@@ -3,7 +3,7 @@ const {
   filters = ["ALL"],
   cardSelector = ".science-card",
   defaultFilter = "ALL",
-  queryKey = "topic", // URL param name: ?topic=SPACE
+  queryKey = "topic",
 } = Astro.props;
 ---
 
@@ -23,46 +23,39 @@ const {
 </nav>
 
 <style>
-  /* Wrapper */
-  .filterbar{
-    padding: 10px 0 12px;
-  }
+  .filterbar { padding: 10px 0 12px; }
 
-  /* Horizontal scroll rail */
   .rail{
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling:touch;
+    scroll-snap-type:x mandatory;
     padding: 0 2px;
-
-    /* Hide scrollbar (cross-browser-ish) */
-    scrollbar-width: none;      /* Firefox */
+    scrollbar-width:none;
   }
-  .rail::-webkit-scrollbar{ display: none; }
+  .rail::-webkit-scrollbar{ display:none; }
 
-  /* Apple-like pill */
   .pill{
-    scroll-snap-align: start;
-    flex: 0 0 auto;
+    scroll-snap-align:start;
+    flex:0 0 auto;
 
-    appearance: none;
-    border: 1px solid rgba(0,0,0,0.10);
-    background: rgba(255,255,255,0.90);
-    color: rgba(11,11,15,0.72);
+    appearance:none;
+    border:1px solid rgba(0,0,0,.10);
+    background:rgba(255,255,255,.90);
+    color:rgba(11,11,15,.72);
 
-    border-radius: 999px;
-    padding: 8px 12px;
+    border-radius:999px;
+    padding:8px 12px;
 
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: -0.01em;  /* Apple-ish */
-    line-height: 1;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    line-height:1;
 
-    cursor: pointer;
-    user-select: none;
+    cursor:pointer;
+    user-select:none;
 
     transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
   }
@@ -70,69 +63,78 @@ const {
   .pill:hover{
     transform: translateY(-1px);
     background: rgba(255,255,255,1);
-    color: rgba(11,11,15,0.90);
-    border-color: rgba(0,0,0,0.14);
+    color: rgba(11,11,15,.90);
+    border-color: rgba(0,0,0,.14);
   }
 
   .pill.active{
-    background: rgba(11,11,15,0.92);
-    color: rgba(255,255,255,0.94);
-    border-color: rgba(11,11,15,0.18);
+    background: rgba(11,11,15,.92);
+    color: rgba(255,255,255,.94);
+    border-color: rgba(11,11,15,.18);
   }
 
-  /* Optional: smaller phones */
   @media (max-width: 420px){
     .pill{ padding: 8px 10px; font-size: 12.5px; }
   }
 </style>
 
 <script is:inline define:vars={{ cardSelector, defaultFilter, queryKey }}>
-  const root = document.currentScript?.closest('.filterbar') || document;
-  const pills = Array.from(root.querySelectorAll('.pill'));
-  const cards = Array.from(document.querySelectorAll(cardSelector));
+  const root = document.currentScript?.closest('.filterbar');
+  const rail = root?.querySelector('.rail');
+  const pills = Array.from(root?.querySelectorAll('.pill') || []);
 
   function normalizeFilter(v){
     if (!v) return null;
-    // Keep it simple: exact match (case-sensitive), but allow lowercase urls:
-    const exact = pills.find(p => p.dataset.filter === v);
-    if (exact) return v;
+    if (pills.some(p => p.dataset.filter === v)) return v;
     const upper = v.toUpperCase();
-    return pills.find(p => p.dataset.filter === upper) ? upper : null;
+    return pills.some(p => p.dataset.filter === upper) ? upper : null;
   }
 
-  function apply(filter, { updateUrl } = { updateUrl: true }) {
+  function getCards(){
+    // IMPORTANT: query when needed (cards exist after DOM parse)
+    return Array.from(document.querySelectorAll(cardSelector));
+  }
+
+  function apply(filter, { updateUrl } = { updateUrl: true }){
     pills.forEach(p => {
       const active = p.dataset.filter === filter;
       p.classList.toggle('active', active);
       p.setAttribute('aria-pressed', active ? 'true' : 'false');
     });
 
+    const cards = getCards();
     cards.forEach(card => {
       const cat = card.dataset.category;
       const show = (filter === 'ALL') || (cat === filter);
       card.classList.toggle('is-hidden', !show);
     });
 
-    // Persist in URL: ?topic=SPACE (remove param if ALL)
-    if (updateUrl) {
+    if (updateUrl){
       const url = new URL(window.location.href);
       if (filter === 'ALL') url.searchParams.delete(queryKey);
       else url.searchParams.set(queryKey, filter);
       window.history.replaceState({}, "", url.toString());
     }
 
-    // Keep active pill visible
+    // keep active pill visible
     const activePill = pills.find(p => p.dataset.filter === filter);
     activePill?.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
   }
 
-  // Init from URL (if valid), otherwise default
-  const url = new URL(window.location.href);
-  const fromUrl = normalizeFilter(url.searchParams.get(queryKey));
-  const initial = fromUrl || defaultFilter || 'ALL';
+  function init(){
+    // initialize from URL
+    const url = new URL(window.location.href);
+    const fromUrl = normalizeFilter(url.searchParams.get(queryKey));
+    const initial = fromUrl || defaultFilter || 'ALL';
 
-  // Click handling
-  pills.forEach(p => p.addEventListener('click', () => apply(p.dataset.filter)));
+    pills.forEach(p => p.addEventListener('click', () => apply(p.dataset.filter)));
+    apply(initial, { updateUrl: false });
+  }
 
-  apply(initial, { updateUrl: false }); // don’t rewrite url on first paint if already set
+  // FIX: run after DOM is ready so cards exist
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
 </script>
