@@ -1,59 +1,46 @@
 ---
-const { title = "UGURCAN" } = Astro.props;
-const year = new Date().getFullYear();
+const { title = "Ugurcan Yagiz", minimal = false } = Astro.props;
 ---
-
 <!doctype html>
-<html lang="en">
+<html lang="tr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
-
-    <!-- Inter font (opsiyonel ama iyi) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
     <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
 
-  <body>
-    <header class="nav">
-      <div class="container nav-inner nav-center">
-        <a class="brand brand-caps" href="/">UGURCAN</a>
-      </div>
-    </header>
+  <body class={minimal ? "layout-minimal" : ""}>
+    {minimal ? (
+      <header class="minimal-header">
+        <div class="container">
+          <a class="minimal-brand" href="/">UGURCAN</a>
+        </div>
+      </header>
+    ) : (
+      <header class="nav">
+        <div class="container nav-inner">
+          <a class="brand" href="/">Ugurcan Yagiz</a>
+          <nav class="nav-links">
+            <a href="/blog">Blog</a>
+            <a href="/science">Science</a>
+            <a href="/art">Art</a>
+            <a href="/history">History</a>
+            <a href="/about">About</a>
+          </nav>
+          <a class="btn primary" href="/blog">Read</a>
+        </div>
+      </header>
+    )}
 
-    <main class="container main-stage">
+    <main class={minimal ? "home-main" : "container"}>
       <slot />
     </main>
 
-    <footer class="footer footer-min">
-      <div class="container footer-inner">
-        <div class="footer-left">© {year} Ugurcan Yagiz</div>
-
-        <div class="footer-right">
-          <a class="icon-link" href="https://instagram.com/john.yagiz" target="_blank" rel="noreferrer" aria-label="Instagram">
-            <!-- Instagram icon -->
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6">
-              <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Z"/>
-              <path d="M16 11.37a4 4 0 1 1-7.94 1.17A4 4 0 0 1 16 11.37Z"/>
-              <path d="M17.5 6.5h.01"/>
-            </svg>
-            <span class="sr-only">@john.yagiz</span>
-          </a>
-
-          <a class="icon-link" href="mailto:info@ugurcanyagiz.com" aria-label="Email">
-            <!-- Mail icon -->
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6">
-              <path d="M4 6h16v12H4z"/>
-              <path d="M4 7l8 6 8-6"/>
-            </svg>
-            <span class="sr-only">info@ugurcanyagiz.com</span>
-          </a>
-        </div>
-      </div>
-    </footer>
+    {!minimal && (
+      <footer class="footer">
+        <div class="container">© {new Date().getFullYear()} Ugurcan Yagiz · Built with Astro</div>
+      </footer>
+    )}
   </body>
 </html>
