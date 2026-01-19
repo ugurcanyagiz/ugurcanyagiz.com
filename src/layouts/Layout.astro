@@ -1,4 +1,6 @@
 ---
+import "../styles/global.css";
+
 const { title = "UGURCAN" } = Astro.props;
 
 const year = new Date().getFullYear();
@@ -14,8 +16,6 @@ const mailtoUrl = `mailto:${email}`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
 
-    <!-- Global CSS -->
-    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
 
   <body>
