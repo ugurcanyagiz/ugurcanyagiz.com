@@ -1,80 +1,146 @@
 ---
-import "../styles/global.css";
-const { title = "Ugurcan Yagiz", minimal = false } = Astro.props;
+const { title = "UGURCAN" } = Astro.props;
+
+const year = new Date().getFullYear();
+const instagramUrl = "https://instagram.com/john.yagiz";
+const email = "info@ugurcanyagiz.com";
+const mailtoUrl = `mailto:${email}`;
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="/src/styles/global.css" />
   </head>
 
-  <body class={minimal ? "home" : ""}>
-    {minimal ? (
-      <>
-        <header class="topbar">
-          <a class="brand" href="/" aria-label="Home">UGURCAN</a>
-        </header>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Go to homepage">UGURCAN</a>
+    </header>
 
-        <main class="page">
-          <slot />
-        </main>
+    <main class="main">
+      <slot />
+    </main>
 
-        <footer class="home-footer">
-          <div class="home-footer-inner">
-            <span>© {new Date().getFullYear()} Ugurcan Yagiz</span>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-left">© {year} Ugurcan Yagiz</div>
 
-            <div class="home-footer-links">
-              <a class="icon-link" href="https://instagram.com/john.yagiz" target="_blank" rel="noreferrer" aria-label="Instagram (@john.yagiz)">
-                <!-- Instagram icon -->
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5z"/>
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                  <path d="M17.5 6.5h.01"/>
-                </svg>
-                <span>@john.yagiz</span>
-              </a>
+        <div class="footer-right" aria-label="Social links">
+          <a class="icon-btn" href={instagramUrl} target="_blank" rel="noreferrer" aria-label="Instagram">
+            <!-- Instagram (official-ish) -->
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path fill="currentColor" d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2Zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5ZM12 7.2A4.8 4.8 0 1 1 7.2 12 4.8 4.8 0 0 1 12 7.2Zm0 2A2.8 2.8 0 1 0 14.8 12 2.8 2.8 0 0 0 12 9.2ZM17.35 6.65a1.05 1.05 0 1 1-1.05 1.05 1.05 1.05 0 0 1 1.05-1.05Z"/>
+            </svg>
+          </a>
 
-              <a class="icon-link" href="mailto:info@ugurcanyagiz.com" aria-label="Email (info@ugurcanyagiz.com)">
-                <!-- Mail icon -->
-                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8">
-                  <path d="M4 4h16v16H4z"/>
-                  <path d="M22 6 12 13 2 6"/>
-                </svg>
-                <span>info@ugurcanyagiz.com</span>
-              </a>
-            </div>
-          </div>
-        </footer>
-      </>
-    ) : (
-      <>
-        <header class="nav">
-          <div class="container nav-inner">
-            <a class="brand" href="/">Ugurcan Yagiz</a>
+          <a class="icon-btn" href={mailtoUrl} aria-label={`Email ${email}`}>
+            <!-- Mail (Outlook vibe minimal envelope) -->
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path fill="currentColor" d="M20 6H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2Zm0 2v.2l-8 5-8-5V8h16Zm-16 10V10.6l7.47 4.67a1 1 0 0 0 1.06 0L20 10.6V18H4Z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </footer>
 
-            <nav class="nav-links">
-              <a href="/blog">Blog</a>
-              <a href="/science">Science</a>
-              <a href="/art">Art</a>
-              <a href="/history">History</a>
-              <a href="/about">About</a>
-            </nav>
+    <style>
+      /* Layout-only styles (safe, local) */
+      :global(body){
+        margin:0;
+      }
 
-            <a class="btn primary" href="/blog">Read</a>
-          </div>
-        </header>
+      .topbar{
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        height: 64px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background: rgba(255,255,255,.78);
+        backdrop-filter: blur(14px);
+        border-bottom: 1px solid rgba(0,0,0,.08);
+      }
 
-        <main class="container">
-          <slot />
-        </main>
+      .brand{
+        font-weight: 800;
+        letter-spacing: .28em;
+        text-transform: uppercase;
+        font-size: 13px;
+        color: #0b0b0f;
+        text-decoration:none;
+      }
 
-        <footer class="footer">
-          <div class="container">© {new Date().getFullYear()} Ugurcan Yagiz · Built with Astro</div>
-        </footer>
-      </>
-    )}
+      .main{
+        min-height: calc(100vh - 64px - 72px);
+      }
+
+      .site-footer{
+        border-top: 1px solid rgba(0,0,0,.08);
+        padding: 18px 0;
+        background: rgba(255,255,255,.65);
+        backdrop-filter: blur(14px);
+      }
+
+      .footer-inner{
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 18px;
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap: 14px;
+      }
+
+      .footer-left{
+        font-size: 13px;
+        color: rgba(11,11,15,.55);
+      }
+
+      .footer-right{
+        display:flex;
+        align-items:center;
+        gap: 10px;
+      }
+
+      .icon-btn{
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        color: rgba(11,11,15,.60);
+        border: 1px solid rgba(0,0,0,.10);
+        background: rgba(255,255,255,.9);
+        text-decoration:none;
+        transition: transform .15s ease, color .15s ease, background .15s ease;
+      }
+
+      .icon-btn:hover{
+        color: rgba(11,11,15,.92);
+        background: rgba(255,255,255,1);
+        transform: translateY(-1px);
+      }
+
+      .icon-btn:active{
+        transform: translateY(0);
+      }
+
+      @media (max-width: 520px){
+        .footer-inner{
+          flex-direction: column;
+          align-items: center;
+          justify-content:center;
+          padding: 10px 18px;
+        }
+      }
+    </style>
   </body>
 </html>
