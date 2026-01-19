@@ -4,6 +4,8 @@ import Layout from "../layouts/Layout.astro";
 const cards = [
   {
     href: "/science/relativity",
+    category: "PHYSICS",
+    subtitle: "Space-time • Gravity",
     title: "Einstein & Relativity",
     excerpt:
       "Time and space aren’t rigid. They stretch, shrink, and bend — and that bending is what we call gravity.",
@@ -11,6 +13,8 @@ const cards = [
   },
   {
     href: "/science/big-bang",
+    category: "SPACE",
+    subtitle: "Origins • Expansion",
     title: "The Big Bang (In Simple Words)",
     excerpt:
       "The universe didn’t explode into space — space itself expanded. And it’s still expanding today.",
@@ -18,6 +22,8 @@ const cards = [
   },
   {
     href: "/science/black-holes",
+    category: "SPACE",
+    subtitle: "Extreme gravity • Event horizon",
     title: "Black Holes",
     excerpt:
       "A place where gravity becomes so strong that even light can’t escape — like nature’s ultimate trapdoor.",
@@ -25,6 +31,8 @@ const cards = [
   },
   {
     href: "/science/time",
+    category: "PHYSICS",
+    subtitle: "Clocks • Dimensions",
     title: "What Is Time, Really?",
     excerpt:
       "Time feels like a river, but physics treats it like a dimension — and it doesn’t flow the same for everyone.",
@@ -32,6 +40,8 @@ const cards = [
   },
   {
     href: "/science/quantum-basics",
+    category: "PHYSICS",
+    subtitle: "Small-scale rules • Measurement",
     title: "Quantum Physics: The Weird Rules",
     excerpt:
       "In the tiny world, things can be in more than one state — until we measure them.",
@@ -39,6 +49,8 @@ const cards = [
   },
   {
     href: "/science/superposition",
+    category: "PHYSICS",
+    subtitle: "Possibilities • Observation",
     title: "Superposition (Like a Coin Mid-Flip)",
     excerpt:
       "A quantum object can be ‘both’ possibilities at once — like a coin that is heads and tails until you look.",
@@ -46,6 +58,8 @@ const cards = [
   },
   {
     href: "/science/entanglement",
+    category: "PHYSICS",
+    subtitle: "Correlations • Distance",
     title: "Entanglement: The Cosmic Link",
     excerpt:
       "Two particles can share one state, even far apart — change one, and the other responds instantly.",
@@ -53,6 +67,8 @@ const cards = [
   },
   {
     href: "/science/waves-particles",
+    category: "PHYSICS",
+    subtitle: "Light • Matter",
     title: "Wave–Particle Duality",
     excerpt:
       "Light and matter can behave like waves and particles — the behavior depends on how we observe them.",
@@ -60,6 +76,8 @@ const cards = [
   },
   {
     href: "/science/uncertainty",
+    category: "PHYSICS",
+    subtitle: "Limits • Precision",
     title: "Uncertainty Principle",
     excerpt:
       "You can’t know a particle’s exact position and exact speed at the same time — it’s a built-in limit of reality.",
@@ -67,13 +85,26 @@ const cards = [
   },
   {
     href: "/science/atoms",
+    category: "CHEMISTRY",
+    subtitle: "Structure • Bonds",
     title: "Atoms: The LEGO of Nature",
     excerpt:
       "Everything you touch is built from atoms — tiny structures with patterns that decide what materials become.",
     img: "https://images.unsplash.com/photo-1554475901-4538ddfbccc2?w=200&q=80",
   },
   {
+    href: "/science/chemistry-life",
+    category: "CHEMISTRY",
+    subtitle: "Reactions • Energy",
+    title: "Chemistry That Powers Life",
+    excerpt:
+      "Cells run on chemical reactions — little controlled fires, batteries, and molecular machines working together.",
+    img: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d1?w=200&q=80",
+  },
+  {
     href: "/science/evolution",
+    category: "BIOLOGY",
+    subtitle: "Selection • Time",
     title: "Evolution (Without the Drama)",
     excerpt:
       "Small changes, over long time, guided by survival and reproduction — nature’s slow, powerful editing process.",
@@ -81,13 +112,26 @@ const cards = [
   },
   {
     href: "/science/dna",
+    category: "BIOLOGY",
+    subtitle: "Genes • Information",
     title: "DNA: Life’s Instruction Manual",
     excerpt:
-      "A long molecule that stores recipes for building and maintaining living things — copied, repaired, and sometimes changed.",
-    img: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d1?w=200&q=80",
+      "A long molecule that stores recipes for building living things — copied, repaired, and sometimes changed.",
+    img: "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=200&q=80",
+  },
+  {
+    href: "/science/cells",
+    category: "BIOLOGY",
+    subtitle: "Membranes • Factories",
+    title: "Cells: Tiny Cities",
+    excerpt:
+      "A cell is like a city: walls, power plants, factories, delivery routes — all coordinated by chemistry.",
+    img: "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=200&q=80",
   },
   {
     href: "/science/consciousness",
+    category: "MIND",
+    subtitle: "Experience • Awareness",
     title: "Consciousness: The Hard Question",
     excerpt:
       "How does a brain create experience? We can map signals — but turning signals into ‘feeling’ is still mysterious.",
@@ -95,6 +139,8 @@ const cards = [
   },
   {
     href: "/science/memory",
+    category: "MIND",
+    subtitle: "Networks • Recall",
     title: "Memory: How the Brain Stores You",
     excerpt:
       "Memories aren’t single files. They’re patterns across networks — re-written a little each time you recall them.",
@@ -102,67 +148,82 @@ const cards = [
   },
   {
     href: "/science/dreams",
+    category: "MIND",
+    subtitle: "Emotion • Simulation",
     title: "Dreams: Why We See Stories at Night",
     excerpt:
-      "Dreams may help the brain simulate threats, process emotion, and stitch meaning from fragments of memory.",
-    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=80",
+      "Dreams may help the brain simulate, process emotion, and stitch meaning from fragments of memory.",
+    img: "https://images.unsplash.com/photo-1496307653780-42ee777d4833?w=200&q=80",
   },
   {
     href: "/science/language",
+    category: "MIND",
+    subtitle: "Symbols • Culture",
     title: "Language: The Human Superpower",
     excerpt:
       "Language compresses thought, transfers knowledge, and lets minds coordinate — like a shared operating system.",
     img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=200&q=80",
   },
   {
-    href: "/science/simulation",
-    title: "Are We in a Simulation?",
-    excerpt:
-      "A fun idea — but hard to test. Science asks: what predictions would be different if it were true?",
-    img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&q=80",
-  },
-  {
-    href: "/science/aliens",
-    title: "Life Beyond Earth (Careful Optimism)",
-    excerpt:
-      "We don’t know yet. But chemistry is universal — and the universe is huge. The real question is: how common is life?",
-    img: "https://images.unsplash.com/photo-1447433819943-74a20887a81e?w=200&q=80",
-  },
-  {
     href: "/science/future-of-ai",
+    category: "TECHNOLOGY",
+    subtitle: "Tools • Verification",
     title: "AI & the Future of Science",
     excerpt:
       "AI can speed up discovery, but it can also mislead. The key is verification, transparency, and careful experiments.",
     img: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=200&q=80",
   },
   {
-    href: "/science/meaning-of-life",
-    title: "Meaning, Purpose, and the Cosmos",
+    href: "/science/life-beyond-earth",
+    category: "SPACE",
+    subtitle: "Astrobiology • Signals",
+    title: "Life Beyond Earth (Careful Optimism)",
     excerpt:
-      "Science tells us what is. Humans decide what matters — with values, community, and the stories we choose to live by.",
-    img: "https://images.unsplash.com/photo-1454789548928-9efd52dc4031?w=200&q=80",
+      "We don’t know yet. But chemistry is universal — and the universe is huge. How common is life?",
+    img: "https://images.unsplash.com/photo-1447433819943-74a20887a81e?w=200&q=80",
   },
 ];
+
+// filter options shown in UI (order matters)
+const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY", "MIND"];
 ---
 
 <Layout title="Science — Ugurcan">
   <section class="science-wrap">
-    <h1 class="page-title">Science</h1>
-    <p class="page-subtitle">
-      Universe, mind, quantum, life — explained simply, without losing the truth.
-    </p>
+    <div class="hero">
+      <h1 class="page-title">Science</h1>
+      <p class="page-subtitle">
+        Universe, mind, quantum, life — explained simply, without losing the truth.
+      </p>
+    </div>
 
-    <div class="card-list">
+    {/* Filter bar: sits right under the global header (UGURCAN) */}
+    <div class="filter-bar" role="toolbar" aria-label="Filter science topics">
+      {filters.map((f) => (
+        <button class={`filter-pill ${f === "ALL" ? "active" : ""}`} type="button" data-filter={f}>
+          {f}
+        </button>
+      ))}
+    </div>
+
+    <div class="card-list" id="cardList">
       {cards.map((c) => (
-        <a class="science-card" href={c.href}>
+        <a class="science-card" href={c.href} data-category={c.category}>
           <div class="card-icon">
             <img src={c.img} alt={c.title} loading="lazy" />
           </div>
 
           <div class="card-text">
+            <div class="subtitle-row">
+              <span class="subtitle">{c.subtitle}</span>
+            </div>
             <h2>{c.title}</h2>
             <p>{c.excerpt}</p>
           </div>
+
+          <span class={`badge badge--${c.category}`} aria-label={`Category ${c.category}`}>
+            {c.category}
+          </span>
         </a>
       ))}
     </div>
@@ -172,8 +233,10 @@ const cards = [
     .science-wrap {
       max-width: 880px;
       margin: 0 auto;
-      padding: 48px 18px 80px;
+      padding: 34px 18px 80px;
     }
+
+    .hero { padding-top: 6px; }
 
     .page-title {
       font-size: 42px;
@@ -183,20 +246,65 @@ const cards = [
     }
 
     .page-subtitle{
-      margin: 0 0 26px;
+      margin: 0 0 18px;
       font-size: 14px;
       line-height: 1.55;
       color: rgba(11, 11, 15, 0.62);
       max-width: 62ch;
     }
 
+    /* Filter bar sits under the sticky header (Layout header is 64px) */
+    .filter-bar{
+      position: sticky;
+      top: 64px;
+      z-index: 25;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 0 14px;
+      margin-bottom: 6px;
+      background: rgba(245,245,247,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .filter-pill{
+      appearance: none;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.85);
+      color: rgba(11,11,15,0.70);
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .15s ease, background .15s ease, color .15s ease;
+      white-space: nowrap;
+    }
+
+    .filter-pill:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,1);
+      color: rgba(11,11,15,0.88);
+    }
+
+    .filter-pill.active{
+      background: rgba(11,11,15,0.90);
+      color: rgba(255,255,255,0.94);
+      border-color: rgba(11,11,15,0.12);
+    }
+
     .card-list {
       display: flex;
       flex-direction: column;
       gap: 14px;
+      margin-top: 10px;
     }
 
     .science-card {
+      position: relative;
       display: flex;
       align-items: flex-start;
       gap: 14px;
@@ -207,6 +315,7 @@ const cards = [
       box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       text-decoration: none;
+      overflow: hidden;
     }
 
     .science-card:hover {
@@ -230,6 +339,30 @@ const cards = [
       display:block;
     }
 
+    .card-text{
+      min-width: 0;
+      padding-right: 88px; /* room for badge on right */
+    }
+
+    .subtitle-row{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .subtitle{
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(11,11,15,0.55);
+      letter-spacing: .02em;
+      text-transform: none;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
     .card-text h2 {
       margin: 0;
       font-size: 16px;
@@ -244,8 +377,83 @@ const cards = [
       color: rgba(11, 11, 15, 0.62);
     }
 
+    /* Category badge top-right */
+    .badge{
+      position:absolute;
+      top: 14px;
+      right: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      border: 1px solid rgba(0,0,0,0.08);
+      backdrop-filter: blur(10px);
+      user-select:none;
+    }
+
+    /* Color system (Apple-like: muted but distinct) */
+    .badge--SPACE{
+      background: rgba(88, 86, 214, 0.14);
+      color: rgba(88, 86, 214, 0.95);
+      border-color: rgba(88, 86, 214, 0.20);
+    }
+    .badge--PHYSICS{
+      background: rgba(0, 122, 255, 0.14);
+      color: rgba(0, 122, 255, 0.95);
+      border-color: rgba(0, 122, 255, 0.20);
+    }
+    .badge--BIOLOGY{
+      background: rgba(52, 199, 89, 0.14);
+      color: rgba(30, 150, 70, 0.95);
+      border-color: rgba(52, 199, 89, 0.22);
+    }
+    .badge--CHEMISTRY{
+      background: rgba(255, 149, 0, 0.14);
+      color: rgba(255, 149, 0, 0.95);
+      border-color: rgba(255, 149, 0, 0.22);
+    }
+    .badge--TECHNOLOGY{
+      background: rgba(255, 45, 85, 0.14);
+      color: rgba(255, 45, 85, 0.92);
+      border-color: rgba(255, 45, 85, 0.22);
+    }
+    .badge--MIND{
+      background: rgba(175, 82, 222, 0.14);
+      color: rgba(175, 82, 222, 0.95);
+      border-color: rgba(175, 82, 222, 0.22);
+    }
+
+    /* Filtering: hide cards */
+    .science-card.is-hidden{ display:none; }
+
     @media (max-width: 480px) {
       .page-title { font-size: 34px; }
+      .card-text{ padding-right: 0; }
+      .badge{ position: static; margin-left: auto; align-self: flex-start; }
+      .science-card{ gap: 12px; }
     }
   </style>
+
+  <script is:inline>
+    const pills = Array.from(document.querySelectorAll('.filter-pill'));
+    const cards = Array.from(document.querySelectorAll('.science-card'));
+
+    function setActive(filter) {
+      pills.forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
+      cards.forEach(card => {
+        const cat = card.dataset.category;
+        const show = (filter === 'ALL') || (cat === filter);
+        card.classList.toggle('is-hidden', !show);
+      });
+    }
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => setActive(pill.dataset.filter));
+    });
+
+    // default
+    setActive('ALL');
+  </script>
 </Layout>
