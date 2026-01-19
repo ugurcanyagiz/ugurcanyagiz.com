@@ -189,8 +189,13 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
 ---
 
 <Layout title="Science — Ugurcan">
-  <!-- This renders inside Layout's sticky header, under UGURCAN -->
-  <FilterBar slot="subnav" filters={filters} cardSelector=".science-card" />
+  <FilterBar
+    slot="subnav"
+    filters={filters}
+    cardSelector=".science-card"
+    queryKey="topic"
+    defaultFilter="ALL"
+  />
 
   <section class="science-wrap">
     <div class="hero">
@@ -290,7 +295,7 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
 
     .card-text{
       min-width: 0;
-      padding-right: 88px; /* room for badge on right (desktop) */
+      padding-right: 88px;
     }
 
     .subtitle-row{
@@ -324,7 +329,6 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       color: rgba(11, 11, 15, 0.62);
     }
 
-    /* Category badge top-right */
     .badge{
       position:absolute;
       top: 14px;
@@ -340,7 +344,6 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       user-select: none;
     }
 
-    /* Color system */
     .badge--SPACE{
       background: rgba(88, 86, 214, 0.14);
       color: rgba(88, 86, 214, 0.95);
@@ -372,7 +375,7 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       border-color: rgba(175, 82, 222, 0.22);
     }
 
-    /* FilterBar toggles this class */
+    /* FilterBar toggles this */
     .science-card.is-hidden{ display: none; }
 
     @media (max-width: 480px) {
