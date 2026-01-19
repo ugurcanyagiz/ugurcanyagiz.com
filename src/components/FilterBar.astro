@@ -1,0 +1,79 @@
+---
+const {
+  filters = ["ALL"],
+  cardSelector = ".science-card",
+  defaultFilter = "ALL",
+} = Astro.props;
+---
+
+<div class="filter-wrap" role="toolbar" aria-label="Filter content">
+  {filters.map((f) => (
+    <button
+      class={`filter-pill ${f === defaultFilter ? "active" : ""}`}
+      type="button"
+      data-filter={f}
+    >
+      {f}
+    </button>
+  ))}
+</div>
+
+<style>
+  .filter-wrap{
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 10px 12px 12px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .filter-pill{
+    appearance: none;
+    border: 1px solid rgba(0,0,0,0.10);
+    background: rgba(255,255,255,0.85);
+    color: rgba(11,11,15,0.70);
+    border-radius: 999px;
+    padding: 9px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform .15s ease, background .15s ease, color .15s ease;
+    white-space: nowrap;
+  }
+
+  .filter-pill:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,1);
+    color: rgba(11,11,15,0.88);
+  }
+
+  .filter-pill.active{
+    background: rgba(11,11,15,0.90);
+    color: rgba(255,255,255,0.94);
+    border-color: rgba(11,11,15,0.12);
+  }
+
+  @media (max-width: 420px){
+    .filter-wrap{ padding: 10px 8px 12px; }
+    .filter-pill{ padding: 8px 10px; font-size: 11px; }
+  }
+</style>
+
+<script is:inline define:vars={{ cardSelector, defaultFilter }}>
+  const pills = Array.from(document.querySelectorAll('.filter-pill'));
+  const cards = Array.from(document.querySelectorAll(cardSelector));
+
+  function setActive(filter){
+    pills.forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
+    cards.forEach(card => {
+      const cat = card.dataset.category;
+      const show = (filter === 'ALL') || (cat === filter);
+      card.classList.toggle('is-hidden', !show);
+    });
+  }
+
+  pills.forEach(p => p.addEventListener('click', () => setActive(p.dataset.filter)));
+  setActive(defaultFilter);
+</script>
