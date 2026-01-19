@@ -1,117 +1,125 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FilterBar from "../components/FilterBar.astro";
+
+/**
+ * Categories (filters) for ART
+ * Keep these exact strings in:
+ * - filters array
+ * - card.category
+ * - badge--CATEGORY class names
+ */
+const filters = ["ALL", "PAINTING", "MUSIC", "ARCHITECTURE", "FILM", "DESIGN", "PHOTOGRAPHY"];
 
 const cards = [
   {
-    href: "/art/what-is-art",
-    category: "PHILOSOPHY",
-    subtitle: "Meaning • Expression",
-    title: "What Is Art, Really?",
+    href: "/art/why-we-like-melodies",
+    category: "MUSIC",
+    subtitle: "Harmony • Emotion",
+    title: "Why Melodies Feel Like Memories",
     excerpt:
-      "Art is not just beauty — it is communication, intention, and the courage to show an inner world.",
+      "A simple melody can trigger emotion faster than words. Here’s why your brain treats music like a shortcut to feeling.",
+    img: "https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=200&q=80",
+  },
+  {
+    href: "/art/composition-in-painting",
+    category: "PAINTING",
+    subtitle: "Balance • Attention",
+    title: "Composition: How Paintings Control Your Eyes",
+    excerpt:
+      "Great paintings ‘direct’ your attention using contrast, lines, and spacing—like invisible choreography.",
+    img: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=200&q=80",
+  },
+  {
+    href: "/art/architecture-as-a-language",
+    category: "ARCHITECTURE",
+    subtitle: "Space • Human behavior",
+    title: "Architecture Is a Language (Without Words)",
+    excerpt:
+      "Buildings silently tell you where to walk, where to rest, and how to feel—open, safe, or overwhelmed.",
+    img: "https://images.unsplash.com/photo-1529421308418-eab98863cee1?w=200&q=80",
+  },
+  {
+    href: "/art/film-editing-invisible-art",
+    category: "FILM",
+    subtitle: "Cuts • Rhythm",
+    title: "Editing: The Invisible Art That Creates Meaning",
+    excerpt:
+      "A cut is not just a cut. It decides what you know, what you miss, and what you feel—second by second.",
+    img: "https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?w=200&q=80",
+  },
+  {
+    href: "/art/minimalism-why-it-works",
+    category: "DESIGN",
+    subtitle: "Clarity • Reduction",
+    title: "Minimalism: Why Less Often Feels Better",
+    excerpt:
+      "Minimal design removes negotiation. When choices shrink, attention sharpens—and the message lands cleaner.",
+    img: "https://images.unsplash.com/photo-1526481280695-3c687fd643ed?w=200&q=80",
+  },
+  {
+    href: "/art/photography-light",
+    category: "PHOTOGRAPHY",
+    subtitle: "Light • Depth",
+    title: "Light: The One Thing Every Great Photo Shares",
+    excerpt:
+      "You can fix many things—but not bad light. Here’s how light creates shape, mood, and realism.",
+    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=80",
+  },
+  {
+    href: "/art/color-theory-simple",
+    category: "DESIGN",
+    subtitle: "Color • Perception",
+    title: "Color Theory (Made Simple)",
+    excerpt:
+      "Colors don’t just decorate. They signal distance, importance, temperature, and emotion—instantly.",
     img: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=200&q=80",
   },
   {
-    href: "/art/renaissance-art",
-    category: "ART-HISTORY",
-    subtitle: "Perspective • Humanism",
-    title: "Renaissance: Seeing Differently",
+    href: "/art/film-sound-design",
+    category: "FILM",
+    subtitle: "Silence • Tension",
+    title: "Sound Design: The Secret Weapon of Cinema",
     excerpt:
-      "Perspective changed art forever — turning flat images into believable worlds and humans into the center.",
-    img: "https://images.unsplash.com/photo-1505666287591-07f7f7c1c7c9?w=200&q=80",
+      "The scariest moment in a movie is often made by sound—tiny details your brain reads as ‘real.’",
+    img: "https://images.unsplash.com/photo-1485846234645-a62644f84728?w=200&q=80",
   },
   {
-    href: "/art/impressionism",
-    category: "ART-HISTORY",
-    subtitle: "Light • Moments",
-    title: "Impressionism: Painting the Moment",
+    href: "/art/painting-brushwork",
+    category: "PAINTING",
+    subtitle: "Texture • Time",
+    title: "Brushwork: You Can See the Artist’s Decisions",
     excerpt:
-      "Instead of perfection, impressionists painted light, movement, and the feeling of a single instant.",
-    img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200&q=80",
+      "Brushwork is visible thinking. It shows speed, confidence, doubt—and sometimes the artist’s mood.",
+    img: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=200&q=80",
   },
   {
-    href: "/art/modern-art",
-    category: "MODERN",
-    subtitle: "Break • Experiment",
-    title: "Modern Art: Breaking the Rules",
-    excerpt:
-      "Modern artists asked a dangerous question: what if art doesn’t need to look like reality at all?",
-    img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&q=80",
-  },
-  {
-    href: "/art/abstract-art",
-    category: "MODERN",
-    subtitle: "Form • Emotion",
-    title: "Abstract Art: Feeling Over Form",
-    excerpt:
-      "Abstract art removes objects to focus on rhythm, color, and emotional impact.",
-    img: "https://images.unsplash.com/photo-1495567720989-cebdbdd97913?w=200&q=80",
-  },
-  {
-    href: "/art/music-and-brain",
+    href: "/art/music-tension-release",
     category: "MUSIC",
-    subtitle: "Rhythm • Emotion",
-    title: "Why Music Feels Physical",
+    subtitle: "Tension • Release",
+    title: "Why Music Feels Like a Story",
     excerpt:
-      "Music activates emotion, memory, and movement — often faster than language ever could.",
-    img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&q=80",
-  },
-  {
-    href: "/art/design-thinking",
-    category: "DESIGN",
-    subtitle: "Function • Simplicity",
-    title: "Design Is How It Works",
-    excerpt:
-      "Good design disappears. It solves problems quietly, without demanding attention.",
-    img: "https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=200&q=80",
-  },
-  {
-    href: "/art/typography",
-    category: "DESIGN",
-    subtitle: "Letters • Voice",
-    title: "Typography Has a Personality",
-    excerpt:
-      "Fonts speak before words do — they suggest mood, trust, seriousness, or play.",
-    img: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=200&q=80",
-  },
-  {
-    href: "/art/ai-and-art",
-    category: "TECHNOLOGY",
-    subtitle: "Tools • Authorship",
-    title: "AI and the Question of Creativity",
-    excerpt:
-      "AI can generate images — but creativity still depends on intention, choice, and taste.",
-    img: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=200&q=80",
-  },
-  {
-    href: "/art/art-and-meaning",
-    category: "PHILOSOPHY",
-    subtitle: "Interpretation • Value",
-    title: "Does Art Need Meaning?",
-    excerpt:
-      "Sometimes meaning is clear. Sometimes it is created by the viewer — and that is the point.",
-    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=80",
+      "Music creates expectation, then resolves it. That tension-and-release loop is why songs feel like journeys.",
+    img: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&q=80",
   },
 ];
-
-const filters = ["ALL", "ART-HISTORY", "MODERN", "DESIGN", "MUSIC", "PHILOSOPHY", "TECHNOLOGY"];
 ---
 
 <Layout title="Art — Ugurcan">
+  <FilterBar
+    slot="subnav"
+    filters={filters}
+    cardSelector=".art-card"
+    queryKey="topic"
+    defaultFilter="ALL"
+  />
+
   <section class="art-wrap">
     <div class="hero">
       <h1 class="page-title">Art</h1>
       <p class="page-subtitle">
-        Art, design, music, and meaning — how humans express what words can’t.
+        Music, film, design, architecture, photography — explained like a craft, not a mystery.
       </p>
-    </div>
-
-    <div class="filter-bar" role="toolbar" aria-label="Filter art topics">
-      {filters.map((f) => (
-        <button class={`filter-pill ${f === "ALL" ? "active" : ""}`} type="button" data-filter={f}>
-          {f}
-        </button>
-      ))}
     </div>
 
     <div class="card-list">
@@ -122,12 +130,16 @@ const filters = ["ALL", "ART-HISTORY", "MODERN", "DESIGN", "MUSIC", "PHILOSOPHY"
           </div>
 
           <div class="card-text">
-            <span class="subtitle">{c.subtitle}</span>
+            <div class="subtitle-row">
+              <span class="subtitle">{c.subtitle}</span>
+            </div>
             <h2>{c.title}</h2>
             <p>{c.excerpt}</p>
           </div>
 
-          <span class={`badge badge--${c.category}`}>{c.category}</span>
+          <span class={`badge badge--${c.category}`} aria-label={`Category ${c.category}`}>
+            {c.category}
+          </span>
         </a>
       ))}
     </div>
@@ -137,7 +149,7 @@ const filters = ["ALL", "ART-HISTORY", "MODERN", "DESIGN", "MUSIC", "PHILOSOPHY"
     .art-wrap{
       max-width: 880px;
       margin: 0 auto;
-      padding: 34px 18px 80px;
+      padding: 28px 18px 80px;
     }
 
     .page-title{
@@ -148,142 +160,118 @@ const filters = ["ALL", "ART-HISTORY", "MODERN", "DESIGN", "MUSIC", "PHILOSOPHY"
     }
 
     .page-subtitle{
+      margin: 0 0 18px;
       font-size: 14px;
-      color: rgba(11,11,15,.62);
-      margin-bottom: 18px;
-      max-width: 60ch;
-    }
-
-    .filter-bar{
-      position: sticky;
-      top: 64px;
-      z-index: 25;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 12px 0 14px;
-      background: rgba(245,245,247,.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(0,0,0,.06);
-    }
-
-    .filter-pill{
-      border-radius: 999px;
-      padding: 9px 12px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      border: 1px solid rgba(0,0,0,.1);
-      background: white;
-      cursor: pointer;
-    }
-
-    .filter-pill.active{
-      background: #111;
-      color: white;
+      line-height: 1.55;
+      color: rgba(11,11,15,0.62);
+      max-width: 62ch;
     }
 
     .card-list{
-      display: flex;
+      display:flex;
       flex-direction: column;
       gap: 14px;
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .art-card{
       position: relative;
-      display: flex;
+      display:flex;
+      align-items:flex-start;
       gap: 14px;
       padding: 16px 18px;
-      background: rgba(255,255,255,.9);
+      background: rgba(255,255,255,0.9);
       border-radius: 18px;
-      border: 1px solid rgba(0,0,0,.06);
-      box-shadow: 0 8px 28px rgba(0,0,0,.06);
-      text-decoration: none;
-      transition: transform .15s ease, box-shadow .15s ease;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      text-decoration:none;
+      overflow:hidden;
     }
 
     .art-card:hover{
       transform: translateY(-1px);
-      box-shadow: 0 12px 36px rgba(0,0,0,.08);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.08);
     }
 
     .card-icon{
       width: 46px;
       height: 46px;
+      flex-shrink:0;
       border-radius: 12px;
-      overflow: hidden;
-      background: #eee;
-      flex-shrink: 0;
+      overflow:hidden;
+      background:#eaeaec;
     }
 
     .card-icon img{
       width:100%;
       height:100%;
       object-fit: cover;
+      display:block;
     }
 
     .card-text{
-      padding-right: 100px;
+      min-width: 0;
+      padding-right: 108px;
     }
+
+    .subtitle-row{ margin-bottom: 6px; }
 
     .subtitle{
       font-size: 12px;
       font-weight: 700;
-      color: rgba(11,11,15,.55);
+      color: rgba(11,11,15,0.55);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
 
     .card-text h2{
-      margin: 4px 0 0;
+      margin:0;
       font-size: 16px;
       font-weight: 800;
+      color:#0b0b0f;
     }
 
     .card-text p{
       margin: 6px 0 0;
       font-size: 14px;
-      color: rgba(11,11,15,.62);
+      line-height: 1.55;
+      color: rgba(11,11,15,0.62);
     }
 
     .badge{
-      position: absolute;
+      position:absolute;
       top: 14px;
       right: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
       font-size: 11px;
       font-weight: 900;
-      padding: 6px 10px;
-      border-radius: 999px;
       letter-spacing: .14em;
-      border: 1px solid rgba(0,0,0,.08);
+      text-transform: uppercase;
+      border: 1px solid rgba(0,0,0,0.08);
+      backdrop-filter: blur(10px);
+      user-select:none;
     }
 
-    .badge--ART-HISTORY{ background: rgba(255,149,0,.15); color: #ff9500; }
-    .badge--MODERN{ background: rgba(175,82,222,.15); color: #af52de; }
-    .badge--DESIGN{ background: rgba(0,122,255,.15); color: #007aff; }
-    .badge--MUSIC{ background: rgba(255,45,85,.15); color: #ff2d55; }
-    .badge--PHILOSOPHY{ background: rgba(142,142,147,.2); color: #3c3c43; }
-    .badge--TECHNOLOGY{ background: rgba(90,200,250,.2); color: #007aff; }
+    /* Muted Apple-like category colors */
+    .badge--PAINTING{     background: rgba(255,149,0,.14);  color: rgba(255,149,0,.95);  border-color: rgba(255,149,0,.22); }
+    .badge--MUSIC{        background: rgba(175,82,222,.14); color: rgba(175,82,222,.95); border-color: rgba(175,82,222,.22); }
+    .badge--ARCHITECTURE{ background: rgba(88,86,214,.14);  color: rgba(88,86,214,.95);  border-color: rgba(88,86,214,.20); }
+    .badge--FILM{         background: rgba(255,45,85,.14);  color: rgba(255,45,85,.92);  border-color: rgba(255,45,85,.22); }
+    .badge--DESIGN{       background: rgba(0,122,255,.14);  color: rgba(0,122,255,.95);  border-color: rgba(0,122,255,.20); }
+    .badge--PHOTOGRAPHY{  background: rgba(52,199,89,.14);  color: rgba(30,150,70,.95);  border-color: rgba(52,199,89,.22); }
 
+    /* FilterBar toggles this */
     .art-card.is-hidden{ display:none; }
+
+    @media (max-width: 480px){
+      .page-title{ font-size: 34px; }
+      .card-text{ padding-right: 0; }
+      .badge{ position: static; margin-left:auto; align-self:flex-start; }
+      .art-card{ gap: 12px; }
+    }
   </style>
-
-  <script is:inline>
-    const pills = document.querySelectorAll('.filter-pill');
-    const cards = document.querySelectorAll('.art-card');
-
-    pills.forEach(p => {
-      p.addEventListener('click', () => {
-        pills.forEach(x => x.classList.remove('active'));
-        p.classList.add('active');
-
-        const f = p.dataset.filter;
-        cards.forEach(c => {
-          c.classList.toggle(
-            'is-hidden',
-            f !== 'ALL' && c.dataset.category !== f
-          );
-        });
-      });
-    });
-  </script>
 </Layout>
