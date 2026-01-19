@@ -1,30 +1,170 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const cards = [
+  {
+    href: "/science/relativity",
+    title: "Einstein & Relativity",
+    excerpt:
+      "Time and space aren’t rigid. They stretch, shrink, and bend — and that bending is what we call gravity.",
+    img: "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?w=200&q=80",
+  },
+  {
+    href: "/science/big-bang",
+    title: "The Big Bang (In Simple Words)",
+    excerpt:
+      "The universe didn’t explode into space — space itself expanded. And it’s still expanding today.",
+    img: "https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?w=200&q=80",
+  },
+  {
+    href: "/science/black-holes",
+    title: "Black Holes",
+    excerpt:
+      "A place where gravity becomes so strong that even light can’t escape — like nature’s ultimate trapdoor.",
+    img: "https://images.unsplash.com/photo-1454789548928-9efd52dc4031?w=200&q=80",
+  },
+  {
+    href: "/science/time",
+    title: "What Is Time, Really?",
+    excerpt:
+      "Time feels like a river, but physics treats it like a dimension — and it doesn’t flow the same for everyone.",
+    img: "https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=200&q=80",
+  },
+  {
+    href: "/science/quantum-basics",
+    title: "Quantum Physics: The Weird Rules",
+    excerpt:
+      "In the tiny world, things can be in more than one state — until we measure them.",
+    img: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=200&q=80",
+  },
+  {
+    href: "/science/superposition",
+    title: "Superposition (Like a Coin Mid-Flip)",
+    excerpt:
+      "A quantum object can be ‘both’ possibilities at once — like a coin that is heads and tails until you look.",
+    img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=200&q=80",
+  },
+  {
+    href: "/science/entanglement",
+    title: "Entanglement: The Cosmic Link",
+    excerpt:
+      "Two particles can share one state, even far apart — change one, and the other responds instantly.",
+    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=80",
+  },
+  {
+    href: "/science/waves-particles",
+    title: "Wave–Particle Duality",
+    excerpt:
+      "Light and matter can behave like waves and particles — the behavior depends on how we observe them.",
+    img: "https://images.unsplash.com/photo-1456428199391-a3b1cb5e93ab?w=200&q=80",
+  },
+  {
+    href: "/science/uncertainty",
+    title: "Uncertainty Principle",
+    excerpt:
+      "You can’t know a particle’s exact position and exact speed at the same time — it’s a built-in limit of reality.",
+    img: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=200&q=80",
+  },
+  {
+    href: "/science/atoms",
+    title: "Atoms: The LEGO of Nature",
+    excerpt:
+      "Everything you touch is built from atoms — tiny structures with patterns that decide what materials become.",
+    img: "https://images.unsplash.com/photo-1554475901-4538ddfbccc2?w=200&q=80",
+  },
+  {
+    href: "/science/evolution",
+    title: "Evolution (Without the Drama)",
+    excerpt:
+      "Small changes, over long time, guided by survival and reproduction — nature’s slow, powerful editing process.",
+    img: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=200&q=80",
+  },
+  {
+    href: "/science/dna",
+    title: "DNA: Life’s Instruction Manual",
+    excerpt:
+      "A long molecule that stores recipes for building and maintaining living things — copied, repaired, and sometimes changed.",
+    img: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d1?w=200&q=80",
+  },
+  {
+    href: "/science/consciousness",
+    title: "Consciousness: The Hard Question",
+    excerpt:
+      "How does a brain create experience? We can map signals — but turning signals into ‘feeling’ is still mysterious.",
+    img: "https://images.unsplash.com/photo-1526379095098-d400fd0bf935?w=200&q=80",
+  },
+  {
+    href: "/science/memory",
+    title: "Memory: How the Brain Stores You",
+    excerpt:
+      "Memories aren’t single files. They’re patterns across networks — re-written a little each time you recall them.",
+    img: "https://images.unsplash.com/photo-1520694478160-2402b5536d0c?w=200&q=80",
+  },
+  {
+    href: "/science/dreams",
+    title: "Dreams: Why We See Stories at Night",
+    excerpt:
+      "Dreams may help the brain simulate threats, process emotion, and stitch meaning from fragments of memory.",
+    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=80",
+  },
+  {
+    href: "/science/language",
+    title: "Language: The Human Superpower",
+    excerpt:
+      "Language compresses thought, transfers knowledge, and lets minds coordinate — like a shared operating system.",
+    img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=200&q=80",
+  },
+  {
+    href: "/science/simulation",
+    title: "Are We in a Simulation?",
+    excerpt:
+      "A fun idea — but hard to test. Science asks: what predictions would be different if it were true?",
+    img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&q=80",
+  },
+  {
+    href: "/science/aliens",
+    title: "Life Beyond Earth (Careful Optimism)",
+    excerpt:
+      "We don’t know yet. But chemistry is universal — and the universe is huge. The real question is: how common is life?",
+    img: "https://images.unsplash.com/photo-1447433819943-74a20887a81e?w=200&q=80",
+  },
+  {
+    href: "/science/future-of-ai",
+    title: "AI & the Future of Science",
+    excerpt:
+      "AI can speed up discovery, but it can also mislead. The key is verification, transparency, and careful experiments.",
+    img: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=200&q=80",
+  },
+  {
+    href: "/science/meaning-of-life",
+    title: "Meaning, Purpose, and the Cosmos",
+    excerpt:
+      "Science tells us what is. Humans decide what matters — with values, community, and the stories we choose to live by.",
+    img: "https://images.unsplash.com/photo-1454789548928-9efd52dc4031?w=200&q=80",
+  },
+];
 ---
 
 <Layout title="Science — Ugurcan">
   <section class="science-wrap">
     <h1 class="page-title">Science</h1>
+    <p class="page-subtitle">
+      Universe, mind, quantum, life — explained simply, without losing the truth.
+    </p>
 
     <div class="card-list">
-      <article class="science-card">
-        <div class="card-icon">
-          <img
-            src="https://images.unsplash.com/photo-1535930749574-1399327ce78f?w=200&q=80"
-            alt="Albert Einstein"
-            loading="lazy"
-          />
-        </div>
+      {cards.map((c) => (
+        <a class="science-card" href={c.href}>
+          <div class="card-icon">
+            <img src={c.img} alt={c.title} loading="lazy" />
+          </div>
 
-        <div class="card-text">
-          <h2>Einstein & Relativity</h2>
-          <p>
-            Imagine time and space are not fixed, like lines on a ruler, but
-            flexible — like a soft blanket that bends when something heavy
-            sits on it...
-          </p>
-        </div>
-      </article>
+          <div class="card-text">
+            <h2>{c.title}</h2>
+            <p>{c.excerpt}</p>
+          </div>
+        </a>
+      ))}
     </div>
   </section>
 
@@ -39,7 +179,15 @@ import Layout from "../layouts/Layout.astro";
       font-size: 42px;
       font-weight: 800;
       letter-spacing: -0.03em;
-      margin-bottom: 32px;
+      margin: 0 0 10px;
+    }
+
+    .page-subtitle{
+      margin: 0 0 26px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(11, 11, 15, 0.62);
+      max-width: 62ch;
     }
 
     .card-list {
@@ -58,6 +206,7 @@ import Layout from "../layouts/Layout.astro";
       border: 1px solid rgba(0, 0, 0, 0.06);
       box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
+      text-decoration: none;
     }
 
     .science-card:hover {
@@ -78,12 +227,13 @@ import Layout from "../layouts/Layout.astro";
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display:block;
     }
 
     .card-text h2 {
       margin: 0;
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 800;
       color: #0b0b0f;
     }
 
@@ -95,9 +245,7 @@ import Layout from "../layouts/Layout.astro";
     }
 
     @media (max-width: 480px) {
-      .page-title {
-        font-size: 34px;
-      }
+      .page-title { font-size: 34px; }
     }
   </style>
 </Layout>
