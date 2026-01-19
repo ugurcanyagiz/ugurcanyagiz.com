@@ -5,9 +5,12 @@ const {
   defaultFilter = "ALL",
   queryKey = "topic",
 } = Astro.props;
+
+// Unique id so script can always find the correct DOM node
+const uid = `filterbar-${Math.random().toString(36).slice(2, 10)}`;
 ---
 
-<nav class="filterbar" aria-label="Content filters">
+<nav id={uid} class="filterbar" aria-label="Content filters">
   <div class="rail" role="toolbar" aria-label="Filter options">
     {filters.map((f) => (
       <button
@@ -78,51 +81,50 @@ const {
   }
 </style>
 
-<script is:inline define:vars={{ cardSelector, defaultFilter, queryKey }}>
-  const root = document.currentScript?.closest('.filterbar');
-  const rail = root?.querySelector('.rail');
-  const pills = Array.from(root?.querySelectorAll('.pill') || []);
+<script is:inline define:vars={{ uid, cardSelector, defaultFilter, queryKey }}>
+  function initFilterBar(){
+    const root = document.getElementById(uid);
+    if (!root) return;
 
-  function normalizeFilter(v){
-    if (!v) return null;
-    if (pills.some(p => p.dataset.filter === v)) return v;
-    const upper = v.toUpperCase();
-    return pills.some(p => p.dataset.filter === upper) ? upper : null;
-  }
+    const pills = Array.from(root.querySelectorAll('.pill'));
 
-  function getCards(){
-    // IMPORTANT: query when needed (cards exist after DOM parse)
-    return Array.from(document.querySelectorAll(cardSelector));
-  }
-
-  function apply(filter, { updateUrl } = { updateUrl: true }){
-    pills.forEach(p => {
-      const active = p.dataset.filter === filter;
-      p.classList.toggle('active', active);
-      p.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
-
-    const cards = getCards();
-    cards.forEach(card => {
-      const cat = card.dataset.category;
-      const show = (filter === 'ALL') || (cat === filter);
-      card.classList.toggle('is-hidden', !show);
-    });
-
-    if (updateUrl){
-      const url = new URL(window.location.href);
-      if (filter === 'ALL') url.searchParams.delete(queryKey);
-      else url.searchParams.set(queryKey, filter);
-      window.history.replaceState({}, "", url.toString());
+    function normalizeFilter(v){
+      if (!v) return null;
+      if (pills.some(p => p.dataset.filter === v)) return v;
+      const upper = v.toUpperCase();
+      return pills.some(p => p.dataset.filter === upper) ? upper : null;
     }
 
-    // keep active pill visible
-    const activePill = pills.find(p => p.dataset.filter === filter);
-    activePill?.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
-  }
+    function getCards(){
+      return Array.from(document.querySelectorAll(cardSelector));
+    }
 
-  function init(){
-    // initialize from URL
+    function apply(filter, { updateUrl } = { updateUrl: true }){
+      pills.forEach(p => {
+        const active = p.dataset.filter === filter;
+        p.classList.toggle('active', active);
+        p.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+
+      const cards = getCards();
+      cards.forEach(card => {
+        const cat = card.dataset.category;
+        const show = (filter === 'ALL') || (cat === filter);
+        card.classList.toggle('is-hidden', !show);
+      });
+
+      if (updateUrl){
+        const url = new URL(window.location.href);
+        if (filter === 'ALL') url.searchParams.delete(queryKey);
+        else url.searchParams.set(queryKey, filter);
+        window.history.replaceState({}, "", url.toString());
+      }
+
+      const activePill = pills.find(p => p.dataset.filter === filter);
+      activePill?.scrollIntoView({ behavior: 'smooth', inline: 'nearest', block: 'nearest' });
+    }
+
+    // initial from URL
     const url = new URL(window.location.href);
     const fromUrl = normalizeFilter(url.searchParams.get(queryKey));
     const initial = fromUrl || defaultFilter || 'ALL';
@@ -131,10 +133,9 @@ const {
     apply(initial, { updateUrl: false });
   }
 
-  // FIX: run after DOM is ready so cards exist
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
+    document.addEventListener('DOMContentLoaded', initFilterBar, { once: true });
   } else {
-    init();
+    initFilterBar();
   }
 </script>
