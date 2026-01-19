@@ -1,0 +1,420 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const cards = [
+  {
+    href: "/history/why-empires-fall",
+    category: "CIVILIZATIONS",
+    subtitle: "Incentives • Administration",
+    title: "Why Empires Rise and Fall",
+    excerpt:
+      "Empires often don’t collapse from one event — they slowly lose trust, coordination, and economic balance.",
+    img: "https://images.unsplash.com/photo-1526129318478-62ed807ebdf9?w=200&q=80",
+  },
+  {
+    href: "/history/roman-road-system",
+    category: "CIVILIZATIONS",
+    subtitle: "Infrastructure • Logistics",
+    title: "Rome: The Power of Roads",
+    excerpt:
+      "Roads weren’t just travel — they were supply chains, communication lines, and political control in stone.",
+    img: "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=200&q=80",
+  },
+  {
+    href: "/history/bronze-age-collapse",
+    category: "CIVILIZATIONS",
+    subtitle: "Networks • Fragility",
+    title: "The Bronze Age Collapse",
+    excerpt:
+      "A connected world can be powerful — but also fragile. When trade breaks, multiple kingdoms can fall together.",
+    img: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=200&q=80",
+  },
+  {
+    href: "/history/plague-and-society",
+    category: "SOCIAL",
+    subtitle: "Disease • Change",
+    title: "Plagues That Reshaped Society",
+    excerpt:
+      "Epidemics don’t only change health — they change labor, beliefs, politics, and the shape of everyday life.",
+    img: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?w=200&q=80",
+  },
+  {
+    href: "/history/renaissance",
+    category: "CULTURE",
+    subtitle: "Art • Ideas",
+    title: "The Renaissance: A Cultural Reboot",
+    excerpt:
+      "New tools, new patrons, and new curiosity turned Europe into a workshop for art, science, and identity.",
+    img: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=200&q=80",
+  },
+  {
+    href: "/history/printing-press",
+    category: "TECH",
+    subtitle: "Information • Scale",
+    title: "The Printing Press Changed Everything",
+    excerpt:
+      "When knowledge became cheap to copy, ideas spread faster than authority could control.",
+    img: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=200&q=80",
+  },
+  {
+    href: "/history/reformation",
+    category: "IDEAS",
+    subtitle: "Belief • Power",
+    title: "Reformation: When Ideas Break Unity",
+    excerpt:
+      "Religious arguments were also political arguments — about who gets to define truth and collect loyalty.",
+    img: "https://images.unsplash.com/photo-1558980664-10ea8f6a3e75?w=200&q=80",
+  },
+  {
+    href: "/history/enlightenment",
+    category: "IDEAS",
+    subtitle: "Reason • Rights",
+    title: "The Enlightenment in Plain Words",
+    excerpt:
+      "A shift toward evidence, debate, and individual rights — and the start of modern political thinking.",
+    img: "https://images.unsplash.com/photo-1455885666463-9d2f87e3a4d7?w=200&q=80",
+  },
+  {
+    href: "/history/industrial-revolution",
+    category: "ECONOMY",
+    subtitle: "Machines • Labor",
+    title: "Industrial Revolution: Speed and Cost",
+    excerpt:
+      "Production scaled, cities grew, and life accelerated — but the benefits and harms were unevenly shared.",
+    img: "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?w=200&q=80",
+  },
+  {
+    href: "/history/supply-chains",
+    category: "ECONOMY",
+    subtitle: "Trade • Resilience",
+    title: "Supply Chains: The Hidden Backbone",
+    excerpt:
+      "From spices to semiconductors, trade networks decide which societies grow — and which become dependent.",
+    img: "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?w=200&q=80",
+  },
+  {
+    href: "/history/world-war-1",
+    category: "WARS",
+    subtitle: "Alliances • Miscalculation",
+    title: "World War I: How Systems Spiral",
+    excerpt:
+      "A complex alliance system turned a regional crisis into a global catastrophe — faster than leaders expected.",
+    img: "https://images.unsplash.com/photo-1452723312111-3a7d0db0e024?w=200&q=80",
+  },
+  {
+    href: "/history/world-war-2",
+    category: "WARS",
+    subtitle: "Total war • Society",
+    title: "World War II: Mobilizing Everything",
+    excerpt:
+      "War became industrial and global — with propaganda, logistics, and technology shaping outcomes.",
+    img: "https://images.unsplash.com/photo-1520975958225-4b0f4d1f8ac4?w=200&q=80",
+  },
+  {
+    href: "/history/cold-war",
+    category: "WARS",
+    subtitle: "Deterrence • Fear",
+    title: "The Cold War: Winning Without Fighting",
+    excerpt:
+      "Two systems competed through influence, intelligence, and technology — avoiding direct conflict at huge risk.",
+    img: "https://images.unsplash.com/photo-1520975682031-a7a6a0dacf7d?w=200&q=80",
+  },
+  {
+    href: "/history/propaganda",
+    category: "POWER",
+    subtitle: "Narratives • Control",
+    title: "Propaganda: How Stories Move Masses",
+    excerpt:
+      "Persuasion works when it simplifies reality — especially when fear and identity are involved.",
+    img: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=200&q=80",
+  },
+  {
+    href: "/history/institutions",
+    category: "POWER",
+    subtitle: "Rules • Trust",
+    title: "Institutions: The Real Infrastructure",
+    excerpt:
+      "Good institutions reduce uncertainty and corruption — making cooperation and growth easier to sustain.",
+    img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=200&q=80",
+  },
+  {
+    href: "/history/revolutions",
+    category: "SOCIAL",
+    subtitle: "Inequality • Pressure",
+    title: "Why Revolutions Happen",
+    excerpt:
+      "Revolutions are often about unmet expectations: when life should improve — but instead becomes impossible.",
+    img: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=200&q=80",
+  },
+  {
+    href: "/history/migration",
+    category: "SOCIAL",
+    subtitle: "Movement • Identity",
+    title: "Migration: The Constant of History",
+    excerpt:
+      "People move for safety, opportunity, and climate — and that movement reshapes languages, food, and borders.",
+    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=80",
+  },
+  {
+    href: "/history/money",
+    category: "ECONOMY",
+    subtitle: "Debt • Confidence",
+    title: "Money: A Shared Belief System",
+    excerpt:
+      "Money works because we all agree it works — backed by institutions, law, and the story of value.",
+    img: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=200&q=80",
+  },
+  {
+    href: "/history/technology-and-history",
+    category: "TECH",
+    subtitle: "Tools • Power shifts",
+    title: "Technology Changes the Winners",
+    excerpt:
+      "From ships to algorithms, technology changes who can coordinate, produce, and influence at scale.",
+    img: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=200&q=80",
+  },
+  {
+    href: "/history/what-repeats",
+    category: "PATTERNS",
+    subtitle: "Cycles • Lessons",
+    title: "History: What Repeats, What Changes",
+    excerpt:
+      "Patterns exist — but never copy-paste. The trick is seeing incentives and constraints, not memorizing dates.",
+    img: "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=200&q=80",
+  },
+];
+
+const filters = ["ALL", "CIVILIZATIONS", "WARS", "POWER", "ECONOMY", "CULTURE", "IDEAS", "SOCIAL", "TECH", "PATTERNS"];
+---
+
+<Layout title="History — Ugurcan">
+  <section class="history-wrap">
+    <div class="hero">
+      <h1 class="page-title">History</h1>
+      <p class="page-subtitle">
+        Civilizations, power, incentives, and patterns — explained clearly, without romanticizing.
+      </p>
+    </div>
+
+    <div class="filter-bar" role="toolbar" aria-label="Filter history topics">
+      {filters.map((f) => (
+        <button class={`filter-pill ${f === "ALL" ? "active" : ""}`} type="button" data-filter={f}>
+          {f}
+        </button>
+      ))}
+    </div>
+
+    <div class="card-list">
+      {cards.map((c) => (
+        <a class="history-card" href={c.href} data-category={c.category}>
+          <div class="card-icon">
+            <img src={c.img} alt={c.title} loading="lazy" />
+          </div>
+
+          <div class="card-text">
+            <div class="subtitle-row">
+              <span class="subtitle">{c.subtitle}</span>
+            </div>
+            <h2>{c.title}</h2>
+            <p>{c.excerpt}</p>
+          </div>
+
+          <span class={`badge badge--${c.category}`} aria-label={`Category ${c.category}`}>
+            {c.category}
+          </span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .history-wrap {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 34px 18px 80px;
+    }
+
+    .page-title {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 10px;
+    }
+
+    .page-subtitle{
+      margin: 0 0 18px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(11, 11, 15, 0.62);
+      max-width: 62ch;
+    }
+
+    /* Filter bar under global sticky header (64px) */
+    .filter-bar{
+      position: sticky;
+      top: 64px;
+      z-index: 25;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 0 14px;
+      margin-bottom: 6px;
+      background: rgba(245,245,247,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .filter-pill{
+      appearance: none;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.85);
+      color: rgba(11,11,15,0.70);
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .15s ease, background .15s ease, color .15s ease;
+      white-space: nowrap;
+    }
+
+    .filter-pill:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,1);
+      color: rgba(11,11,15,0.88);
+    }
+
+    .filter-pill.active{
+      background: rgba(11,11,15,0.90);
+      color: rgba(255,255,255,0.94);
+      border-color: rgba(11,11,15,0.12);
+    }
+
+    .card-list{
+      display:flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .history-card{
+      position: relative;
+      display:flex;
+      align-items:flex-start;
+      gap: 14px;
+      padding: 16px 18px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      text-decoration:none;
+      overflow:hidden;
+    }
+
+    .history-card:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.08);
+    }
+
+    .card-icon{
+      width: 46px;
+      height: 46px;
+      flex-shrink:0;
+      border-radius: 12px;
+      overflow:hidden;
+      background:#eaeaec;
+    }
+
+    .card-icon img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+    }
+
+    .card-text{
+      min-width: 0;
+      padding-right: 108px;
+    }
+
+    .subtitle-row{ margin-bottom: 6px; }
+
+    .subtitle{
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(11,11,15,0.55);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    .card-text h2{
+      margin:0;
+      font-size: 16px;
+      font-weight: 800;
+      color:#0b0b0f;
+    }
+
+    .card-text p{
+      margin: 6px 0 0;
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(11,11,15,0.62);
+    }
+
+    .badge{
+      position:absolute;
+      top: 14px;
+      right: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      border: 1px solid rgba(0,0,0,0.08);
+      backdrop-filter: blur(10px);
+      user-select:none;
+    }
+
+    /* Category colors (muted Apple-like) */
+    .badge--CIVILIZATIONS{ background: rgba(0,122,255,.14); color: rgba(0,122,255,.95); border-color: rgba(0,122,255,.20); }
+    .badge--WARS{          background: rgba(255,59,48,.14); color: rgba(255,59,48,.92); border-color: rgba(255,59,48,.22); }
+    .badge--POWER{         background: rgba(175,82,222,.14); color: rgba(175,82,222,.95); border-color: rgba(175,82,222,.22); }
+    .badge--ECONOMY{       background: rgba(255,149,0,.14); color: rgba(255,149,0,.95); border-color: rgba(255,149,0,.22); }
+    .badge--CULTURE{       background: rgba(255,45,85,.14); color: rgba(255,45,85,.92); border-color: rgba(255,45,85,.22); }
+    .badge--IDEAS{         background: rgba(88,86,214,.14); color: rgba(88,86,214,.95); border-color: rgba(88,86,214,.20); }
+    .badge--SOCIAL{        background: rgba(52,199,89,.14); color: rgba(30,150,70,.95); border-color: rgba(52,199,89,.22); }
+    .badge--TECH{          background: rgba(90,200,250,.18); color: rgba(0,122,255,.90); border-color: rgba(90,200,250,.25); }
+    .badge--PATTERNS{      background: rgba(142,142,147,.16); color: rgba(60,60,67,.80); border-color: rgba(142,142,147,.22); }
+
+    .history-card.is-hidden{ display:none; }
+
+    @media (max-width: 480px){
+      .page-title{ font-size: 34px; }
+      .card-text{ padding-right: 0; }
+      .badge{ position: static; margin-left:auto; align-self:flex-start; }
+    }
+  </style>
+
+  <script is:inline>
+    const pills = Array.from(document.querySelectorAll('.filter-pill'));
+    const cards = Array.from(document.querySelectorAll('.history-card'));
+
+    function setActive(filter){
+      pills.forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
+      cards.forEach(card => {
+        const cat = card.dataset.category;
+        const show = (filter === 'ALL') || (cat === filter);
+        card.classList.toggle('is-hidden', !show);
+      });
+    }
+
+    pills.forEach(p => p.addEventListener('click', () => setActive(p.dataset.filter)));
+    setActive('ALL');
+  </script>
+</Layout>
