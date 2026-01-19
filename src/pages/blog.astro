@@ -7,7 +7,6 @@ const videoId = "wupToqz1e2g";
 <Layout title="JLOG! — Ugurcan">
   <section class="jlog">
     <div class="stage">
-      <!-- YouTube IFrame API will replace this div with an iframe -->
       <div id="ytPlayer" class="player" aria-label="JLOG video player"></div>
 
       <button id="soundPill" class="sound-pill" type="button" aria-pressed="false">
@@ -25,20 +24,35 @@ const videoId = "wupToqz1e2g";
       padding: 22px 18px 60px;
     }
 
-    /* free-floating centered video (no extra frame UI) */
+    /* Responsive centered video canvas */
     .stage{
       position: relative;
-      width: min(980px, 100%);
+      width: min(1040px, 100%);
       aspect-ratio: 16 / 9;
       border-radius: 22px;
       overflow: hidden;
+
+      /* subtle Apple-like surface */
       background: rgba(0,0,0,0.06);
       box-shadow: 0 18px 60px rgba(0,0,0,.12);
     }
 
+    /* IMPORTANT: force player to fill the stage */
     .player{
+      position: absolute;
+      inset: 0;
       width: 100%;
       height: 100%;
+    }
+
+    /* IMPORTANT: YouTube iframe gets injected inside .player */
+    .player :global(iframe){
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      border: 0 !important;
+      display: block !important;
     }
 
     /* Pill button */
@@ -95,6 +109,7 @@ const videoId = "wupToqz1e2g";
       box-shadow: 0 0 0 3px rgba(52,199,89,0.18);
     }
 
+    /* Mobile stability */
     @media (max-width: 520px){
       .jlog{ padding: 18px 12px 50px; }
       .stage{ border-radius: 18px; }
@@ -103,20 +118,30 @@ const videoId = "wupToqz1e2g";
   </style>
 
   <script is:inline define:vars={{ videoId }}>
-    // Load YouTube IFrame API once
     function loadYouTubeAPI() {
       return new Promise((resolve) => {
         if (window.YT && window.YT.Player) return resolve();
+
         const existing = document.querySelector('script[data-yt-api="1"]');
-        if (existing) return resolve(); // onYouTubeIframeAPIReady will still fire / or YT will exist soon
+        if (!existing) {
+          const tag = document.createElement('script');
+          tag.src = "https://www.youtube.com/iframe_api";
+          tag.async = true;
+          tag.dataset.ytApi = "1";
+          document.head.appendChild(tag);
+        }
 
-        const tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        tag.async = true;
-        tag.dataset.ytApi = "1";
-        document.head.appendChild(tag);
+        const prev = window.onYouTubeIframeAPIReady;
+        window.onYouTubeIframeAPIReady = () => {
+          try { if (typeof prev === "function") prev(); } catch(_) {}
+          resolve();
+        };
 
-        window.onYouTubeIframeAPIReady = () => resolve();
+        // If API loads but doesn't call onYouTubeIframeAPIReady for some reason:
+        const t = setInterval(() => {
+          if (window.YT && window.YT.Player) { clearInterval(t); resolve(); }
+        }, 50);
+        setTimeout(() => clearInterval(t), 5000);
       });
     }
 
@@ -136,7 +161,6 @@ const videoId = "wupToqz1e2g";
     async function init() {
       await loadYouTubeAPI();
 
-      // Create player
       player = new YT.Player(mountId, {
         videoId,
         playerVars: {
@@ -151,7 +175,6 @@ const videoId = "wupToqz1e2g";
         },
         events: {
           onReady: (e) => {
-            // Start muted autoplay
             try {
               e.target.mute();
               e.target.playVideo();
@@ -161,9 +184,8 @@ const videoId = "wupToqz1e2g";
         }
       });
 
-      // Toggle sound on click (user gesture)
       pill.addEventListener("click", () => {
-        if (!player || !player.unMute) return;
+        if (!player) return;
 
         if (!isUnmuted) {
           try {
