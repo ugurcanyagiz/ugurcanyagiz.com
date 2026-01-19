@@ -208,3 +208,29 @@ a:hover{ text-decoration: underline; text-underline-offset: 4px; }
 @media (max-width: 860px){
   .footer-inner{ flex-direction: column; }
 }
+.layout-minimal a:hover { text-decoration: none; }
+
+.minimal-header{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(245,245,247,.82);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--line);
+}
+
+.minimal-brand{
+  display:inline-block;
+  padding: 18px 0;
+  font-weight: 700;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.home-main{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 22px var(--pad) 10px;
+}
