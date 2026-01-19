@@ -1,35 +1,19 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-// Put your audio file here:
-// /public/audio/pale-blue-dot.mp3
 const audioSrc = "/audio/pale-blue-dot.mp3";
-
 const title = "The Pale Blue Dot";
-const subtitle = "Audio recording · Carl Sagan";
-const dateLabel = new Date().toLocaleDateString("en-US", {
-  weekday: "long",
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-});
+const subtitle = "Carl Sagan · Audio recording";
 ---
 
-<Layout title="JLOG! — Pale Blue Dot">
-  <article class="jlog">
-
-    <!-- Minimal diary header -->
-    <header class="head">
-      <div>
-        <p class="kicker">JLOG!</p>
-        <h1 class="h1">{title}</h1>
-        <p class="meta">{dateLabel} · {subtitle}</p>
-      </div>
-
-      <span class="badge">AUDIO</span>
+<Layout title="JLOG! — Ugurcan">
+  <main class="jlog">
+    <header class="head" aria-label="JLOG header">
+      <p class="kicker">JLOG!</p>
+      <h1 class="h1">{title}</h1>
+      <p class="meta">{subtitle}</p>
     </header>
 
-    <!-- Audio card -->
     <section class="card" aria-label="Audio recording">
       <div class="card-top">
         <div class="wave" aria-hidden="true">
@@ -50,13 +34,11 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
           <div class="big">{title}</div>
         </div>
 
-        <a class="share" href={audioSrc} download aria-label="Download audio">Download</a>
+        <a class="download" href={audioSrc} download aria-label="Download audio">Download</a>
       </div>
 
-      <div class="player">
-        <button class="play" type="button" aria-label="Play/Pause" id="playBtn">
-          ▶
-        </button>
+      <div class="player" aria-label="Audio controls">
+        <button class="play" type="button" aria-label="Play/Pause" id="playBtn">▶</button>
 
         <div class="time" id="tNow">0:00</div>
 
@@ -73,52 +55,38 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
 
         <div class="time" id="tDur">0:00</div>
 
-        <button class="mute" type="button" aria-label="Mute/Unmute" id="muteBtn">
-          🔈
-        </button>
+        <button class="mute" type="button" aria-label="Mute/Unmute" id="muteBtn">🔈</button>
       </div>
 
-      <audio id="audio" preload="metadata">
+      <div class="autoplay-hint" id="hint" aria-live="polite"></div>
+
+      <audio id="audio" preload="metadata" playsinline>
         <source src={audioSrc} type="audio/mpeg" />
         Your browser does not support the audio element.
       </audio>
-
-      <p class="note">
-        Tip: This is a clean, diary-style audio card. Replace <code>/audio/pale-blue-dot.mp3</code> with your own recording anytime.
-      </p>
     </section>
-
-    <!-- Optional: a minimal quote block (very Ive-ish) -->
-    <section class="paper" aria-label="Reflection">
-      <h2 class="h2">Reflection</h2>
-      <p class="p">
-        A calm place for one recording, one thought. If you want, I can add a “Today’s note” textarea that saves locally
-        (localStorage) so this becomes a real diary.
-      </p>
-    </section>
-
-  </article>
+  </main>
 
   <style>
     .jlog{
       max-width: 1100px;
       margin: 0 auto;
-      padding: 22px 18px 90px;
+      padding: 18px 18px 90px;
+      display: grid;
+      gap: 16px;
     }
 
+    /* Centered “JLOG!” under UGURCAN header */
     .head{
-      display:flex;
-      align-items:flex-end;
-      justify-content: space-between;
-      gap: 14px;
-      margin-bottom: 14px;
+      text-align: center;
+      padding-top: 18px;
     }
 
     .kicker{
-      margin: 0 0 10px;
+      margin: 0 0 12px;
       font-size: 12px;
       font-weight: 900;
-      letter-spacing: .24em;
+      letter-spacing: .26em;
       text-transform: uppercase;
       color: rgba(11,11,15,0.62);
     }
@@ -137,28 +105,11 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
       font-size: 14px;
       line-height: 1.6;
       color: rgba(11,11,15,0.60);
-      max-width: 80ch;
-    }
-
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      background: rgba(0,122,255,0.14);
-      color: rgba(0,122,255,0.92);
-      border: 1px solid rgba(0,122,255,0.20);
-      user-select:none;
-      white-space: nowrap;
-      backdrop-filter: blur(10px);
     }
 
     .card{
+      width: min(980px, 100%);
+      margin: 0 auto;
       background: rgba(255,255,255,0.92);
       border: 1px solid rgba(0,0,0,0.06);
       border-radius: 22px;
@@ -189,10 +140,7 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
       flex-shrink: 0;
     }
 
-    .card-title{
-      min-width: 0;
-      flex: 1;
-    }
+    .card-title{ min-width:0; flex:1; }
 
     .small{
       font-size: 12px;
@@ -214,7 +162,7 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
       text-overflow: ellipsis;
     }
 
-    .share{
+    .download{
       flex-shrink:0;
       padding: 9px 12px;
       border-radius: 10px;
@@ -226,7 +174,7 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
       text-decoration: none;
       transition: transform .15s ease, background .15s ease;
     }
-    .share:hover{
+    .download:hover{
       transform: translateY(-1px);
       background: rgba(255,255,255,1);
       color: rgba(11,11,15,0.92);
@@ -236,7 +184,7 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
       display:flex;
       align-items:center;
       gap: 12px;
-      padding: 2px 2px 8px;
+      padding: 2px 2px 4px;
     }
 
     .play, .mute{
@@ -298,54 +246,18 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
       cursor: pointer;
     }
 
-    .note{
-      margin: 8px 2px 0;
+    .autoplay-hint{
+      margin: 6px 2px 0;
       font-size: 12px;
-      line-height: 1.55;
-      color: rgba(11,11,15,0.55);
-    }
-    .note code{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      font-size: 12px;
-      background: rgba(245,245,247,0.9);
-      border: 1px solid rgba(0,0,0,0.06);
-      padding: 2px 6px;
-      border-radius: 8px;
-    }
-
-    .paper{
-      margin-top: 16px;
-      max-width: 860px;
-      margin-left: auto;
-      margin-right: auto;
-      background: rgba(255,255,255,0.86);
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: 22px;
-      box-shadow: 0 14px 48px rgba(0,0,0,0.06);
-      padding: 16px 18px 18px;
-    }
-
-    .h2{
-      margin: 0 0 8px;
-      font-size: 16px;
-      font-weight: 850;
-      letter-spacing: -0.02em;
-      color: rgba(11,11,15,0.90);
-    }
-
-    .p{
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.7;
-      color: rgba(11,11,15,0.66);
+      line-height: 1.45;
+      color: rgba(11,11,15,0.52);
+      min-height: 18px;
     }
 
     @media (max-width: 520px){
       .h1{ font-size: 34px; }
-      .head{ align-items:flex-start; }
-      .badge{ margin-top: 2px; }
       .time{ min-width: 38px; }
-      .share{ padding: 9px 10px; }
+      .download{ padding: 9px 10px; }
     }
   </style>
 
@@ -356,6 +268,7 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
     const seek = document.getElementById("seek");
     const tNow = document.getElementById("tNow");
     const tDur = document.getElementById("tDur");
+    const hint = document.getElementById("hint");
 
     function fmt(s){
       if (!isFinite(s)) return "0:00";
@@ -375,19 +288,33 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
       }
     }
 
+    function setPlaying(on){
+      playBtn.textContent = on ? "❚❚" : "▶";
+    }
+
+    async function tryAutoplay(){
+      // Best-effort autoplay. Some browsers block it unless user interacted.
+      try{
+        await audio.play();
+        setPlaying(true);
+        hint.textContent = "";
+      }catch(e){
+        setPlaying(false);
+        hint.textContent = "Autoplay may be blocked by your browser. Press Play to start.";
+      }
+    }
+
     audio.addEventListener("loadedmetadata", update);
     audio.addEventListener("timeupdate", update);
-    audio.addEventListener("ended", () => {
-      playBtn.textContent = "▶";
-    });
+    audio.addEventListener("play", () => setPlaying(true));
+    audio.addEventListener("pause", () => setPlaying(false));
+    audio.addEventListener("ended", () => setPlaying(false));
 
     playBtn.addEventListener("click", async () => {
       if (audio.paused){
         try { await audio.play(); } catch(e) {}
-        playBtn.textContent = "❚❚";
       } else {
         audio.pause();
-        playBtn.textContent = "▶";
       }
     });
 
@@ -403,7 +330,15 @@ const dateLabel = new Date().toLocaleDateString("en-US", {
       audio.currentTime = v * dur;
     });
 
-    // initial
-    update();
+    // Start automatically when page opens (best effort)
+    if (document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", () => {
+        update();
+        tryAutoplay();
+      }, { once: true });
+    } else {
+      update();
+      tryAutoplay();
+    }
   </script>
 </Layout>
