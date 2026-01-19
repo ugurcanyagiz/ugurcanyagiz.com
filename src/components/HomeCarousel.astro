@@ -1,9 +1,9 @@
----
 /**
  * HomeCarousel.astro
- * - “page turn” hissi (subtle)
- * - iOS/Safari “next slide peeking” fix (clip-path + mask + translate3d)
- * - Başlıklara mikro animasyon (slide değişiminde kısa pulse)
+ * Fixes:
+ * - Prevents horizontal overflow on small phones
+ * - Keeps slide background stable (no "image drifting")
+ * - Uses modern mobile viewport units (svh) to avoid address-bar jump
  */
 const slides = [
   {
@@ -51,7 +51,6 @@ const slides = [
 
 <section class="stage" aria-label="Home navigation">
   <div class="carousel">
-
     <div class="viewport" id="viewport" aria-roledescription="carousel">
       <div class="track" id="track">
         {slides.map((s) => (
@@ -83,40 +82,37 @@ const slides = [
 
 <style>
   :root{
-    --bg:#f5f5f7;
     --panel:#ffffff;
     --text:#0b0b0f;
-    --muted:#6b6b75;
-    --line:#e6e6ea;
+    --line:rgba(11,11,15,.10);
     --radius:22px;
-    --shadow:0 24px 70px rgba(0,0,0,.10);
+    --shadow:0 22px 70px rgba(0,0,0,.10);
     --container:1100px;
   }
 
   .stage{
     max-width:var(--container);
     margin:0 auto;
-    padding:22px 18px 36px;
+    padding: 18px var(--pad, 24px) 28px;
   }
 
-  .carousel{
-    position:relative;
-    border-radius:var(--radius);
-  }
+  .carousel{ position:relative; }
 
-  /* ✅ Viewport “peek” fix */
   .viewport{
     position:relative;
+    width:100%;
     overflow:hidden;
     border-radius:var(--radius);
     background:var(--panel);
     border:1px solid var(--line);
     box-shadow:var(--shadow);
 
-    height:min(78vh, 680px);
-    min-height:520px;
+    /* Desktop default */
+    height: min(74svh, 660px);
+    min-height: 460px;
+    max-height: 720px;
 
-    /* iOS/Safari transform+overflow glitch killer */
+    /* iOS/Safari overflow + transform fixes */
     clip-path: inset(0 round var(--radius));
     -webkit-mask-image: -webkit-radial-gradient(white, black);
     transform: translateZ(0);
@@ -127,7 +123,7 @@ const slides = [
     height:100%;
     display:flex;
     width:100%;
-    gap:0; /* ✅ important */
+    gap:0;
     transition:transform .55s cubic-bezier(.2,.8,.2,1);
     will-change:transform;
     transform: translate3d(0,0,0);
@@ -141,34 +137,42 @@ const slides = [
     display:flex;
     align-items:flex-end;
     justify-content:flex-start;
-    padding:28px;
+    padding: clamp(18px, 3vw, 28px);
     color:#fff;
-    overflow:hidden; /* ✅ clip inside slide too */
+    overflow:hidden;
     user-select:none;
     -webkit-user-select:none;
     touch-action:pan-y;
   }
 
+  /* Stable background (prevents subtle "drifting" on scroll/translate) */
   .slide::before{
     content:"";
     position:absolute; inset:0;
     background-image:var(--img);
     background-size:cover;
     background-position:center;
-    transform:scale(1.02);
+    transform: translate3d(0,0,0) scale(1.03);
+    transform-origin:center;
+    will-change: transform;
+    backface-visibility:hidden;
   }
 
+  /* Calmer overlay (less heavy) */
   .slide::after{
     content:"";
     position:absolute; inset:0;
-    background:
-      linear-gradient(180deg, rgba(0,0,0,.08) 0%, rgba(0,0,0,.22) 45%, rgba(0,0,0,.70) 100%);
+    background: linear-gradient(180deg,
+      rgba(0,0,0,.06) 0%,
+      rgba(0,0,0,.16) 42%,
+      rgba(0,0,0,.66) 100%
+    );
   }
 
   .slide-content{
     position:relative;
     z-index:2;
-    max-width:680px;
+    max-width: 680px;
   }
 
   .kicker{
@@ -186,19 +190,20 @@ const slides = [
   }
 
   .title{
-    margin:14px 0 10px;
-    font-size: clamp(36px, 6vw, 64px);
+    margin: 14px 0 10px;
+    font-size: clamp(34px, 6vw, 62px);
     line-height:1.02;
-    letter-spacing:-0.04em;
-    font-weight:800;
+    letter-spacing:-0.06em;
+    font-weight:750;
   }
 
   .subtitle{
     margin:0;
-    color:rgba(255,255,255,.84);
+    color:rgba(255,255,255,.86);
     font-size:15px;
     line-height:1.55;
     max-width:52ch;
+    overflow-wrap:anywhere;
   }
 
   .cta{
@@ -210,11 +215,11 @@ const slides = [
     border-radius:999px;
     background:rgba(255,255,255,.92);
     color:var(--text);
-    font-weight:800;
+    font-weight:700;
     font-size:13px;
+    white-space:nowrap;
   }
 
-  /* Controls */
   .controls{
     position:absolute;
     inset:0;
@@ -228,10 +233,10 @@ const slides = [
 
   .arrow{
     pointer-events:auto;
-    width:46px;height:46px;
+    width:44px;height:44px;
     border-radius:999px;
-    border:1px solid rgba(255,255,255,.25);
-    background:rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.22);
+    background:rgba(0,0,0,.28);
     color:#fff;
     display:flex;
     align-items:center;
@@ -239,7 +244,7 @@ const slides = [
     backdrop-filter:blur(10px);
     transition:transform .18s ease, background .18s ease;
   }
-  .arrow:hover{background:rgba(0,0,0,.48)}
+  .arrow:hover{background:rgba(0,0,0,.40)}
   .arrow:active{transform:scale(.98)}
 
   .dots{
@@ -257,18 +262,9 @@ const slides = [
   }
   .dot.active{background:rgba(0,0,0,.78); transform: scale(1.2);}
 
-  /* “Notebook page” feel (subtle) */
-  .viewport.turning .track{
-    /* tx is percentage string like "-100%" */
-    transform: translate3d(var(--tx, 0%), 0, 0) rotateY(calc(var(--turn, 1) * -10deg));
-  }
-  .viewport.turning{
-    perspective: 1100px;
-  }
-
-  /* Micro animations on slide change */
+  /* Micro animations */
   .viewport.pulse [data-anim]{
-    animation: microPulse .36s ease-out both;
+    animation: microPulse .34s ease-out both;
   }
   @keyframes microPulse{
     0%{ transform: translateY(0); filter: none; }
@@ -276,11 +272,28 @@ const slides = [
     100%{ transform: translateY(0); filter: none; }
   }
 
-  /* Mobile tweaks */
+  /* Mobile: fit nicely without clipping or horizontal overflow */
   @media (max-width: 720px){
-    .viewport{min-height:520px; height: calc(100vh - 150px)}
-    .slide{padding:22px}
-    .arrow{width:42px;height:42px}
+    .stage{ padding: 14px var(--pad, 24px) 18px; }
+
+    .viewport{
+      /* svh handles iOS address bar better than vh */
+      height: calc(100svh - 170px);
+      min-height: 420px;
+      max-height: 560px;
+    }
+
+    .slide{ padding: 18px; }
+    .arrow{ width:42px; height:42px; }
+
+    .subtitle{ font-size: 14px; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 380px){
+    .viewport{ min-height: 390px; }
+    .title{ font-size: 34px; }
+    .kicker{ font-size: 11px; }
   }
 
   @media (prefers-reduced-motion: reduce){
@@ -313,33 +326,20 @@ const slides = [
 
   function setPulse(){
     viewport.classList.remove('pulse');
-    // restart animation
-    void viewport.offsetWidth;
+    void viewport.offsetWidth; // restart animation
     viewport.classList.add('pulse');
-    window.setTimeout(() => viewport.classList.remove('pulse'), 420);
+    window.setTimeout(() => viewport.classList.remove('pulse'), 380);
   }
 
   function update(){
     const tx = -index * 100;
     track.style.transform = `translate3d(${tx}%, 0, 0)`;
-    viewport.style.setProperty('--tx', `${tx}%`);
-
     dots.forEach((d,i) => d.classList.toggle('active', i === index));
     setPulse();
   }
 
   function go(i){
-    const prev = index;
     index = (i + slides.length) % slides.length;
-
-    // page-turn hint direction
-    const dir = (index - prev + slides.length) % slides.length;
-    const turn = (dir === 1 || (dir === 0 && i > prev)) ? 1 : -1;
-    viewport.style.setProperty('--turn', String(turn));
-
-    viewport.classList.add('turning');
-    window.setTimeout(() => viewport.classList.remove('turning'), 520);
-
     update();
   }
 
@@ -367,7 +367,6 @@ const slides = [
     const dx = p.clientX - startX;
     const dy = p.clientY - startY;
 
-    // only horizontal intent
     if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)){
       if (dx < 0) go(index + 1);
       else go(index - 1);
@@ -381,7 +380,7 @@ const slides = [
   viewport.addEventListener('mousedown', onStart);
   window.addEventListener('mouseup', onEnd);
 
-  // prevent accidental image drag
+  // Prevent accidental drag
   viewport.addEventListener('dragstart', (e) => e.preventDefault());
 
   update();
