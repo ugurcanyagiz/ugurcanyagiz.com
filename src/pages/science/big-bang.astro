@@ -1,0 +1,542 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "The Big Bang (In Simple Words) — Science";
+const updated = "Updated: 2026";
+---
+
+<Layout title={title}>
+  <article class="page">
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-top">
+        <a class="back" href="/science">← Back to Science</a>
+        <span class="chip chip--space">SPACE</span>
+      </div>
+
+      <h1>The Big Bang (In Simple Words)</h1>
+      <p class="subtitle">
+        The universe didn’t explode <i>into</i> space — <b>space itself expanded</b>. And it’s still expanding today.
+      </p>
+
+      <div class="hero-grid">
+        <section class="card card--soft">
+          <h2 class="hsmall">What you’ll learn</h2>
+          <ul class="list">
+            <li>What the Big Bang actually means (and what it doesn’t).</li>
+            <li>Why we think the universe expanded from a hot, dense state.</li>
+            <li>Key evidence: <b>redshift</b>, <b>CMB</b>, and <b>light elements</b>.</li>
+          </ul>
+        </section>
+
+        <section class="card card--ink">
+          <p class="quote">
+            “The Big Bang is not a firework in empty space — it’s the stretching of space everywhere.”
+          </p>
+          <p class="meta">{updated}</p>
+        </section>
+      </div>
+    </header>
+
+    <!-- TL;DR -->
+    <section class="section">
+      <h2>TL;DR</h2>
+      <div class="tldr">
+        <div class="tldr-item">
+          <div class="dot dot--a" aria-hidden="true"></div>
+          <div>
+            <h3>Expansion, not explosion</h3>
+            <p>Distances between galaxies grow because the fabric of space grows.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--b" aria-hidden="true"></div>
+          <div>
+            <h3>Hot, dense beginning</h3>
+            <p>Early universe was hotter and denser; it cooled as it expanded.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--c" aria-hidden="true"></div>
+          <div>
+            <h3>Evidence is everywhere</h3>
+            <p>Redshift, the cosmic microwave background, and light elements all agree.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: What it is -->
+    <section class="section">
+      <h2>What the Big Bang is</h2>
+      <p class="lead">
+        The Big Bang model says: if we rewind cosmic history, the universe becomes <b>smaller, hotter, and denser</b>.
+        At some point, physics hits limits of what we can currently describe. So “Big Bang” is a story about
+        <b>early expansion</b>, not about a “bang” at a single place.
+      </p>
+
+      <div class="two-col">
+        <div class="card">
+          <h3 class="hsmall">Common misconceptions</h3>
+          <div class="stack">
+            <div class="callout">
+              <h4>“It exploded from a point into empty space.”</h4>
+              <p>
+                Not exactly. There may not be an “outside.” The model describes expansion of space itself.
+              </p>
+            </div>
+            <div class="callout">
+              <h4>“The Big Bang explains what caused everything.”</h4>
+              <p>
+                It describes early behavior and evolution. The “ultimate cause” is still unknown.
+              </p>
+            </div>
+            <div class="callout">
+              <h4>“The universe had a center.”</h4>
+              <p>
+                In standard cosmology, expansion happens everywhere; no special center is required.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <figure class="figure card">
+          <figcaption class="figcap"><b>Balloon analogy</b> — expansion without a center on the surface</figcaption>
+
+          <svg viewBox="0 0 640 360" role="img" aria-label="Balloon analogy showing dots spreading apart as the surface expands">
+            <defs>
+              <radialGradient id="bg" cx="50%" cy="45%" r="70%">
+                <stop offset="0" stop-color="rgba(88,86,214,0.20)"/>
+                <stop offset="1" stop-color="rgba(0,122,255,0.08)"/>
+              </radialGradient>
+            </defs>
+
+            <rect x="0" y="0" width="640" height="360" fill="rgba(245,245,247,1)"/>
+            <circle cx="320" cy="180" r="120" fill="url(#bg)" stroke="rgba(0,0,0,0.10)" stroke-width="2"/>
+
+            <!-- dots -->
+            <g fill="rgba(11,11,15,0.80)">
+              <circle cx="280" cy="140" r="5"/>
+              <circle cx="350" cy="120" r="5"/>
+              <circle cx="380" cy="190" r="5"/>
+              <circle cx="300" cy="235" r="5"/>
+              <circle cx="250" cy="190" r="5"/>
+              <circle cx="355" cy="240" r="5"/>
+            </g>
+
+            <!-- arrows (expansion) -->
+            <g stroke="rgba(0,122,255,0.95)" stroke-width="3" stroke-linecap="round">
+              <line x1="320" y1="60" x2="320" y2="30"/>
+              <line x1="320" y1="300" x2="320" y2="330"/>
+              <line x1="200" y1="180" x2="160" y2="180"/>
+              <line x1="440" y1="180" x2="480" y2="180"/>
+              <line x1="235" y1="105" x2="205" y2="80"/>
+              <line x1="405" y1="255" x2="435" y2="285"/>
+            </g>
+
+            <text x="320" y="340" text-anchor="middle" font-size="13" fill="rgba(11,11,15,0.60)">
+              On the surface, every dot sees others moving away — no center on the surface.
+            </text>
+          </svg>
+
+          <p class="note">
+            The balloon surface is a 2D analogy for 3D space. It helps show “expansion everywhere” without requiring a center.
+          </p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- SECTION: Evidence -->
+    <section class="section">
+      <h2>How we know</h2>
+      <p class="lead">
+        Big Bang cosmology is supported because multiple independent measurements point to the same picture.
+      </p>
+
+      <div class="card">
+        <div class="grid3">
+          <div class="mini">
+            <h4>1) Galaxy redshift</h4>
+            <p>
+              Distant galaxies’ light is stretched (redshifted). More distance → more redshift → consistent with expansion.
+            </p>
+          </div>
+          <div class="mini">
+            <h4>2) Cosmic Microwave Background</h4>
+            <p>
+              A faint “afterglow” from the early hot universe — nearly uniform, with tiny fluctuations that seeded structure.
+            </p>
+          </div>
+          <div class="mini">
+            <h4>3) Light elements</h4>
+            <p>
+              Early-universe physics predicts hydrogen/helium/deuterium abundances that match what we observe.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <figure class="figure card">
+        <figcaption class="figcap"><b>Redshift intuition</b> — stretching light as space expands</figcaption>
+
+        <svg viewBox="0 0 860 280" role="img" aria-label="Redshift diagram with wave stretched over distance">
+          <rect x="0" y="0" width="860" height="280" fill="rgba(245,245,247,1)"/>
+
+          <!-- left: shorter wavelength -->
+          <text x="70" y="45" font-size="13" fill="rgba(11,11,15,0.65)">Earlier / closer</text>
+          <path d="M40 120
+                   C70 80, 100 160, 130 120
+                   C160 80, 190 160, 220 120
+                   C250 80, 280 160, 310 120"
+                fill="none" stroke="rgba(0,122,255,0.95)" stroke-width="4" stroke-linecap="round"/>
+
+          <!-- right: longer wavelength -->
+          <text x="620" y="45" font-size="13" fill="rgba(11,11,15,0.65)">Later / farther</text>
+          <path d="M520 120
+                   C580 60, 640 180, 700 120
+                   C760 60, 820 180, 880 120"
+                fill="none" stroke="rgba(255,45,85,0.95)" stroke-width="4" stroke-linecap="round"
+                transform="translate(-40,0)"/>
+
+          <!-- arrow -->
+          <line x1="350" y1="120" x2="510" y2="120" stroke="rgba(0,0,0,0.25)" stroke-width="3" />
+          <polygon points="510,120 496,112 496,128" fill="rgba(0,0,0,0.25)"/>
+
+          <text x="430" y="175" text-anchor="middle" font-size="13" fill="rgba(11,11,15,0.60)">
+            As space expands, the wavelength stretches → light shifts toward red.
+          </text>
+        </svg>
+
+        <p class="note">
+          Redshift can also come from motion, but the consistent large-scale pattern supports expanding space.
+        </p>
+      </figure>
+    </section>
+
+    <!-- SECTION: Timeline -->
+    <section class="section">
+      <h2>A quick timeline</h2>
+      <div class="card">
+        <ol class="timeline">
+          <li><b>Very early:</b> extremely hot, dense state (our physics is incomplete here).</li>
+          <li><b>First minutes:</b> light elements begin forming (hydrogen/helium/deuterium).</li>
+          <li><b>~380,000 years:</b> atoms form; light decouples → <b>CMB</b> travels freely.</li>
+          <li><b>Hundreds of millions of years:</b> first stars/galaxies ignite; structure grows.</li>
+          <li><b>Today:</b> expansion continues; the universe is cooler and more spread out.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- SECTION: Explain to a child -->
+    <section class="section">
+      <h2>Make it easy</h2>
+      <div class="card">
+        <p class="lead">
+          Imagine the universe is like a giant stretchy grid.
+        </p>
+        <ol class="steps">
+          <li>Long ago, the grid was much smaller, so everything was squeezed together and very hot.</li>
+          <li>The grid started stretching, and stretching makes everything cool down over time.</li>
+          <li>When the grid stretches, dots on the grid move away from each other — not because they’re running,
+              but because the paper itself is getting bigger.</li>
+        </ol>
+        <p class="note">
+          The Big Bang is the story of that stretching and cooling — supported by several kinds of evidence.
+        </p>
+      </div>
+    </section>
+
+    <!-- SECTION: FAQ -->
+    <section class="section">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details class="card" open>
+          <summary>What’s “before” the Big Bang?</summary>
+          <p>
+            We don’t know. Our current models describe the universe extremely early, but “before” may not be
+            a well-defined question with today’s physics.
+          </p>
+        </details>
+
+        <details class="card">
+          <summary>Is the universe still expanding?</summary>
+          <p>
+            Yes. Measurements indicate expansion continues, and appears to be accelerating on large scales.
+          </p>
+        </details>
+
+        <details class="card">
+          <summary>Will the universe expand forever?</summary>
+          <p>
+            The best current evidence suggests continued expansion. The detailed long-term fate depends on
+            cosmic energy content and how it evolves.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- FOOT NAV -->
+    <nav class="footnav">
+      <a class="btn" href="/science">← Science</a>
+      <a class="btn btn--ghost" href="/science/black-holes">Next: Black Holes →</a>
+    </nav>
+  </article>
+
+  <style>
+    .page{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 90px;
+    }
+
+    .hero{ padding-top: 6px; }
+    .hero-top{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .back{
+      color: rgba(11,11,15,0.60);
+      font-size: 13px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+    .back:hover{ color: rgba(11,11,15,0.90); }
+
+    h1{
+      margin: 0 0 10px;
+      font-size: 44px;
+      font-weight: 850;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+    }
+    .subtitle{
+      margin: 0 0 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(11,11,15,0.62);
+      max-width: 75ch;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .section{ margin-top: 28px; }
+    .section > h2{
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      color: rgba(11,11,15,0.92);
+    }
+    .lead{
+      margin: 0 0 14px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(11,11,15,0.70);
+      max-width: 82ch;
+    }
+
+    .card{
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 18px;
+      box-shadow: 0 10px 34px rgba(0,0,0,0.06);
+      padding: 16px 18px;
+    }
+    .card--soft{ background: rgba(255,255,255,0.85); }
+    .card--ink{
+      background: rgba(11,11,15,0.92);
+      border-color: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.92);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    }
+
+    .quote{ margin: 0; font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.92); }
+    .meta{ margin: 12px 0 0; font-size: 12px; color: rgba(255,255,255,0.70); }
+
+    .hsmall{
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(11,11,15,0.72);
+    }
+    .list{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(11,11,15,0.72);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .chip{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.08);
+      user-select: none;
+      background: rgba(255,255,255,0.70);
+      backdrop-filter: blur(10px);
+    }
+    .chip--space{
+      color: rgba(88,86,214,0.95);
+      border-color: rgba(88,86,214,0.20);
+      background: rgba(88,86,214,0.12);
+    }
+
+    .tldr{ display:grid; gap: 12px; }
+    .tldr-item{
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 10px 34px rgba(0,0,0,0.06);
+    }
+    .tldr-item h3{ margin: 0 0 4px; font-size: 15px; font-weight: 850; letter-spacing: -0.01em; }
+    .tldr-item p{ margin: 0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .dot{
+      width: 10px; height: 10px; border-radius: 999px;
+      margin-top: 5px;
+      flex-shrink:0;
+    }
+    .dot--a{ background: rgba(88,86,214,0.95); box-shadow: 0 0 0 4px rgba(88,86,214,0.12); }
+    .dot--b{ background: rgba(0,122,255,0.95); box-shadow: 0 0 0 4px rgba(0,122,255,0.12); }
+    .dot--c{ background: rgba(255,149,0,0.95); box-shadow: 0 0 0 4px rgba(255,149,0,0.12); }
+
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items:start;
+      margin-top: 12px;
+    }
+
+    .stack{ display:flex; flex-direction:column; gap: 10px; }
+    .callout{
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(245,245,247,0.85);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .callout h4{
+      margin: 0 0 4px;
+      font-size: 13px;
+      font-weight: 850;
+      letter-spacing: -0.01em;
+      color: rgba(11,11,15,0.86);
+    }
+    .callout p{
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(11,11,15,0.62);
+    }
+
+    .figure svg{
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+      display:block;
+      overflow:hidden;
+    }
+    .figcap{ margin: 0 0 10px; font-size: 13px; color: rgba(11,11,15,0.70); }
+    .note{ margin: 10px 0 0; font-size: 13px; line-height: 1.6; color: rgba(11,11,15,0.55); }
+
+    .grid3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .mini{
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(245,245,247,0.70);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .mini h4{ margin: 0 0 6px; font-size: 14px; font-weight: 850; letter-spacing: -0.01em; }
+    .mini p{ margin: 0; font-size: 13.5px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .timeline{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(11,11,15,0.70);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .steps{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: rgba(11,11,15,0.70);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .faq{ display:flex; flex-direction:column; gap: 10px; }
+    details summary{
+      cursor: pointer;
+      font-weight: 850;
+      font-size: 14px;
+      color: rgba(11,11,15,0.86);
+      list-style: none;
+    }
+    details summary::-webkit-details-marker{ display:none; }
+    details p{
+      margin: 10px 0 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(11,11,15,0.62);
+    }
+
+    .footnav{
+      margin-top: 28px;
+      display:flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.90);
+      font-size: 13px;
+      font-weight: 750;
+      color: rgba(11,11,15,0.84);
+      text-decoration:none;
+      transition: transform .15s ease, background .15s ease;
+      white-space: nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,1); }
+    .btn--ghost{ background: rgba(245,245,247,0.75); }
+
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .two-col{ grid-template-columns: 1fr; }
+      .grid3{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px){
+      h1{ font-size: 34px; }
+      .footnav{ flex-direction: column; }
+      .btn{ width: 100%; }
+    }
+  </style>
+</Layout>

@@ -1,0 +1,585 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "Black Holes — Science";
+const updated = "Updated: 2026";
+---
+
+<Layout title={title}>
+  <article class="page">
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-top">
+        <a class="back" href="/science">← Back to Science</a>
+        <span class="chip chip--space">SPACE</span>
+      </div>
+
+      <h1>Black Holes</h1>
+      <p class="subtitle">
+        A region where gravity becomes so strong that even light can’t escape — not because it “pulls harder,”
+        but because spacetime is curved so extremely.
+      </p>
+
+      <div class="hero-grid">
+        <section class="card card--soft">
+          <h2 class="hsmall">What you’ll learn</h2>
+          <ul class="list">
+            <li>The parts: <b>event horizon</b>, <b>singularity</b> (as a limit), <b>accretion disk</b>.</li>
+            <li>How black holes form and how we detect them.</li>
+            <li>Why “spaghettification” happens — and when it doesn’t.</li>
+          </ul>
+        </section>
+
+        <section class="card card--ink">
+          <p class="quote">
+            “A black hole isn’t a cosmic vacuum cleaner. From far away, it behaves like any object with the same mass.”
+          </p>
+          <p class="meta">{updated}</p>
+        </section>
+      </div>
+    </header>
+
+    <!-- TL;DR -->
+    <section class="section">
+      <h2>TL;DR</h2>
+      <div class="tldr">
+        <div class="tldr-item">
+          <div class="dot dot--a" aria-hidden="true"></div>
+          <div>
+            <h3>Escape becomes impossible</h3>
+            <p>
+              Inside the <b>event horizon</b>, every path that could lead outward bends back inward — even for light.
+            </p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--b" aria-hidden="true"></div>
+          <div>
+            <h3>They’re detected by effects</h3>
+            <p>
+              We “see” black holes by their gravity: star orbits, glowing accretion disks, lensing, and gravitational waves.
+            </p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--c" aria-hidden="true"></div>
+          <div>
+            <h3>Not all are deadly up close</h3>
+            <p>
+              Tidal forces depend on mass: small black holes tear you apart sooner; supermassive ones can be gentler at the horizon.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: What is a black hole -->
+    <section class="section">
+      <h2>What is a black hole?</h2>
+      <p class="lead">
+        A black hole forms when a lot of mass is compressed into a small region. In General Relativity terms,
+        spacetime becomes curved so strongly that there is a boundary — the <b>event horizon</b> — beyond which
+        “outward” paths no longer exist.
+      </p>
+
+      <div class="two-col">
+        <div class="card">
+          <h3 class="hsmall">Key pieces (simple)</h3>
+          <div class="stack">
+            <div class="callout">
+              <h4>Event horizon</h4>
+              <p>The point of no return: after crossing it, light can’t get out.</p>
+            </div>
+            <div class="callout">
+              <h4>Singularity (as a limit)</h4>
+              <p>
+                Classical GR predicts infinite density at the center, but that likely signals “new physics needed”
+                (quantum gravity).
+              </p>
+            </div>
+            <div class="callout">
+              <h4>Accretion disk</h4>
+              <p>Infalling gas heats up and glows; many black holes are discovered from this light.</p>
+            </div>
+          </div>
+        </div>
+
+        <figure class="figure card">
+          <figcaption class="figcap"><b>Event horizon intuition</b> — crossing the boundary</figcaption>
+
+          <svg viewBox="0 0 640 360" role="img" aria-label="Diagram showing event horizon and light paths bending inward">
+            <defs>
+              <radialGradient id="bhGlow" cx="50%" cy="50%" r="60%">
+                <stop offset="0" stop-color="rgba(11,11,15,0.92)"/>
+                <stop offset="0.6" stop-color="rgba(11,11,15,0.92)"/>
+                <stop offset="1" stop-color="rgba(11,11,15,0.05)"/>
+              </radialGradient>
+              <radialGradient id="disk" cx="50%" cy="50%" r="55%">
+                <stop offset="0" stop-color="rgba(255,149,0,0.00)"/>
+                <stop offset="0.55" stop-color="rgba(255,149,0,0.18)"/>
+                <stop offset="0.85" stop-color="rgba(255,45,85,0.18)"/>
+                <stop offset="1" stop-color="rgba(255,45,85,0.00)"/>
+              </radialGradient>
+            </defs>
+
+            <rect x="0" y="0" width="640" height="360" fill="rgba(245,245,247,1)"/>
+
+            <!-- accretion disk glow -->
+            <ellipse cx="350" cy="180" rx="210" ry="90" fill="url(#disk)"/>
+
+            <!-- black hole -->
+            <circle cx="350" cy="180" r="78" fill="url(#bhGlow)"/>
+            <circle cx="350" cy="180" r="52" fill="rgba(11,11,15,0.96)"/>
+
+            <!-- horizon ring -->
+            <circle cx="350" cy="180" r="78" fill="none" stroke="rgba(0,122,255,0.65)" stroke-width="3" stroke-dasharray="8 7"/>
+            <text x="350" y="74" text-anchor="middle" font-size="13" fill="rgba(0,122,255,0.85)">event horizon</text>
+
+            <!-- light rays bending -->
+            <path d="M80 100 C200 80, 250 90, 300 125 C330 145, 340 160, 350 180"
+                  fill="none" stroke="rgba(255,45,85,0.92)" stroke-width="4" stroke-linecap="round"/>
+            <path d="M80 260 C200 280, 250 270, 300 235 C330 215, 340 200, 350 180"
+                  fill="none" stroke="rgba(255,45,85,0.92)" stroke-width="4" stroke-linecap="round"/>
+            <text x="95" y="88" font-size="12" fill="rgba(11,11,15,0.55)">light paths</text>
+
+            <!-- arrow into center -->
+            <line x1="520" y1="180" x2="408" y2="180" stroke="rgba(88,86,214,0.90)" stroke-width="4" stroke-linecap="round"/>
+            <polygon points="408,180 422,172 422,188" fill="rgba(88,86,214,0.90)"/>
+            <text x="520" y="165" text-anchor="end" font-size="12" fill="rgba(11,11,15,0.55)">infall</text>
+
+            <text x="320" y="332" text-anchor="middle" font-size="13" fill="rgba(11,11,15,0.60)">
+              Outside the horizon, light can still escape. Inside, “outward” is no longer a usable direction.
+            </text>
+          </svg>
+
+          <p class="note">
+            We draw the horizon as a ring, but it’s a 3D surface. Once crossed, returning would require faster-than-light travel.
+          </p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- SECTION: Formation -->
+    <section class="section">
+      <h2>How do black holes form?</h2>
+      <p class="lead">
+        Most known black holes come from the death of massive stars. When nuclear fuel runs out, pressure drops,
+        gravity wins, and the core can collapse. Supermassive black holes likely grew over time through mergers and feeding.
+      </p>
+
+      <div class="card">
+        <div class="grid3">
+          <div class="mini">
+            <h4>Stellar-mass</h4>
+            <p>Form from collapsing massive stars; a few to dozens of solar masses.</p>
+          </div>
+          <div class="mini">
+            <h4>Supermassive</h4>
+            <p>Millions–billions of solar masses; live in galaxy centers.</p>
+          </div>
+          <div class="mini">
+            <h4>Mergers</h4>
+            <p>Two black holes spiral together → gravitational waves carry energy away.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Spaghettification -->
+    <section class="section">
+      <h2>“Spaghettification” (tidal forces)</h2>
+      <p class="lead">
+        Gravity decreases with distance. If your feet are closer to the black hole than your head, your feet feel a stronger pull —
+        you get stretched. That stretching is called <b>tidal force</b>.
+      </p>
+
+      <figure class="figure card">
+        <figcaption class="figcap"><b>Tidal stretch</b> — why size matters</figcaption>
+
+        <svg viewBox="0 0 860 320" role="img" aria-label="Tidal force diagram with person stretched near a small black hole and less near a supermassive black hole">
+          <rect x="0" y="0" width="860" height="320" fill="rgba(245,245,247,1)"/>
+
+          <!-- left: small BH -->
+          <text x="145" y="46" text-anchor="middle" font-size="13" fill="rgba(11,11,15,0.65)">Small black hole</text>
+          <circle cx="145" cy="170" r="44" fill="rgba(11,11,15,0.92)"/>
+          <circle cx="145" cy="170" r="58" fill="none" stroke="rgba(255,59,48,0.50)" stroke-width="3" stroke-dasharray="7 7"/>
+          <text x="145" y="252" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">strong tidal forces</text>
+
+          <!-- stretched stick figure -->
+          <line x1="280" y1="105" x2="280" y2="245" stroke="rgba(0,122,255,0.90)" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="280" cy="90" r="14" fill="rgba(0,122,255,0.90)"/>
+          <text x="280" y="278" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">stretched</text>
+
+          <!-- arrows -->
+          <g stroke="rgba(255,59,48,0.85)" stroke-width="4" stroke-linecap="round">
+            <line x1="245" y1="120" x2="175" y2="150"/>
+            <line x1="245" y1="220" x2="175" y2="190"/>
+          </g>
+
+          <!-- right: supermassive BH -->
+          <text x="670" y="46" text-anchor="middle" font-size="13" fill="rgba(11,11,15,0.65)">Supermassive black hole</text>
+          <circle cx="670" cy="170" r="70" fill="rgba(11,11,15,0.92)"/>
+          <circle cx="670" cy="170" r="92" fill="none" stroke="rgba(52,199,89,0.45)" stroke-width="3" stroke-dasharray="7 7"/>
+          <text x="670" y="252" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">weaker tides at horizon</text>
+
+          <!-- normal stick figure -->
+          <line x1="520" y1="125" x2="520" y2="235" stroke="rgba(88,86,214,0.90)" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="520" cy="110" r="14" fill="rgba(88,86,214,0.90)"/>
+          <text x="520" y="278" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">less stretched</text>
+
+          <text x="430" y="305" text-anchor="middle" font-size="13" fill="rgba(11,11,15,0.60)">
+            Bigger black hole → horizon is farther out → tidal gradient can be smaller at the crossing.
+          </text>
+        </svg>
+
+        <p class="note">
+          The danger is the <i>difference</i> in gravity across you (tidal gradient), not simply “strong gravity.”
+        </p>
+      </figure>
+    </section>
+
+    <!-- SECTION: How we detect -->
+    <section class="section">
+      <h2>How do we detect black holes?</h2>
+      <p class="lead">
+        Since black holes don’t emit light on their own, we detect them by what they do to nearby matter, light, and spacetime.
+      </p>
+
+      <div class="card">
+        <div class="grid3">
+          <div class="mini">
+            <h4>Orbits</h4>
+            <p>Stars orbiting an invisible mass (e.g., in our galaxy’s center).</p>
+          </div>
+          <div class="mini">
+            <h4>Accretion glow</h4>
+            <p>Hot gas spirals in, emits X-rays/optical light.</p>
+          </div>
+          <div class="mini">
+            <h4>Gravitational waves</h4>
+            <p>Mergers create ripples in spacetime detected by LIGO/Virgo/KAGRA.</p>
+          </div>
+        </div>
+      </div>
+
+      <figure class="figure card">
+        <figcaption class="figcap"><b>Gravitational lensing</b> — mass bends light</figcaption>
+
+        <svg viewBox="0 0 860 300" role="img" aria-label="Gravitational lensing diagram showing light bending around a massive object">
+          <rect x="0" y="0" width="860" height="300" fill="rgba(245,245,247,1)"/>
+
+          <!-- source -->
+          <circle cx="120" cy="150" r="10" fill="rgba(255,45,85,0.92)"/>
+          <text x="120" y="125" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">source</text>
+
+          <!-- lens mass -->
+          <circle cx="430" cy="150" r="36" fill="rgba(11,11,15,0.88)"/>
+          <text x="430" y="208" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">mass</text>
+
+          <!-- observer -->
+          <circle cx="740" cy="150" r="10" fill="rgba(0,122,255,0.92)"/>
+          <text x="740" y="125" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">observer</text>
+
+          <!-- light paths -->
+          <path d="M130 150 C260 60, 360 70, 430 150 C500 230, 610 240, 730 150"
+                fill="none" stroke="rgba(88,86,214,0.90)" stroke-width="4" stroke-linecap="round"/>
+          <path d="M130 150 C260 240, 360 230, 430 150 C500 70, 610 60, 730 150"
+                fill="none" stroke="rgba(88,86,214,0.90)" stroke-width="4" stroke-linecap="round"/>
+
+          <text x="430" y="280" text-anchor="middle" font-size="13" fill="rgba(11,11,15,0.60)">
+            Light bends around mass → multiple paths → magnification and distorted images.
+          </text>
+        </svg>
+      </figure>
+    </section>
+
+    <!-- SECTION: Explain to a child -->
+    <section class="section">
+      <h2>Explain it to a child</h2>
+      <div class="card">
+        <p class="lead">
+          Imagine space is like a rulebook for how things move.
+        </p>
+        <ol class="steps">
+          <li>Very heavy stuff changes the rulebook so strongly that “escaping” becomes impossible past a boundary.</li>
+          <li>That boundary is the <b>event horizon</b>.</li>
+          <li>We can’t see the hole itself, but we see the bright hot gas around it and the way it bends light and pulls stars.</li>
+        </ol>
+        <p class="note">
+          Black holes don’t “suck everything.” You’d need to get very close for them to grab you.
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details class="card" open>
+          <summary>Can a black hole “eat” the whole universe?</summary>
+          <p>
+            No. Far away, a black hole’s gravity looks like any object with that mass. It doesn’t pull from infinite distance
+            like a vacuum cleaner.
+          </p>
+        </details>
+
+        <details class="card">
+          <summary>Do black holes last forever?</summary>
+          <p>
+            Quantum theory suggests <b>Hawking radiation</b>, meaning black holes could very slowly lose mass. For stellar/supermassive
+            holes, this would take an unimaginably long time.
+          </p>
+        </details>
+
+        <details class="card">
+          <summary>What happens inside?</summary>
+          <p>
+            We don’t know with certainty. Classical relativity predicts a singularity, but that likely means our theory breaks
+            down and needs quantum gravity.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- FOOT NAV -->
+    <nav class="footnav">
+      <a class="btn" href="/science/big-bang">← Previous: Big Bang</a>
+      <a class="btn btn--ghost" href="/science/time">Next: What Is Time? →</a>
+    </nav>
+  </article>
+
+  <style>
+    .page{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 90px;
+    }
+
+    .hero{ padding-top: 6px; }
+    .hero-top{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .back{
+      color: rgba(11,11,15,0.60);
+      font-size: 13px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+    .back:hover{ color: rgba(11,11,15,0.90); }
+
+    h1{
+      margin: 0 0 10px;
+      font-size: 44px;
+      font-weight: 850;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+    }
+    .subtitle{
+      margin: 0 0 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(11,11,15,0.62);
+      max-width: 78ch;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .section{ margin-top: 28px; }
+    .section > h2{
+      margin: 0 0 12px;
+      font-size: 20px;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      color: rgba(11,11,15,0.92);
+    }
+    .lead{
+      margin: 0 0 14px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: rgba(11,11,15,0.70);
+      max-width: 84ch;
+    }
+
+    .card{
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 18px;
+      box-shadow: 0 10px 34px rgba(0,0,0,0.06);
+      padding: 16px 18px;
+    }
+    .card--soft{ background: rgba(255,255,255,0.85); }
+    .card--ink{
+      background: rgba(11,11,15,0.92);
+      border-color: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.92);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    }
+
+    .quote{ margin: 0; font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.92); }
+    .meta{ margin: 12px 0 0; font-size: 12px; color: rgba(255,255,255,0.70); }
+
+    .hsmall{
+      margin: 0 0 10px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: rgba(11,11,15,0.72);
+    }
+    .list{
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(11,11,15,0.72);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    .chip{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.08);
+      user-select: none;
+      background: rgba(255,255,255,0.70);
+      backdrop-filter: blur(10px);
+    }
+    .chip--space{
+      color: rgba(88,86,214,0.95);
+      border-color: rgba(88,86,214,0.20);
+      background: rgba(88,86,214,0.12);
+    }
+
+    .tldr{ display:grid; gap: 12px; }
+    .tldr-item{
+      display:flex;
+      gap: 12px;
+      align-items:flex-start;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 10px 34px rgba(0,0,0,0.06);
+    }
+    .tldr-item h3{ margin: 0 0 4px; font-size: 15px; font-weight: 850; letter-spacing: -0.01em; }
+    .tldr-item p{ margin: 0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .dot{ width: 10px; height: 10px; border-radius: 999px; margin-top: 5px; flex-shrink:0; }
+    .dot--a{ background: rgba(88,86,214,0.95); box-shadow: 0 0 0 4px rgba(88,86,214,0.12); }
+    .dot--b{ background: rgba(0,122,255,0.95); box-shadow: 0 0 0 4px rgba(0,122,255,0.12); }
+    .dot--c{ background: rgba(255,149,0,0.95); box-shadow: 0 0 0 4px rgba(255,149,0,0.12); }
+
+    .two-col{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      align-items:start;
+      margin-top: 12px;
+    }
+
+    .stack{ display:flex; flex-direction:column; gap: 10px; }
+    .callout{
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(245,245,247,0.85);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .callout h4{ margin: 0 0 4px; font-size: 13px; font-weight: 850; letter-spacing: -0.01em; color: rgba(11,11,15,0.86); }
+    .callout p{ margin: 0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .figure svg{
+      width: 100%;
+      height: auto;
+      border-radius: 14px;
+      display:block;
+      overflow:hidden;
+    }
+    .figcap{ margin: 0 0 10px; font-size: 13px; color: rgba(11,11,15,0.70); }
+    .note{ margin: 10px 0 0; font-size: 13px; line-height: 1.6; color: rgba(11,11,15,0.55); }
+
+    .grid3{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .mini{
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(245,245,247,0.70);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .mini h4{ margin: 0 0 6px; font-size: 14px; font-weight: 850; letter-spacing: -0.01em; }
+    .mini p{ margin: 0; font-size: 13.5px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .steps{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      color: rgba(11,11,15,0.70);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .faq{ display:flex; flex-direction:column; gap: 10px; }
+    details summary{
+      cursor: pointer;
+      font-weight: 850;
+      font-size: 14px;
+      color: rgba(11,11,15,0.86);
+      list-style: none;
+    }
+    details summary::-webkit-details-marker{ display:none; }
+    details p{
+      margin: 10px 0 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: rgba(11,11,15,0.62);
+    }
+
+    .footnav{
+      margin-top: 28px;
+      display:flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.90);
+      font-size: 13px;
+      font-weight: 750;
+      color: rgba(11,11,15,0.84);
+      text-decoration:none;
+      transition: transform .15s ease, background .15s ease;
+      white-space: nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,1); }
+    .btn--ghost{ background: rgba(245,245,247,0.75); }
+
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .two-col{ grid-template-columns: 1fr; }
+      .grid3{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px){
+      h1{ font-size: 34px; }
+      .footnav{ flex-direction: column; }
+      .btn{ width: 100%; }
+    }
+  </style>
+</Layout>
