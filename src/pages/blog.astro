@@ -1,13 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-// YouTube video id
-const videoId = "wupToqz1e2g";
+// Put your audio file here:
+// /public/audio/pale-blue-dot.mp3
+const audioSrc = "/audio/pale-blue-dot.mp3";
 
-// Simple diary metadata (you can change anytime)
-const entryTitle = "Today";
-const entrySubtitle = "Quiet notes, small observations, one clip.";
-const entryDate = new Date().toLocaleDateString("en-US", {
+const title = "The Pale Blue Dot";
+const subtitle = "Audio recording · Carl Sagan";
+const dateLabel = new Date().toLocaleDateString("en-US", {
   weekday: "long",
   year: "numeric",
   month: "long",
@@ -15,88 +15,103 @@ const entryDate = new Date().toLocaleDateString("en-US", {
 });
 ---
 
-<Layout title="JLOG! — Ugurcan">
+<Layout title="JLOG! — Pale Blue Dot">
   <article class="jlog">
 
     <!-- Minimal diary header -->
-    <header class="diary-head">
-      <div class="left">
+    <header class="head">
+      <div>
         <p class="kicker">JLOG!</p>
-        <h1 class="title">{entryTitle}</h1>
-        <p class="meta">{entryDate} · {entrySubtitle}</p>
+        <h1 class="h1">{title}</h1>
+        <p class="meta">{dateLabel} · {subtitle}</p>
       </div>
 
-      <div class="right">
-        <span class="badge">DIARY</span>
-      </div>
+      <span class="badge">AUDIO</span>
     </header>
 
-    <!-- Video stage (portrait-first, very Apple-like) -->
-    <section class="stage" aria-label="Diary video">
-      <div class="stage-inner">
-        <div id="ytPlayer" class="player" aria-label="JLOG video player"></div>
-
-        <div class="controls">
-          <button id="soundPill" class="pill" type="button" aria-pressed="false">
-            <span class="dot" aria-hidden="true"></span>
-            <span class="label">Unmute</span>
-          </button>
-
-          <a class="pill pill--ghost" href="https://www.youtube.com/watch?v=wupToqz1e2g" target="_blank" rel="noreferrer">
-            Open
-          </a>
+    <!-- Audio card -->
+    <section class="card" aria-label="Audio recording">
+      <div class="card-top">
+        <div class="wave" aria-hidden="true">
+          <svg viewBox="0 0 120 24" width="120" height="24">
+            <path
+              d="M2 12c6 0 6-8 12-8s6 16 12 16 6-16 12-16 6 16 12 16 6-16 12-16 6 16 12 16 6-16 12-16 6 8 12 8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              opacity=".55"
+            />
+          </svg>
         </div>
+
+        <div class="card-title">
+          <div class="small">{subtitle}</div>
+          <div class="big">{title}</div>
+        </div>
+
+        <a class="share" href={audioSrc} download aria-label="Download audio">Download</a>
       </div>
+
+      <div class="player">
+        <button class="play" type="button" aria-label="Play/Pause" id="playBtn">
+          ▶
+        </button>
+
+        <div class="time" id="tNow">0:00</div>
+
+        <input
+          class="seek"
+          id="seek"
+          type="range"
+          min="0"
+          max="1000"
+          value="0"
+          step="1"
+          aria-label="Seek"
+        />
+
+        <div class="time" id="tDur">0:00</div>
+
+        <button class="mute" type="button" aria-label="Mute/Unmute" id="muteBtn">
+          🔈
+        </button>
+      </div>
+
+      <audio id="audio" preload="metadata">
+        <source src={audioSrc} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+
+      <p class="note">
+        Tip: This is a clean, diary-style audio card. Replace <code>/audio/pale-blue-dot.mp3</code> with your own recording anytime.
+      </p>
     </section>
 
-    <!-- Diary note area -->
-    <section class="paper" aria-label="Diary note">
-      <div class="paper-head">
-        <h2>Today’s Note</h2>
-        <span class="sub">Keep it simple. Keep it honest.</span>
-      </div>
-
-      <div class="note">
-        <p>
-          This page is designed like a digital diary: one focus element (the clip), then a quiet space for reflection.
-          You can replace this text with your own daily note.
-        </p>
-
-        <div class="mini-grid">
-          <div class="mini">
-            <p class="mini-k">Mood</p>
-            <p class="mini-v">Calm</p>
-          </div>
-          <div class="mini">
-            <p class="mini-k">Theme</p>
-            <p class="mini-v">Perspective</p>
-          </div>
-          <div class="mini">
-            <p class="mini-k">Tag</p>
-            <p class="mini-v">#jlog</p>
-          </div>
-        </div>
-      </div>
+    <!-- Optional: a minimal quote block (very Ive-ish) -->
+    <section class="paper" aria-label="Reflection">
+      <h2 class="h2">Reflection</h2>
+      <p class="p">
+        A calm place for one recording, one thought. If you want, I can add a “Today’s note” textarea that saves locally
+        (localStorage) so this becomes a real diary.
+      </p>
     </section>
 
   </article>
 
   <style>
-    /* Page */
     .jlog{
-      max-width: 1080px;
+      max-width: 1100px;
       margin: 0 auto;
       padding: 22px 18px 90px;
     }
 
-    /* Header */
-    .diary-head{
+    .head{
       display:flex;
       align-items:flex-end;
       justify-content: space-between;
-      gap: 18px;
-      padding-top: 6px;
-      margin-bottom: 16px;
+      gap: 14px;
+      margin-bottom: 14px;
     }
 
     .kicker{
@@ -108,7 +123,7 @@ const entryDate = new Date().toLocaleDateString("en-US", {
       color: rgba(11,11,15,0.62);
     }
 
-    .title{
+    .h1{
       margin: 0 0 8px;
       font-size: 44px;
       font-weight: 850;
@@ -135,298 +150,260 @@ const entryDate = new Date().toLocaleDateString("en-US", {
       font-weight: 900;
       letter-spacing: .14em;
       text-transform: uppercase;
-      background: rgba(142,142,147,0.16);
-      color: rgba(60,60,67,0.82);
-      border: 1px solid rgba(142,142,147,0.22);
+      background: rgba(0,122,255,0.14);
+      color: rgba(0,122,255,0.92);
+      border: 1px solid rgba(0,122,255,0.20);
       user-select:none;
+      white-space: nowrap;
       backdrop-filter: blur(10px);
-      white-space: nowrap;
     }
 
-    /* Stage wrapper */
-    .stage{
-      margin-top: 10px;
-    }
-
-    .stage-inner{
-      position: relative;
-
-      /* Portrait-first: looks intentional for vertical videos */
-      width: min(520px, 100%);
-      aspect-ratio: 9 / 16;
-
-      /* Make it feel “device-like” but not cheesy */
-      border-radius: 26px;
-      overflow: hidden;
-
-      background: rgba(255,255,255,0.75);
-      border: 1px solid rgba(0,0,0,0.08);
-      box-shadow: 0 22px 70px rgba(0,0,0,0.14);
-
-      /* Center it */
-      margin: 0 auto;
-    }
-
-    /* Player fills stage */
-    .player{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      background: rgba(0,0,0,0.06);
-    }
-
-    /*
-      Cover without fighting aspect ratios:
-      - We center + oversize iframe to fill the portrait stage.
-      - Crops edges if needed (good for vertical clips).
-    */
-    .player :global(iframe){
-      position:absolute !important;
-      top: 50% !important;
-      left: 50% !important;
-      width: 130% !important;
-      height: 130% !important;
-      transform: translate(-50%, -50%) !important;
-      border: 0 !important;
-      display:block !important;
-    }
-
-    /* Controls */
-    .controls{
-      position:absolute;
-      left: 14px;
-      right: 14px;
-      bottom: 14px;
-      z-index: 5;
-
-      display:flex;
-      justify-content: space-between;
-      gap: 10px;
-      pointer-events: none; /* only buttons clickable */
-    }
-
-    .pill{
-      pointer-events: auto;
-
-      display:inline-flex;
-      align-items:center;
-      gap: 8px;
-
-      border-radius: 999px;
-      padding: 10px 12px;
-
-      border: 1px solid rgba(255,255,255,0.22);
-      background: rgba(18,18,22,0.55);
-      backdrop-filter: blur(14px);
-
-      color: rgba(255,255,255,0.92);
-      font-size: 13px;
-      font-weight: 650;
-      letter-spacing: -0.01em;
-
-      cursor: pointer;
-      user-select: none;
-
-      transition: transform .15s ease, background .15s ease, border-color .15s ease;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .pill:hover{
-      transform: translateY(-1px);
-      background: rgba(18,18,22,0.72);
-      border-color: rgba(255,255,255,0.32);
-    }
-
-    .pill--ghost{
-      background: rgba(255,255,255,0.18);
-    }
-
-    .dot{
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.70);
-      box-shadow: 0 0 0 3px rgba(255,255,255,0.10);
-      flex-shrink:0;
-    }
-
-    /* Unmuted state */
-    .pill.is-on{
-      background: rgba(255,255,255,0.86);
-      border-color: rgba(0,0,0,0.08);
-      color: rgba(11,11,15,0.92);
-    }
-    .pill.is-on .dot{
-      background: rgba(52,199,89,0.95);
-      box-shadow: 0 0 0 3px rgba(52,199,89,0.18);
-    }
-
-    /* Paper (note section) */
-    .paper{
-      margin-top: 18px;
-      max-width: 860px;
-      margin-left: auto;
-      margin-right: auto;
+    .card{
       background: rgba(255,255,255,0.92);
       border: 1px solid rgba(0,0,0,0.06);
       border-radius: 22px;
       box-shadow: 0 14px 48px rgba(0,0,0,0.07);
+      padding: 16px 16px 14px;
+      overflow: hidden;
+    }
+
+    .card-top{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      margin-bottom: 12px;
+    }
+
+    .wave{
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(245,245,247,0.9);
+      border: 1px solid rgba(0,0,0,0.06);
+      color: rgba(11,11,15,0.55);
+      flex-shrink: 0;
+    }
+
+    .card-title{
+      min-width: 0;
+      flex: 1;
+    }
+
+    .small{
+      font-size: 12px;
+      font-weight: 650;
+      color: rgba(11,11,15,0.55);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .big{
+      margin-top: 2px;
+      font-size: 16px;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      color: rgba(11,11,15,0.90);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .share{
+      flex-shrink:0;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.90);
+      color: rgba(11,11,15,0.78);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .share:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,1);
+      color: rgba(11,11,15,0.92);
+    }
+
+    .player{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      padding: 2px 2px 8px;
+    }
+
+    .play, .mute{
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.92);
+      color: rgba(11,11,15,0.86);
+      cursor: pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition: transform .15s ease, background .15s ease;
+      user-select:none;
+    }
+    .play:hover, .mute:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,1);
+    }
+
+    .time{
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      font-weight: 750;
+      color: rgba(11,11,15,0.58);
+      min-width: 44px;
+      text-align:center;
+      user-select:none;
+    }
+
+    .seek{
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.12);
+      outline: none;
+    }
+    .seek::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      appearance:none;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(11,11,15,0.85);
+      border: 2px solid rgba(255,255,255,0.90);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+    .seek::-moz-range-thumb{
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(11,11,15,0.85);
+      border: 2px solid rgba(255,255,255,0.90);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+
+    .note{
+      margin: 8px 2px 0;
+      font-size: 12px;
+      line-height: 1.55;
+      color: rgba(11,11,15,0.55);
+    }
+    .note code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      background: rgba(245,245,247,0.9);
+      border: 1px solid rgba(0,0,0,0.06);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+
+    .paper{
+      margin-top: 16px;
+      max-width: 860px;
+      margin-left: auto;
+      margin-right: auto;
+      background: rgba(255,255,255,0.86);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 22px;
+      box-shadow: 0 14px 48px rgba(0,0,0,0.06);
       padding: 16px 18px 18px;
     }
 
-    .paper-head{
-      display:flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .paper h2{
-      margin: 0;
+    .h2{
+      margin: 0 0 8px;
       font-size: 16px;
       font-weight: 850;
       letter-spacing: -0.02em;
       color: rgba(11,11,15,0.90);
     }
 
-    .sub{
-      font-size: 12px;
-      color: rgba(11,11,15,0.55);
-      font-weight: 650;
-      white-space: nowrap;
-    }
-
-    .note p{
+    .p{
       margin: 0;
       font-size: 14px;
       line-height: 1.7;
       color: rgba(11,11,15,0.66);
     }
 
-    .mini-grid{
-      margin-top: 14px;
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .mini{
-      padding: 12px 12px;
-      border-radius: 16px;
-      background: rgba(245,245,247,0.78);
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-
-    .mini-k{
-      margin: 0 0 6px;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: rgba(11,11,15,0.55);
-    }
-
-    .mini-v{
-      margin: 0;
-      font-size: 13px;
-      font-weight: 750;
-      color: rgba(11,11,15,0.82);
-    }
-
-    /* Responsive */
     @media (max-width: 520px){
-      .title{ font-size: 34px; }
-      .stage-inner{ border-radius: 22px; width: min(420px, 100%); }
-      .player :global(iframe){ width: 145% !important; height: 145% !important; }
-      .mini-grid{ grid-template-columns: 1fr; }
-      .sub{ display:none; }
+      .h1{ font-size: 34px; }
+      .head{ align-items:flex-start; }
+      .badge{ margin-top: 2px; }
+      .time{ min-width: 38px; }
+      .share{ padding: 9px 10px; }
     }
   </style>
 
-  <script is:inline define:vars={{ videoId }}>
-    function loadYouTubeAPI() {
-      return new Promise((resolve) => {
-        if (window.YT && window.YT.Player) return resolve();
+  <script is:inline>
+    const audio = document.getElementById("audio");
+    const playBtn = document.getElementById("playBtn");
+    const muteBtn = document.getElementById("muteBtn");
+    const seek = document.getElementById("seek");
+    const tNow = document.getElementById("tNow");
+    const tDur = document.getElementById("tDur");
 
-        const existing = document.querySelector('script[data-yt-api="1"]');
-        if (!existing) {
-          const tag = document.createElement('script');
-          tag.src = "https://www.youtube.com/iframe_api";
-          tag.async = true;
-          tag.dataset.ytApi = "1";
-          document.head.appendChild(tag);
-        }
-
-        const prev = window.onYouTubeIframeAPIReady;
-        window.onYouTubeIframeAPIReady = () => {
-          try { if (typeof prev === "function") prev(); } catch(_) {}
-          resolve();
-        };
-
-        const t = setInterval(() => {
-          if (window.YT && window.YT.Player) { clearInterval(t); resolve(); }
-        }, 50);
-        setTimeout(() => clearInterval(t), 5000);
-      });
+    function fmt(s){
+      if (!isFinite(s)) return "0:00";
+      const m = Math.floor(s / 60);
+      const r = Math.floor(s % 60);
+      return `${m}:${String(r).padStart(2,"0")}`;
     }
 
-    let player;
-    let isUnmuted = false;
-
-    const pill = document.getElementById("soundPill");
-    const label = pill?.querySelector(".label");
-    const mountId = "ytPlayer";
-
-    function setPillState(on) {
-      isUnmuted = on;
-      pill?.classList.toggle("is-on", on);
-      pill?.setAttribute("aria-pressed", on ? "true" : "false");
-      if (label) label.textContent = on ? "Mute" : "Unmute";
+    function update(){
+      const dur = audio.duration || 0;
+      const cur = audio.currentTime || 0;
+      tNow.textContent = fmt(cur);
+      tDur.textContent = fmt(dur);
+      if (dur > 0){
+        const v = Math.round((cur / dur) * 1000);
+        seek.value = String(v);
+      }
     }
 
-    async function init() {
-      await loadYouTubeAPI();
+    audio.addEventListener("loadedmetadata", update);
+    audio.addEventListener("timeupdate", update);
+    audio.addEventListener("ended", () => {
+      playBtn.textContent = "▶";
+    });
 
-      player = new YT.Player(mountId, {
-        videoId,
-        playerVars: {
-          autoplay: 1,
-          mute: 1,
-          controls: 0,
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1,
-          loop: 1,
-          playlist: videoId
-        },
-        events: {
-          onReady: (e) => {
-            try { e.target.mute(); e.target.playVideo(); } catch (_) {}
-            setPillState(false);
-          }
-        }
-      });
+    playBtn.addEventListener("click", async () => {
+      if (audio.paused){
+        try { await audio.play(); } catch(e) {}
+        playBtn.textContent = "❚❚";
+      } else {
+        audio.pause();
+        playBtn.textContent = "▶";
+      }
+    });
 
-      pill?.addEventListener("click", () => {
-        if (!player) return;
+    muteBtn.addEventListener("click", () => {
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? "🔇" : "🔈";
+    });
 
-        if (!isUnmuted) {
-          try { player.unMute(); player.setVolume(100); player.playVideo(); } catch (_) {}
-          setPillState(true);
-        } else {
-          try { player.mute(); } catch (_) {}
-          setPillState(false);
-        }
-      });
-    }
+    seek.addEventListener("input", () => {
+      const dur = audio.duration || 0;
+      if (dur <= 0) return;
+      const v = Number(seek.value) / 1000;
+      audio.currentTime = v * dur;
+    });
 
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", init, { once: true });
-    } else {
-      init();
-    }
+    // initial
+    update();
   </script>
 </Layout>
