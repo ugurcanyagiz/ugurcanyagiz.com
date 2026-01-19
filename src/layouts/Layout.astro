@@ -19,9 +19,16 @@ const mailtoUrl = `mailto:${email}`;
 
   <body>
     <!-- TOP BRAND BAR -->
-    <header class="topbar">
-      <a class="brand" href="/" aria-label="Go to homepage">UGURCAN</a>
-    </header>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="/" aria-label="Go to homepage">UGURCAN</a>
+  </div>
+
+  <div class="subnav">
+    <slot name="subnav" />
+  </div>
+</header>
+
 
     <main class="main">
       <slot />
