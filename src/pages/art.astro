@@ -1,0 +1,289 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const cards = [
+  {
+    href: "/art/what-is-art",
+    category: "PHILOSOPHY",
+    subtitle: "Meaning • Expression",
+    title: "What Is Art, Really?",
+    excerpt:
+      "Art is not just beauty — it is communication, intention, and the courage to show an inner world.",
+    img: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=200&q=80",
+  },
+  {
+    href: "/art/renaissance-art",
+    category: "ART-HISTORY",
+    subtitle: "Perspective • Humanism",
+    title: "Renaissance: Seeing Differently",
+    excerpt:
+      "Perspective changed art forever — turning flat images into believable worlds and humans into the center.",
+    img: "https://images.unsplash.com/photo-1505666287591-07f7f7c1c7c9?w=200&q=80",
+  },
+  {
+    href: "/art/impressionism",
+    category: "ART-HISTORY",
+    subtitle: "Light • Moments",
+    title: "Impressionism: Painting the Moment",
+    excerpt:
+      "Instead of perfection, impressionists painted light, movement, and the feeling of a single instant.",
+    img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=200&q=80",
+  },
+  {
+    href: "/art/modern-art",
+    category: "MODERN",
+    subtitle: "Break • Experiment",
+    title: "Modern Art: Breaking the Rules",
+    excerpt:
+      "Modern artists asked a dangerous question: what if art doesn’t need to look like reality at all?",
+    img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=200&q=80",
+  },
+  {
+    href: "/art/abstract-art",
+    category: "MODERN",
+    subtitle: "Form • Emotion",
+    title: "Abstract Art: Feeling Over Form",
+    excerpt:
+      "Abstract art removes objects to focus on rhythm, color, and emotional impact.",
+    img: "https://images.unsplash.com/photo-1495567720989-cebdbdd97913?w=200&q=80",
+  },
+  {
+    href: "/art/music-and-brain",
+    category: "MUSIC",
+    subtitle: "Rhythm • Emotion",
+    title: "Why Music Feels Physical",
+    excerpt:
+      "Music activates emotion, memory, and movement — often faster than language ever could.",
+    img: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&q=80",
+  },
+  {
+    href: "/art/design-thinking",
+    category: "DESIGN",
+    subtitle: "Function • Simplicity",
+    title: "Design Is How It Works",
+    excerpt:
+      "Good design disappears. It solves problems quietly, without demanding attention.",
+    img: "https://images.unsplash.com/photo-1492724441997-5dc865305da7?w=200&q=80",
+  },
+  {
+    href: "/art/typography",
+    category: "DESIGN",
+    subtitle: "Letters • Voice",
+    title: "Typography Has a Personality",
+    excerpt:
+      "Fonts speak before words do — they suggest mood, trust, seriousness, or play.",
+    img: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=200&q=80",
+  },
+  {
+    href: "/art/ai-and-art",
+    category: "TECHNOLOGY",
+    subtitle: "Tools • Authorship",
+    title: "AI and the Question of Creativity",
+    excerpt:
+      "AI can generate images — but creativity still depends on intention, choice, and taste.",
+    img: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=200&q=80",
+  },
+  {
+    href: "/art/art-and-meaning",
+    category: "PHILOSOPHY",
+    subtitle: "Interpretation • Value",
+    title: "Does Art Need Meaning?",
+    excerpt:
+      "Sometimes meaning is clear. Sometimes it is created by the viewer — and that is the point.",
+    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=80",
+  },
+];
+
+const filters = ["ALL", "ART-HISTORY", "MODERN", "DESIGN", "MUSIC", "PHILOSOPHY", "TECHNOLOGY"];
+---
+
+<Layout title="Art — Ugurcan">
+  <section class="art-wrap">
+    <div class="hero">
+      <h1 class="page-title">Art</h1>
+      <p class="page-subtitle">
+        Art, design, music, and meaning — how humans express what words can’t.
+      </p>
+    </div>
+
+    <div class="filter-bar" role="toolbar" aria-label="Filter art topics">
+      {filters.map((f) => (
+        <button class={`filter-pill ${f === "ALL" ? "active" : ""}`} type="button" data-filter={f}>
+          {f}
+        </button>
+      ))}
+    </div>
+
+    <div class="card-list">
+      {cards.map((c) => (
+        <a class="art-card" href={c.href} data-category={c.category}>
+          <div class="card-icon">
+            <img src={c.img} alt={c.title} loading="lazy" />
+          </div>
+
+          <div class="card-text">
+            <span class="subtitle">{c.subtitle}</span>
+            <h2>{c.title}</h2>
+            <p>{c.excerpt}</p>
+          </div>
+
+          <span class={`badge badge--${c.category}`}>{c.category}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .art-wrap{
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 34px 18px 80px;
+    }
+
+    .page-title{
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 10px;
+    }
+
+    .page-subtitle{
+      font-size: 14px;
+      color: rgba(11,11,15,.62);
+      margin-bottom: 18px;
+      max-width: 60ch;
+    }
+
+    .filter-bar{
+      position: sticky;
+      top: 64px;
+      z-index: 25;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 0 14px;
+      background: rgba(245,245,247,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+
+    .filter-pill{
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      border: 1px solid rgba(0,0,0,.1);
+      background: white;
+      cursor: pointer;
+    }
+
+    .filter-pill.active{
+      background: #111;
+      color: white;
+    }
+
+    .card-list{
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .art-card{
+      position: relative;
+      display: flex;
+      gap: 14px;
+      padding: 16px 18px;
+      background: rgba(255,255,255,.9);
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,.06);
+      box-shadow: 0 8px 28px rgba(0,0,0,.06);
+      text-decoration: none;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .art-card:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 12px 36px rgba(0,0,0,.08);
+    }
+
+    .card-icon{
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #eee;
+      flex-shrink: 0;
+    }
+
+    .card-icon img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+    }
+
+    .card-text{
+      padding-right: 100px;
+    }
+
+    .subtitle{
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(11,11,15,.55);
+    }
+
+    .card-text h2{
+      margin: 4px 0 0;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .card-text p{
+      margin: 6px 0 0;
+      font-size: 14px;
+      color: rgba(11,11,15,.62);
+    }
+
+    .badge{
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 6px 10px;
+      border-radius: 999px;
+      letter-spacing: .14em;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    .badge--ART-HISTORY{ background: rgba(255,149,0,.15); color: #ff9500; }
+    .badge--MODERN{ background: rgba(175,82,222,.15); color: #af52de; }
+    .badge--DESIGN{ background: rgba(0,122,255,.15); color: #007aff; }
+    .badge--MUSIC{ background: rgba(255,45,85,.15); color: #ff2d55; }
+    .badge--PHILOSOPHY{ background: rgba(142,142,147,.2); color: #3c3c43; }
+    .badge--TECHNOLOGY{ background: rgba(90,200,250,.2); color: #007aff; }
+
+    .art-card.is-hidden{ display:none; }
+  </style>
+
+  <script is:inline>
+    const pills = document.querySelectorAll('.filter-pill');
+    const cards = document.querySelectorAll('.art-card');
+
+    pills.forEach(p => {
+      p.addEventListener('click', () => {
+        pills.forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+
+        const f = p.dataset.filter;
+        cards.forEach(c => {
+          c.classList.toggle(
+            'is-hidden',
+            f !== 'ALL' && c.dataset.category !== f
+          );
+        });
+      });
+    });
+  </script>
+</Layout>
