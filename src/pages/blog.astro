@@ -2,18 +2,18 @@
 import Layout from "../layouts/Layout.astro";
 
 const audioSrc = "/audio/pale-blue-dot.mp3";
-const storyImg = "/images/story-of-my-life.jpg"; // placeholder
+const title = "The Pale Blue Dot";
+const subtitle = "Carl Sagan · Audio recording";
 ---
 
 <Layout title="JLOG! — Ugurcan">
   <main class="jlog">
-
-    <!-- JLOG HEADER -->
-    <header class="head">
+    <header class="head" aria-label="JLOG header">
       <p class="kicker">JLOG!</p>
+      <h1 class="h1">{title}</h1>
+      <p class="meta">{subtitle}</p>
     </header>
 
-    <!-- AUDIO CARD -->
     <section class="card" aria-label="Audio recording">
       <div class="card-top">
         <div class="wave" aria-hidden="true">
@@ -30,105 +30,237 @@ const storyImg = "/images/story-of-my-life.jpg"; // placeholder
         </div>
 
         <div class="card-title">
-          <div class="big">The Pale Blue Dot</div>
-          <div class="small">Carl Sagan · Audio recording</div>
+          <div class="small">{subtitle}</div>
+          <div class="big">{title}</div>
         </div>
 
-        <a class="download" href={audioSrc} download>Download</a>
+        <a class="download" href={audioSrc} download aria-label="Download audio">Download</a>
       </div>
 
-      <div class="player">
-        <button class="play" id="playBtn">▶</button>
+      <div class="player" aria-label="Audio controls">
+        <button class="play" type="button" aria-label="Play/Pause" id="playBtn">▶</button>
+
         <div class="time" id="tNow">0:00</div>
-        <input class="seek" id="seek" type="range" min="0" max="1000" value="0" />
+
+        <input
+          class="seek"
+          id="seek"
+          type="range"
+          min="0"
+          max="1000"
+          value="0"
+          step="1"
+          aria-label="Seek"
+        />
+
         <div class="time" id="tDur">0:00</div>
-        <button class="mute" id="muteBtn">🔈</button>
+
+        <button class="mute" type="button" aria-label="Mute/Unmute" id="muteBtn">🔈</button>
       </div>
+
+      <div class="autoplay-hint" id="hint" aria-live="polite"></div>
 
       <audio id="audio" preload="metadata" playsinline>
         <source src={audioSrc} type="audio/mpeg" />
+        Your browser does not support the audio element.
       </audio>
     </section>
-
-    <!-- STORY OF MY LIFE CARD -->
-    <section class="story-card">
-      <a href="/jlog/story-of-my-life" class="story-link">
-        <div class="story-bg">
-          <div class="story-title">story of my life</div>
-        </div>
-      </a>
-    </section>
-
   </main>
 
   <style>
     .jlog{
       max-width: 1100px;
       margin: 0 auto;
-      padding: 24px 18px 90px;
+      padding: 18px 18px 90px;
       display: grid;
-      gap: 28px;
+      gap: 16px;
     }
 
+    /* Centered “JLOG!” under UGURCAN header */
     .head{
       text-align: center;
-      padding-top: 12px;
+      padding-top: 18px;
     }
 
     .kicker{
+      margin: 0 0 12px;
       font-size: 12px;
       font-weight: 900;
-      letter-spacing: .28em;
+      letter-spacing: .26em;
       text-transform: uppercase;
-      color: rgba(11,11,15,.65);
+      color: rgba(11,11,15,0.62);
     }
 
-    /* STORY CARD */
-    .story-card{
-      max-width: 980px;
+    .h1{
+      margin: 0 0 8px;
+      font-size: 44px;
+      font-weight: 850;
+      letter-spacing: -0.035em;
+      line-height: 1.05;
+      color: rgba(11,11,15,0.92);
+    }
+
+    .meta{
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(11,11,15,0.60);
+    }
+
+    .card{
+      width: min(980px, 100%);
       margin: 0 auto;
-    }
-
-    .story-link{
-      display: block;
-      border-radius: 24px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 22px;
+      box-shadow: 0 14px 48px rgba(0,0,0,0.07);
+      padding: 16px 16px 14px;
       overflow: hidden;
-      text-decoration: none;
     }
 
-    .story-bg{
-      height: 320px;
-      background:
-        radial-gradient(1200px 600px at 20% 10%, rgba(88,86,214,.25), transparent 60%),
-        radial-gradient(800px 400px at 80% 30%, rgba(52,199,89,.18), transparent 55%),
-        linear-gradient(180deg, #0b0b12, #14141c);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 30px 80px rgba(0,0,0,.35);
-      transition: transform .4s ease, box-shadow .4s ease;
+    .card-top{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      margin-bottom: 12px;
     }
 
-    .story-link:hover .story-bg{
-      transform: translateY(-2px);
-      box-shadow: 0 40px 100px rgba(0,0,0,.45);
+    .wave{
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: rgba(245,245,247,0.9);
+      border: 1px solid rgba(0,0,0,0.06);
+      color: rgba(11,11,15,0.55);
+      flex-shrink: 0;
     }
 
-    .story-title{
-      color: rgba(255,255,255,.92);
-      font-size: 34px;
-      font-weight: 800;
+    .card-title{ min-width:0; flex:1; }
+
+    .small{
+      font-size: 12px;
+      font-weight: 650;
+      color: rgba(11,11,15,0.55);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .big{
+      margin-top: 2px;
+      font-size: 16px;
+      font-weight: 850;
       letter-spacing: -0.02em;
-      text-transform: lowercase;
+      color: rgba(11,11,15,0.90);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .download{
+      flex-shrink:0;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.90);
+      color: rgba(11,11,15,0.78);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .download:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,1);
+      color: rgba(11,11,15,0.92);
+    }
+
+    .player{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      padding: 2px 2px 4px;
+    }
+
+    .play, .mute{
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.92);
+      color: rgba(11,11,15,0.86);
+      cursor: pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition: transform .15s ease, background .15s ease;
+      user-select:none;
+    }
+    .play:hover, .mute:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,1);
+    }
+
+    .time{
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      font-weight: 750;
+      color: rgba(11,11,15,0.58);
+      min-width: 44px;
+      text-align:center;
+      user-select:none;
+    }
+
+    .seek{
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.12);
+      outline: none;
+    }
+    .seek::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      appearance:none;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(11,11,15,0.85);
+      border: 2px solid rgba(255,255,255,0.90);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+    .seek::-moz-range-thumb{
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(11,11,15,0.85);
+      border: 2px solid rgba(255,255,255,0.90);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+
+    .autoplay-hint{
+      margin: 6px 2px 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: rgba(11,11,15,0.52);
+      min-height: 18px;
     }
 
     @media (max-width: 520px){
-      .story-bg{ height: 220px; }
-      .story-title{ font-size: 26px; }
+      .h1{ font-size: 34px; }
+      .time{ min-width: 38px; }
+      .download{ padding: 9px 10px; }
     }
   </style>
 
-  <!-- AUDIO SCRIPT (AYNI KALIYOR, KISALTTIM) -->
   <script is:inline>
     const audio = document.getElementById("audio");
     const playBtn = document.getElementById("playBtn");
@@ -136,17 +268,77 @@ const storyImg = "/images/story-of-my-life.jpg"; // placeholder
     const seek = document.getElementById("seek");
     const tNow = document.getElementById("tNow");
     const tDur = document.getElementById("tDur");
+    const hint = document.getElementById("hint");
 
-    const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,"0")}`;
+    function fmt(s){
+      if (!isFinite(s)) return "0:00";
+      const m = Math.floor(s / 60);
+      const r = Math.floor(s % 60);
+      return `${m}:${String(r).padStart(2,"0")}`;
+    }
 
-    audio.addEventListener("timeupdate", () => {
-      tNow.textContent = fmt(audio.currentTime || 0);
-      tDur.textContent = fmt(audio.duration || 0);
-      seek.value = audio.duration ? (audio.currentTime / audio.duration) * 1000 : 0;
+    function update(){
+      const dur = audio.duration || 0;
+      const cur = audio.currentTime || 0;
+      tNow.textContent = fmt(cur);
+      tDur.textContent = fmt(dur);
+      if (dur > 0){
+        const v = Math.round((cur / dur) * 1000);
+        seek.value = String(v);
+      }
+    }
+
+    function setPlaying(on){
+      playBtn.textContent = on ? "❚❚" : "▶";
+    }
+
+    async function tryAutoplay(){
+      // Best-effort autoplay. Some browsers block it unless user interacted.
+      try{
+        await audio.play();
+        setPlaying(true);
+        hint.textContent = "";
+      }catch(e){
+        setPlaying(false);
+        hint.textContent = "Autoplay may be blocked by your browser. Press Play to start.";
+      }
+    }
+
+    audio.addEventListener("loadedmetadata", update);
+    audio.addEventListener("timeupdate", update);
+    audio.addEventListener("play", () => setPlaying(true));
+    audio.addEventListener("pause", () => setPlaying(false));
+    audio.addEventListener("ended", () => setPlaying(false));
+
+    playBtn.addEventListener("click", async () => {
+      if (audio.paused){
+        try { await audio.play(); } catch(e) {}
+      } else {
+        audio.pause();
+      }
     });
 
-    playBtn.onclick = async () => audio.paused ? audio.play() : audio.pause();
-    muteBtn.onclick = () => audio.muted = !audio.muted;
-    seek.oninput = () => audio.currentTime = (seek.value / 1000) * audio.duration;
+    muteBtn.addEventListener("click", () => {
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? "🔇" : "🔈";
+    });
+
+    seek.addEventListener("input", () => {
+      const dur = audio.duration || 0;
+      if (dur <= 0) return;
+      const v = Number(seek.value) / 1000;
+      audio.currentTime = v * dur;
+    });
+
+    // Start automatically when page opens (best effort)
+    if (document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", () => {
+        update();
+        tryAutoplay();
+      }, { once: true });
+    } else {
+      update();
+      tryAutoplay();
+    }
   </script>
 </Layout>
