@@ -1,90 +1,98 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FilterBar from "../components/FilterBar.astro";
+
+/**
+ * Future categories (filters)
+ * Keep the strings consistent in:
+ * - filters array
+ * - card.category
+ * - badge--CATEGORY class names
+ */
+const filters = ["ALL", "AI", "BIOTECH", "SPACE", "ENERGY", "COMPUTING", "SOCIETY", "ROBOTICS"];
 
 const cards = [
   {
-    href: "/future/artificial-intelligence",
+    href: "/future/ai-agents",
     category: "AI",
-    subtitle: "Intelligence • Automation",
-    title: "Artificial Intelligence After the Hype",
+    subtitle: "Workflows • Autonomy",
+    title: "AI Agents: From Tools to Teammates",
     excerpt:
-      "AI is powerful, but not magical. The real impact comes from how humans choose to use, limit, and verify it.",
+      "The next wave isn’t just chat — it’s agents that plan, call tools, verify, and hand you finished work (with receipts).",
     img: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=200&q=80",
   },
   {
-    href: "/future/future-of-work",
-    category: "SOCIETY",
-    subtitle: "Jobs • Meaning",
-    title: "The Future of Work",
+    href: "/future/longevity-biotech",
+    category: "BIOTECH",
+    subtitle: "Aging • Prevention",
+    title: "Longevity: Treating Aging Like an Engineering Problem",
     excerpt:
-      "Automation will remove tasks, not purpose. The challenge is redesigning work around human strengths.",
-    img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=200&q=80",
-  },
-  {
-    href: "/future/energy-transition",
-    category: "CLIMATE",
-    subtitle: "Energy • Sustainability",
-    title: "The Energy Transition",
-    excerpt:
-      "The future depends less on invention and more on scaling what already works — cleanly and affordably.",
-    img: "https://images.unsplash.com/photo-1509395176047-4a66953fd231?w=200&q=80",
-  },
-  {
-    href: "/future/biotechnology",
-    category: "BIO",
-    subtitle: "Health • Engineering",
-    title: "Biotechnology and Human Limits",
-    excerpt:
-      "Gene editing and bioengineering promise longer, healthier lives — but raise deep ethical questions.",
+      "Instead of waiting for disease, biotech is moving toward monitoring and repairing the body early — like maintenance for biology.",
     img: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d1?w=200&q=80",
   },
   {
-    href: "/future/space-exploration",
+    href: "/future/space-economy",
     category: "SPACE",
-    subtitle: "Exploration • Survival",
-    title: "Why Humanity Looks to Space",
+    subtitle: "Launch costs • Industry",
+    title: "The Space Economy: When Orbit Becomes a Workplace",
     excerpt:
-      "Space is not an escape plan — but it may become a long-term insurance policy for civilization.",
+      "Cheaper launch and better robotics could turn orbit into a factory floor — communications, materials, energy, and research.",
     img: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=200&q=80",
   },
   {
-    href: "/future/smart-cities",
-    category: "TECH",
-    subtitle: "Infrastructure • Data",
-    title: "Smart Cities: Promise and Risk",
+    href: "/future/fusion-and-grid",
+    category: "ENERGY",
+    subtitle: "Fusion • Storage",
+    title: "Energy: Fusion, Storage, and the Smarter Grid",
     excerpt:
-      "Sensors can optimize cities — or quietly centralize control. Governance matters as much as technology.",
-    img: "https://images.unsplash.com/photo-1494526585095-c41746248156?w=200&q=80",
+      "Even before fusion arrives, batteries + software can reshape the grid — balancing supply and demand in real time.",
+    img: "https://images.unsplash.com/photo-1509395176047-4a66953fd231?w=200&q=80",
   },
   {
-    href: "/future/meaning-in-the-future",
-    category: "PHILOSOPHY",
-    subtitle: "Purpose • Values",
-    title: "Meaning in a High-Tech Future",
+    href: "/future/quantum-post-crypto",
+    category: "COMPUTING",
+    subtitle: "Quantum • Security",
+    title: "Quantum Computing: Powerful, But Not Magic",
     excerpt:
-      "As technology accelerates, the human question becomes sharper: what should we optimize for?",
-    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=80",
+      "Quantum won’t replace normal computers. It will crush specific problems — and force the world to upgrade encryption.",
+    img: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=200&q=80",
+  },
+  {
+    href: "/future/robots-at-home",
+    category: "ROBOTICS",
+    subtitle: "Dexterity • Cost curves",
+    title: "Robots at Home: The Hardest Product Challenge",
+    excerpt:
+      "Home robots need safe strength, good hands, and common sense — the last 10% is the toughest, but progress is real.",
+    img: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=200&q=80",
+  },
+  {
+    href: "/future/society-trust",
+    category: "SOCIETY",
+    subtitle: "Identity • Truth",
+    title: "Trust in the AI Era: Proving What’s Real",
+    excerpt:
+      "As synthetic media grows, society will rely more on verification: provenance, signatures, and transparent evidence trails.",
+    img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=200&q=80",
   },
 ];
-
-const filters = ["ALL", "AI", "TECH", "BIO", "SPACE", "CLIMATE", "SOCIETY", "PHILOSOPHY"];
 ---
 
 <Layout title="Future — Ugurcan">
+  <FilterBar
+    slot="subnav"
+    filters={filters}
+    cardSelector=".future-card"
+    queryKey="topic"
+    defaultFilter="ALL"
+  />
+
   <section class="future-wrap">
     <div class="hero">
       <h1 class="page-title">Future</h1>
       <p class="page-subtitle">
-        Technology, humanity, and the choices that shape what comes next.
+        The next decade, explained without hype — what changes, what stays hard, and what matters most.
       </p>
-    </div>
-
-    <div class="filter-bar" role="toolbar" aria-label="Filter future topics">
-      {filters.map((f) => (
-        <button class={`filter-pill ${f === "ALL" ? "active" : ""}`} type="button" data-filter={f}>
-          {f}
-        </button>
-      ))}
     </div>
 
     <div class="card-list">
@@ -95,12 +103,16 @@ const filters = ["ALL", "AI", "TECH", "BIO", "SPACE", "CLIMATE", "SOCIETY", "PHI
           </div>
 
           <div class="card-text">
-            <span class="subtitle">{c.subtitle}</span>
+            <div class="subtitle-row">
+              <span class="subtitle">{c.subtitle}</span>
+            </div>
             <h2>{c.title}</h2>
             <p>{c.excerpt}</p>
           </div>
 
-          <span class={`badge badge--${c.category}`}>{c.category}</span>
+          <span class={`badge badge--${c.category}`} aria-label={`Category ${c.category}`}>
+            {c.category}
+          </span>
         </a>
       ))}
     </div>
@@ -110,7 +122,7 @@ const filters = ["ALL", "AI", "TECH", "BIO", "SPACE", "CLIMATE", "SOCIETY", "PHI
     .future-wrap{
       max-width: 880px;
       margin: 0 auto;
-      padding: 34px 18px 80px;
+      padding: 28px 18px 80px;
     }
 
     .page-title{
@@ -121,144 +133,119 @@ const filters = ["ALL", "AI", "TECH", "BIO", "SPACE", "CLIMATE", "SOCIETY", "PHI
     }
 
     .page-subtitle{
+      margin: 0 0 18px;
       font-size: 14px;
-      color: rgba(11,11,15,.62);
-      margin-bottom: 18px;
-      max-width: 60ch;
-    }
-
-    .filter-bar{
-      position: sticky;
-      top: 64px;
-      z-index: 25;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 12px 0 14px;
-      background: rgba(245,245,247,.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(0,0,0,.06);
-    }
-
-    .filter-pill{
-      border-radius: 999px;
-      padding: 9px 12px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      border: 1px solid rgba(0,0,0,.1);
-      background: white;
-      cursor: pointer;
-    }
-
-    .filter-pill.active{
-      background: #111;
-      color: white;
+      line-height: 1.55;
+      color: rgba(11,11,15,0.62);
+      max-width: 66ch;
     }
 
     .card-list{
-      display: flex;
+      display:flex;
       flex-direction: column;
       gap: 14px;
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .future-card{
       position: relative;
-      display: flex;
+      display:flex;
+      align-items:flex-start;
       gap: 14px;
       padding: 16px 18px;
-      background: rgba(255,255,255,.9);
+      background: rgba(255,255,255,0.9);
       border-radius: 18px;
-      border: 1px solid rgba(0,0,0,.06);
-      box-shadow: 0 8px 28px rgba(0,0,0,.06);
-      text-decoration: none;
-      transition: transform .15s ease, box-shadow .15s ease;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.06);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      text-decoration:none;
+      overflow:hidden;
     }
 
     .future-card:hover{
       transform: translateY(-1px);
-      box-shadow: 0 12px 36px rgba(0,0,0,.08);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.08);
     }
 
     .card-icon{
       width: 46px;
       height: 46px;
+      flex-shrink:0;
       border-radius: 12px;
-      overflow: hidden;
-      background: #eee;
-      flex-shrink: 0;
+      overflow:hidden;
+      background:#eaeaec;
     }
 
     .card-icon img{
       width:100%;
       height:100%;
       object-fit: cover;
+      display:block;
     }
 
     .card-text{
-      padding-right: 110px;
+      min-width: 0;
+      padding-right: 108px;
     }
+
+    .subtitle-row{ margin-bottom: 6px; }
 
     .subtitle{
       font-size: 12px;
       font-weight: 700;
-      color: rgba(11,11,15,.55);
+      color: rgba(11,11,15,0.55);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
 
     .card-text h2{
-      margin: 4px 0 0;
+      margin:0;
       font-size: 16px;
       font-weight: 800;
+      color:#0b0b0f;
     }
 
     .card-text p{
       margin: 6px 0 0;
       font-size: 14px;
-      color: rgba(11,11,15,.62);
+      line-height: 1.55;
+      color: rgba(11,11,15,0.62);
     }
 
     .badge{
-      position: absolute;
+      position:absolute;
       top: 14px;
       right: 14px;
+      padding: 7px 10px;
+      border-radius: 999px;
       font-size: 11px;
       font-weight: 900;
-      padding: 6px 10px;
-      border-radius: 999px;
       letter-spacing: .14em;
-      border: 1px solid rgba(0,0,0,.08);
+      text-transform: uppercase;
+      border: 1px solid rgba(0,0,0,0.08);
+      backdrop-filter: blur(10px);
+      user-select:none;
     }
 
-    /* Future color palette */
-    .badge--AI{ background: rgba(0,122,255,.15); color: #007aff; }
-    .badge--TECH{ background: rgba(90,200,250,.2); color: #007aff; }
-    .badge--BIO{ background: rgba(52,199,89,.18); color: #1e9646; }
-    .badge--SPACE{ background: rgba(88,86,214,.18); color: #5856d6; }
-    .badge--CLIMATE{ background: rgba(48,209,88,.18); color: #248a3d; }
-    .badge--SOCIETY{ background: rgba(255,149,0,.18); color: #ff9500; }
-    .badge--PHILOSOPHY{ background: rgba(142,142,147,.22); color: #3c3c43; }
+    /* Muted Apple-like category colors */
+    .badge--AI{        background: rgba(0,122,255,.14);  color: rgba(0,122,255,.95);  border-color: rgba(0,122,255,.20); }
+    .badge--BIOTECH{   background: rgba(52,199,89,.14);  color: rgba(30,150,70,.95);  border-color: rgba(52,199,89,.22); }
+    .badge--SPACE{     background: rgba(88,86,214,.14);  color: rgba(88,86,214,.95);  border-color: rgba(88,86,214,.20); }
+    .badge--ENERGY{    background: rgba(255,149,0,.14);  color: rgba(255,149,0,.95);  border-color: rgba(255,149,0,.22); }
+    .badge--COMPUTING{ background: rgba(175,82,222,.14); color: rgba(175,82,222,.95); border-color: rgba(175,82,222,.22); }
+    .badge--SOCIETY{   background: rgba(142,142,147,.16); color: rgba(60,60,67,.80); border-color: rgba(142,142,147,.22); }
+    .badge--ROBOTICS{  background: rgba(255,45,85,.14);  color: rgba(255,45,85,.92);  border-color: rgba(255,45,85,.22); }
 
+    /* FilterBar toggles this */
     .future-card.is-hidden{ display:none; }
+
+    @media (max-width: 480px){
+      .page-title{ font-size: 34px; }
+      .card-text{ padding-right: 0; }
+      .badge{ position: static; margin-left:auto; align-self:flex-start; }
+      .future-card{ gap: 12px; }
+    }
   </style>
-
-  <script is:inline>
-    const pills = document.querySelectorAll('.filter-pill');
-    const cards = document.querySelectorAll('.future-card');
-
-    pills.forEach(p => {
-      p.addEventListener('click', () => {
-        pills.forEach(x => x.classList.remove('active'));
-        p.classList.add('active');
-
-        const f = p.dataset.filter;
-        cards.forEach(c => {
-          c.classList.toggle(
-            'is-hidden',
-            f !== 'ALL' && c.dataset.category !== f
-          );
-        });
-      });
-    });
-  </script>
 </Layout>
