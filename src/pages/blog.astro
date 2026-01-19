@@ -1,32 +1,48 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import FilterBar from "../components/FilterBar.astro";
 
 const audioSrc = "/audio/pale-blue-dot.mp3";
 
-// JLOG post cards
+// Audio üstündeki küçük başlıkları (kart içinde) istersen tutuyoruz, bunlar sayfa başlığı değil:
+const audioTitle = "The Pale Blue Dot";
+const audioSubtitle = "Carl Sagan · Audio recording";
+
+// Quote (audio altında)
+const quote = "I don't want to believe. I want to know.";
+
+// Blog cards
 const posts = [
   {
     href: "/jlog/story-of-my-life",
     category: "LIFE",
     title: "the story of my life",
-    excerpt:
-      "A personal thread: curiosity, migration, building, learning — and becoming.",
+    excerpt: "A personal thread: curiosity, migration, building, learning — and becoming.",
+    // Seçenek A:
     img: "/images/story-of-my-life.jpg",
+  },
+  {
+    href: "/jlog/what-is-real",
+    category: "REALITY",
+    title: "do we really know what is real?",
+    excerpt: "Perception, dreams, memory, and the strange edges of certainty.",
+    // Seçenek A (önerilen):
+    img: "/images/reality-dali.jpg",
+    // Seçenek B (şimdilik): aşağıdaki satırı açıp üsttekini kapatabilirsin
+    // img: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=1600&q=80",
   },
 ];
 
-const filters = ["ALL", "LIFE"];
+const filters = ["ALL", "LIFE", "REALITY"];
 ---
 
 <Layout title="JLOG! — Ugurcan">
   <main class="jlog">
-    <!-- Only JLOG! under UGURCAN -->
+    <!-- HEADER (sadece JLOG!) -->
     <header class="head" aria-label="JLOG header">
       <p class="kicker">JLOG!</p>
     </header>
 
-    <!-- AUDIO CARD -->
+    <!-- AUDIO CARD (aynı tasarım kalsın) -->
     <section class="card" aria-label="Audio recording">
       <div class="card-top">
         <div class="wave" aria-hidden="true">
@@ -43,8 +59,8 @@ const filters = ["ALL", "LIFE"];
         </div>
 
         <div class="card-title">
-          <div class="small">Carl Sagan · Audio recording</div>
-          <div class="big">The Pale Blue Dot</div>
+          <div class="small">{audioSubtitle}</div>
+          <div class="big">{audioTitle}</div>
         </div>
 
         <a class="download" href={audioSrc} download aria-label="Download audio">Download</a>
@@ -55,16 +71,7 @@ const filters = ["ALL", "LIFE"];
 
         <div class="time" id="tNow">0:00</div>
 
-        <input
-          class="seek"
-          id="seek"
-          type="range"
-          min="0"
-          max="1000"
-          value="0"
-          step="1"
-          aria-label="Seek"
-        />
+        <input class="seek" id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" />
 
         <div class="time" id="tDur">0:00</div>
 
@@ -79,37 +86,39 @@ const filters = ["ALL", "LIFE"];
       </audio>
     </section>
 
-    <!-- JLOG label + Filter (Apple-like, minimal, sweet spacing) -->
-    <section class="below-audio" aria-label="JLOG posts">
-      <div class="posts-head">
-        <p class="posts-kicker">...</p>
-      </div>
+    <!-- QUOTE (audio altı) -->
+    <section class="quote" aria-label="Quote">
+      <p class="quote-text">“{quote}”</p>
+    </section>
 
-      <FilterBar
-        filters={filters}
-        cardSelector=".jlog-card"
-        queryKey="cat"
-        defaultFilter="ALL"
-      />
-
-      <div class="post-list">
-        {posts.map((p) => (
-          <a class="jlog-card" href={p.href} data-category={p.category} aria-label={p.title}>
-            <div class="jlog-card__bg" aria-hidden="true">
-              <img src={p.img} alt="" loading="lazy" />
-            </div>
-
-            <div class="jlog-card__overlay" aria-hidden="true"></div>
-
-            <div class="jlog-card__text">
-              <div class="jlog-card__title">{p.title}</div>
-              <div class="jlog-card__excerpt">{p.excerpt}</div>
-            </div>
-
-            <div class="jlog-card__badge">{p.category}</div>
-          </a>
+    <!-- FILTER -->
+    <nav class="filterbar" aria-label="JLOG filters">
+      <div class="rail" role="toolbar" aria-label="Filter options">
+        {filters.map((f) => (
+          <button
+            class={`pill ${f === "ALL" ? "active" : ""}`}
+            type="button"
+            data-filter={f}
+            aria-pressed={f === "ALL" ? "true" : "false"}
+          >
+            {f}
+          </button>
         ))}
       </div>
+    </nav>
+
+    <!-- POSTS -->
+    <section class="posts" aria-label="JLOG posts">
+      {posts.map((p) => (
+        <a class="post-card" href={p.href} data-category={p.category} style={`--bg:url('${p.img}')`}>
+          <span class={`badge badge--${p.category}`}>{p.category}</span>
+
+          <div class="overlay">
+            <h2>{p.title}</h2>
+            <p>{p.excerpt}</p>
+          </div>
+        </a>
+      ))}
     </section>
   </main>
 
@@ -122,11 +131,9 @@ const filters = ["ALL", "LIFE"];
       gap: 16px;
     }
 
-    /* Only JLOG! under UGURCAN header */
     .head{
       text-align: center;
       padding-top: 18px;
-      padding-bottom: 6px;
     }
 
     .kicker{
@@ -138,7 +145,7 @@ const filters = ["ALL", "LIFE"];
       color: rgba(11,11,15,0.62);
     }
 
-    /* Audio card (kept) */
+    /* AUDIO CARD */
     .card{
       width: min(980px, 100%);
       margin: 0 auto;
@@ -286,99 +293,128 @@ const filters = ["ALL", "LIFE"];
       min-height: 18px;
     }
 
-    /* Below-audio block */
-    .below-audio{
+    /* QUOTE */
+    .quote{
       width: min(980px, 100%);
-      margin: 2px auto 0;
-      padding-top: 6px;
-    }
-
-    .posts-head{
+      margin: 0 auto;
       text-align: center;
-      margin: 10px 0 6px;
+      padding: 10px 6px 2px;
     }
-
-    .posts-kicker{
+    .quote-text{
       margin: 0;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: .26em;
-      text-transform: uppercase;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
       color: rgba(11,11,15,0.62);
     }
 
-    /* Posts list */
-    .post-list{
-      display:flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 12px;
+    /* FILTER BAR (Apple-like, yatay kaydırmalı) */
+    .filterbar{
+      width: min(980px, 100%);
+      margin: 6px auto 0;
+      padding: 6px 0 0;
     }
 
-    .jlog-card{
+    .rail{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      -webkit-overflow-scrolling:touch;
+      padding: 2px 2px 8px;
+      scrollbar-width:none;
+    }
+    .rail::-webkit-scrollbar{ display:none; }
+
+    .pill{
+      flex:0 0 auto;
+      appearance:none;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.88);
+      color: rgba(11,11,15,.72);
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12.5px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor:pointer;
+      transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
+      user-select:none;
+      white-space: nowrap;
+    }
+    .pill:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,1);
+      color: rgba(11,11,15,.90);
+      border-color: rgba(0,0,0,.14);
+    }
+    .pill.active{
+      background: rgba(11,11,15,.92);
+      color: rgba(255,255,255,.94);
+      border-color: rgba(11,11,15,.18);
+    }
+
+    /* POSTS */
+    .posts{
+      width: min(980px, 100%);
+      margin: 6px auto 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    .post-card{
       position: relative;
       border-radius: 22px;
       overflow: hidden;
+      min-height: 180px;
       border: 1px solid rgba(0,0,0,0.06);
-      background: rgba(255,255,255,0.92);
-      box-shadow: 0 14px 48px rgba(0,0,0,0.07);
-      min-height: 220px;
-      display:flex;
-      align-items:flex-end;
-      text-decoration:none;
-      isolation: isolate;
-      transition: transform .15s ease, box-shadow .15s ease;
-    }
-    .jlog-card:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 18px 60px rgba(0,0,0,0.09);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.10);
+      background: #111;
+      text-decoration: none;
+      display: block;
+
+      background-image: var(--bg);
+      background-size: cover;
+      background-position: center;
+      transform: translateZ(0);
     }
 
-    .jlog-card__bg{
+    .post-card::before{
+      content:"";
       position:absolute;
       inset:0;
-      z-index: 0;
-    }
-    .jlog-card__bg img{
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-      transform: scale(1.02);
-      filter: saturate(0.95) contrast(0.98);
-    }
-
-    .jlog-card__overlay{
-      position:absolute;
-      inset:0;
-      z-index: 1;
       background:
-        linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 82%, rgba(0,0,0,0.62) 100%);
+        radial-gradient(1200px 360px at 22% 80%, rgba(0,0,0,0.55), transparent 55%),
+        linear-gradient(180deg, rgba(0,0,0,0.10), rgba(0,0,0,0.58));
+      pointer-events:none;
     }
 
-    .jlog-card__text{
-      position: relative;
-      z-index: 2;
+    .overlay{
+      position:absolute;
+      inset:auto 0 0 0;
       padding: 18px 18px 16px;
-      max-width: 70ch;
+      z-index: 2;
     }
 
-    .jlog-card__title{
+    .overlay h2{
+      margin: 0 0 6px;
       font-size: 22px;
       font-weight: 900;
       letter-spacing: -0.03em;
       color: rgba(255,255,255,0.96);
-      text-transform: lowercase;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.45);
     }
 
-    .jlog-card__excerpt{
-      margin-top: 6px;
-      font-size: 14px;
-      line-height: 1.55;
-      color: rgba(255,255,255,0.78);
+    .overlay p{
+      margin: 0;
+      font-size: 13.5px;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.80);
+      max-width: 70ch;
     }
 
-    .jlog-card__badge{
+    .badge{
       position:absolute;
       top: 14px;
       right: 14px;
@@ -389,26 +425,26 @@ const filters = ["ALL", "LIFE"];
       font-weight: 900;
       letter-spacing: .14em;
       text-transform: uppercase;
-      background: rgba(255,255,255,0.80);
+      background: rgba(255,255,255,0.82);
       color: rgba(11,11,15,0.80);
-      border: 1px solid rgba(0,0,0,0.10);
-      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,0,0,0.08);
+      backdrop-filter: blur(10px);
       user-select:none;
     }
 
-    /* FilterBar hides this */
-    .jlog-card.is-hidden{ display:none; }
+    /* filter toggles */
+    .post-card.is-hidden{ display: none; }
 
     @media (max-width: 520px){
-      .jlog{ padding: 14px 12px 70px; }
       .time{ min-width: 38px; }
       .download{ padding: 9px 10px; }
-      .jlog-card{ min-height: 200px; }
-      .jlog-card__title{ font-size: 20px; }
+      .overlay h2{ font-size: 18px; }
+      .post-card{ min-height: 170px; }
     }
   </style>
 
   <script is:inline>
+    // AUDIO LOGIC
     const audio = document.getElementById("audio");
     const playBtn = document.getElementById("playBtn");
     const muteBtn = document.getElementById("muteBtn");
@@ -440,8 +476,6 @@ const filters = ["ALL", "LIFE"];
     }
 
     async function tryAutoplay(){
-      // Best-effort autoplay. Many browsers block autoplay with sound.
-      // We do NOT force unmuted playback; user can click Play if blocked.
       try{
         await audio.play();
         setPlaying(true);
@@ -487,5 +521,26 @@ const filters = ["ALL", "LIFE"];
       update();
       tryAutoplay();
     }
+
+    // FILTER LOGIC (posts)
+    const pills = Array.from(document.querySelectorAll(".pill"));
+    const cards = Array.from(document.querySelectorAll(".post-card"));
+
+    function apply(filter){
+      pills.forEach(p => {
+        const active = p.dataset.filter === filter;
+        p.classList.toggle("active", active);
+        p.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+
+      cards.forEach(card => {
+        const cat = card.dataset.category;
+        const show = (filter === "ALL") || (cat === filter);
+        card.classList.toggle("is-hidden", !show);
+      });
+    }
+
+    pills.forEach(p => p.addEventListener("click", () => apply(p.dataset.filter)));
+    apply("ALL");
   </script>
 </Layout>
