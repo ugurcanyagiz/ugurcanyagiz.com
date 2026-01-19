@@ -2,29 +2,22 @@
 import Layout from "../layouts/Layout.astro";
 
 const videoId = "wupToqz1e2g";
-const title = "JLOG! — Ugurcan";
-const src =
-  `https://www.youtube-nocookie.com/embed/${videoId}` +
-  `?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1` +
-  `&loop=1&playlist=${videoId}`;
 ---
 
-<Layout title={title}>
+<Layout title="JLOG! — Ugurcan">
   <section class="jlog">
-    <div class="video-wrap" aria-label="JLOG video">
-      <iframe
-        src={src}
-        title="JLOG video"
-        allow="autoplay; encrypted-media; picture-in-picture"
-        allowfullscreen
-        loading="eager"
-        referrerpolicy="strict-origin-when-cross-origin"
-      />
+    <div class="stage">
+      <!-- YouTube IFrame API will replace this div with an iframe -->
+      <div id="ytPlayer" class="player" aria-label="JLOG video player"></div>
+
+      <button id="soundPill" class="sound-pill" type="button" aria-pressed="false">
+        <span class="dot" aria-hidden="true"></span>
+        Unmute
+      </button>
     </div>
   </section>
 
   <style>
-    /* No frame, free-floating center */
     .jlog{
       min-height: calc(100vh - 64px - 72px);
       display: grid;
@@ -32,26 +25,164 @@ const src =
       padding: 22px 18px 60px;
     }
 
-    /* Responsive, centered, subtle Apple-like floating */
-    .video-wrap{
+    /* free-floating centered video (no extra frame UI) */
+    .stage{
+      position: relative;
       width: min(980px, 100%);
       aspect-ratio: 16 / 9;
       border-radius: 22px;
       overflow: hidden;
-      background: rgba(255,255,255,0.65);
+      background: rgba(0,0,0,0.06);
       box-shadow: 0 18px 60px rgba(0,0,0,.12);
     }
 
-    iframe{
+    .player{
       width: 100%;
       height: 100%;
-      border: 0;
-      display: block;
+    }
+
+    /* Pill button */
+    .sound-pill{
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      z-index: 5;
+
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      border-radius: 999px;
+      padding: 10px 12px;
+
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(18,18,22,0.55);
+      backdrop-filter: blur(14px);
+
+      color: rgba(255,255,255,0.92);
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: -0.01em;
+
+      cursor: pointer;
+      user-select: none;
+
+      transition: transform .15s ease, background .15s ease, border-color .15s ease;
+    }
+
+    .sound-pill:hover{
+      transform: translateY(-1px);
+      background: rgba(18,18,22,0.70);
+      border-color: rgba(255,255,255,0.30);
+    }
+
+    .dot{
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      box-shadow: 0 0 0 3px rgba(255,255,255,0.10);
+    }
+
+    /* "Unmuted" state */
+    .sound-pill.is-on{
+      background: rgba(255,255,255,0.80);
+      border-color: rgba(0,0,0,0.08);
+      color: rgba(11,11,15,0.92);
+    }
+    .sound-pill.is-on .dot{
+      background: rgba(52,199,89,0.95);
+      box-shadow: 0 0 0 3px rgba(52,199,89,0.18);
     }
 
     @media (max-width: 520px){
       .jlog{ padding: 18px 12px 50px; }
-      .video-wrap{ border-radius: 18px; }
+      .stage{ border-radius: 18px; }
+      .sound-pill{ right: 10px; bottom: 10px; padding: 9px 11px; }
     }
   </style>
+
+  <script is:inline define:vars={{ videoId }}>
+    // Load YouTube IFrame API once
+    function loadYouTubeAPI() {
+      return new Promise((resolve) => {
+        if (window.YT && window.YT.Player) return resolve();
+        const existing = document.querySelector('script[data-yt-api="1"]');
+        if (existing) return resolve(); // onYouTubeIframeAPIReady will still fire / or YT will exist soon
+
+        const tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        tag.async = true;
+        tag.dataset.ytApi = "1";
+        document.head.appendChild(tag);
+
+        window.onYouTubeIframeAPIReady = () => resolve();
+      });
+    }
+
+    let player;
+    let isUnmuted = false;
+
+    const pill = document.getElementById("soundPill");
+    const mountId = "ytPlayer";
+
+    function setPillState(on) {
+      isUnmuted = on;
+      pill.classList.toggle("is-on", on);
+      pill.textContent = on ? "Mute" : "Unmute";
+      pill.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+
+    async function init() {
+      await loadYouTubeAPI();
+
+      // Create player
+      player = new YT.Player(mountId, {
+        videoId,
+        playerVars: {
+          autoplay: 1,
+          mute: 1,
+          controls: 0,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1,
+          loop: 1,
+          playlist: videoId
+        },
+        events: {
+          onReady: (e) => {
+            // Start muted autoplay
+            try {
+              e.target.mute();
+              e.target.playVideo();
+            } catch (_) {}
+            setPillState(false);
+          }
+        }
+      });
+
+      // Toggle sound on click (user gesture)
+      pill.addEventListener("click", () => {
+        if (!player || !player.unMute) return;
+
+        if (!isUnmuted) {
+          try {
+            player.unMute();
+            player.setVolume(100);
+            player.playVideo();
+          } catch (_) {}
+          setPillState(true);
+        } else {
+          try { player.mute(); } catch (_) {}
+          setPillState(false);
+        }
+      });
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  </script>
 </Layout>
