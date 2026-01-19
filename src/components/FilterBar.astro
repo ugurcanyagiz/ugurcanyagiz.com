@@ -8,11 +8,7 @@ const {
 
 <div class="filter-wrap" role="toolbar" aria-label="Filter content">
   {filters.map((f) => (
-    <button
-      class={`filter-pill ${f === defaultFilter ? "active" : ""}`}
-      type="button"
-      data-filter={f}
-    >
+    <button class={`pill ${f === defaultFilter ? "active" : ""}`} type="button" data-filter={f}>
       {f}
     </button>
   ))}
@@ -23,11 +19,10 @@ const {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    padding: 10px 12px 12px;
-    border-top: 1px solid rgba(0,0,0,0.06);
+    padding: 10px 0 12px;
   }
 
-  .filter-pill{
+  .pill{
     appearance: none;
     border: 1px solid rgba(0,0,0,0.10);
     background: rgba(255,255,255,0.85);
@@ -43,29 +38,25 @@ const {
     white-space: nowrap;
   }
 
-  .filter-pill:hover{
+  .pill:hover{
     transform: translateY(-1px);
     background: rgba(255,255,255,1);
     color: rgba(11,11,15,0.88);
   }
 
-  .filter-pill.active{
+  .pill.active{
     background: rgba(11,11,15,0.90);
     color: rgba(255,255,255,0.94);
     border-color: rgba(11,11,15,0.12);
   }
-
-  @media (max-width: 420px){
-    .filter-wrap{ padding: 10px 8px 12px; }
-    .filter-pill{ padding: 8px 10px; font-size: 11px; }
-  }
 </style>
 
 <script is:inline define:vars={{ cardSelector, defaultFilter }}>
-  const pills = Array.from(document.querySelectorAll('.filter-pill'));
+  const root = document.currentScript?.closest('.filter-wrap') || document;
+  const pills = Array.from(root.querySelectorAll('.pill'));
   const cards = Array.from(document.querySelectorAll(cardSelector));
 
-  function setActive(filter){
+  function apply(filter){
     pills.forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
     cards.forEach(card => {
       const cat = card.dataset.category;
@@ -74,6 +65,6 @@ const {
     });
   }
 
-  pills.forEach(p => p.addEventListener('click', () => setActive(p.dataset.filter)));
-  setActive(defaultFilter);
+  pills.forEach(p => p.addEventListener('click', () => apply(p.dataset.filter)));
+  apply(defaultFilter);
 </script>
