@@ -1,10 +1,8 @@
-/**
- * HomeCarousel.astro
- * Fixes:
- * - Prevents horizontal overflow on small phones
- * - Keeps slide background stable (no "image drifting")
- * - Uses modern mobile viewport units (svh) to avoid address-bar jump
- */
+---
+// HomeCarousel.astro
+// NOTE: This component intentionally avoids a few Astro-compiler edge cases
+// by keeping markup very simple (no unusual nesting / exotic characters).
+
 const slides = [
   {
     href: "/blog",
@@ -18,7 +16,8 @@ const slides = [
     href: "/science",
     title: "SCIENCE",
     kicker: "Cosmos · Physics · Mind",
-    subtitle: "Explaining complex things simply. Evidence, models, and the edge of what we know.",
+    subtitle:
+      "Explaining complex things simply. Evidence, models, and the edge of what we know.",
     cta: "Explore Science →",
     img: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=2400&q=85",
   },
@@ -26,7 +25,8 @@ const slides = [
     href: "/history",
     title: "HISTORY",
     kicker: "Civilizations · Patterns",
-    subtitle: "Big patterns: people, incentives, rise & fall. What repeats, what breaks, what matters.",
+    subtitle:
+      "Big patterns: people, incentives, rise & fall. What repeats, what breaks, what matters.",
     cta: "Explore History →",
     img: "https://images.unsplash.com/photo-1461360228754-6e81c478b882?w=2400&q=85",
   },
@@ -34,7 +34,8 @@ const slides = [
     href: "/art",
     title: "ART",
     kicker: "Design · Music · Craft",
-    subtitle: "Taste, composition, and the craft behind creative decisions — from sketches to systems.",
+    subtitle:
+      "Taste, composition, and the craft behind creative decisions — from sketches to systems.",
     cta: "Explore Art →",
     img: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=2400&q=85",
   },
@@ -42,24 +43,25 @@ const slides = [
     href: "/future",
     title: "FUTURE",
     kicker: "AI · Systems · Tomorrow",
-    subtitle: "Signals, trajectories, and thoughtful speculation — grounded optimism, clear risks.",
+    subtitle:
+      "Signals, trajectories, and thoughtful speculation — grounded optimism, clear risks.",
     cta: "Explore Future →",
     img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=2400&q=85",
   },
 ];
+
+function cssUrl(u) {
+  // Always output: url("...") with quotes to keep CSS parsing stable.
+  return `url("${u}")`;
+}
 ---
 
 <section class="stage" aria-label="Home navigation">
   <div class="carousel">
-    <div class="viewport" id="viewport" aria-roledescription="carousel">
+    <div class="viewport" id="viewport">
       <div class="track" id="track">
         {slides.map((s) => (
-          <a
-            class="slide"
-            href={s.href}
-            style={`--img:url('${s.img}')`}
-            data-title={s.title}
-          >
+          <a class="slide" href={s.href} style={`--img: ${cssUrl(s.img)};`}>
             <div class="slide-content" data-anim>
               <div class="kicker">{s.kicker}</div>
               <div class="title">{s.title}</div>
@@ -70,9 +72,13 @@ const slides = [
         ))}
       </div>
 
-      <div class="controls" aria-hidden="false">
-        <button class="arrow" id="prev" aria-label="Previous">‹</button>
-        <button class="arrow" id="next" aria-label="Next">›</button>
+      <div class="controls">
+        <button class="arrow" type="button" id="prev" aria-label="Previous">
+          &lsaquo;
+        </button>
+        <button class="arrow" type="button" id="next" aria-label="Next">
+          &rsaquo;
+        </button>
       </div>
     </div>
 
@@ -81,231 +87,245 @@ const slides = [
 </section>
 
 <style>
-  :root{
-    --panel:#ffffff;
-    --text:#0b0b0f;
-    --line:rgba(11,11,15,.10);
-    --radius:22px;
-    --shadow:0 22px 70px rgba(0,0,0,.10);
-    --container:1100px;
+  :root {
+    --bg: #f5f5f7;
+    --panel: #ffffff;
+    --text: #0b0b0f;
+    --muted: #6b6b75;
+    --line: #e6e6ea;
+    --radius: 22px;
+    --shadow: 0 24px 70px rgba(0, 0, 0, 0.1);
+    --container: 1100px;
   }
 
-  .stage{
-    max-width:var(--container);
-    margin:0 auto;
-    padding: 18px var(--pad, 24px) 28px;
+  .stage {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 22px 18px 36px;
   }
 
-  .carousel{ position:relative; }
+  .carousel {
+    position: relative;
+    border-radius: var(--radius);
+  }
 
-  .viewport{
-    position:relative;
-    width:100%;
-    overflow:hidden;
-    border-radius:var(--radius);
-    background:var(--panel);
-    border:1px solid var(--line);
-    box-shadow:var(--shadow);
+  .viewport {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
 
-    /* Desktop default */
-    height: min(74svh, 660px);
-    min-height: 460px;
-    max-height: 720px;
+    /* Desktop */
+    height: min(78vh, 680px);
+    min-height: 520px;
 
-    /* iOS/Safari overflow + transform fixes */
+    /* iOS/Safari overflow+transform stability */
     clip-path: inset(0 round var(--radius));
     -webkit-mask-image: -webkit-radial-gradient(white, black);
     transform: translateZ(0);
-    isolation:isolate;
+    isolation: isolate;
   }
 
-  .track{
-    height:100%;
-    display:flex;
-    width:100%;
-    gap:0;
-    transition:transform .55s cubic-bezier(.2,.8,.2,1);
-    will-change:transform;
-    transform: translate3d(0,0,0);
-  }
-
-  .slide{
-    width:100%;
-    min-width:100%;
-    flex:0 0 100%;
-    position:relative;
-    display:flex;
-    align-items:flex-end;
-    justify-content:flex-start;
-    padding: clamp(18px, 3vw, 28px);
-    color:#fff;
-    overflow:hidden;
-    user-select:none;
-    -webkit-user-select:none;
-    touch-action:pan-y;
-  }
-
-  /* Stable background (prevents subtle "drifting" on scroll/translate) */
-  .slide::before{
-    content:"";
-    position:absolute; inset:0;
-    background-image:var(--img);
-    background-size:cover;
-    background-position:center;
-    transform: translate3d(0,0,0) scale(1.03);
-    transform-origin:center;
+  .track {
+    height: 100%;
+    display: flex;
+    width: 100%;
+    gap: 0;
+    transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
     will-change: transform;
-    backface-visibility:hidden;
+    transform: translate3d(0, 0, 0);
   }
 
-  /* Calmer overlay (less heavy) */
-  .slide::after{
-    content:"";
-    position:absolute; inset:0;
-    background: linear-gradient(180deg,
-      rgba(0,0,0,.06) 0%,
-      rgba(0,0,0,.16) 42%,
-      rgba(0,0,0,.66) 100%
+  .slide {
+    width: 100%;
+    min-width: 100%;
+    flex: 0 0 100%;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 28px;
+    color: #fff;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: pan-y;
+    text-decoration: none;
+  }
+
+  .slide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--img);
+    background-size: cover;
+    background-position: center;
+    transform: translate3d(0, 0, 0) scale(1.02);
+    will-change: transform;
+    backface-visibility: hidden;
+  }
+
+  .slide::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.08) 0%,
+      rgba(0, 0, 0, 0.22) 45%,
+      rgba(0, 0, 0, 0.7) 100%
     );
   }
 
-  .slide-content{
-    position:relative;
-    z-index:2;
+  .slide-content {
+    position: relative;
+    z-index: 2;
     max-width: 680px;
   }
 
-  .kicker{
-    display:inline-flex;
-    align-items:center;
-    padding:8px 12px;
-    border-radius:999px;
-    background:rgba(255,255,255,.14);
-    border:1px solid rgba(255,255,255,.20);
-    backdrop-filter:blur(10px);
-    font-size:12px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    font-weight:700;
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
   }
 
-  .title{
+  .title {
     margin: 14px 0 10px;
-    font-size: clamp(34px, 6vw, 62px);
-    line-height:1.02;
-    letter-spacing:-0.06em;
-    font-weight:750;
+    font-size: clamp(36px, 6vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    font-weight: 800;
   }
 
-  .subtitle{
-    margin:0;
-    color:rgba(255,255,255,.86);
-    font-size:15px;
-    line-height:1.55;
-    max-width:52ch;
-    overflow-wrap:anywhere;
+  .subtitle {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 15px;
+    line-height: 1.55;
+    max-width: 52ch;
   }
 
-  .cta{
-    margin-top:18px;
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    padding:12px 14px;
-    border-radius:999px;
-    background:rgba(255,255,255,.92);
-    color:var(--text);
-    font-weight:700;
-    font-size:13px;
-    white-space:nowrap;
+  .cta {
+    margin-top: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--text);
+    font-weight: 800;
+    font-size: 13px;
   }
 
-  .controls{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 10px;
-    z-index:5;
+  .controls {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    z-index: 5;
   }
 
-  .arrow{
-    pointer-events:auto;
-    width:44px;height:44px;
-    border-radius:999px;
-    border:1px solid rgba(255,255,255,.22);
-    background:rgba(0,0,0,.28);
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    backdrop-filter:blur(10px);
-    transition:transform .18s ease, background .18s ease;
+  .arrow {
+    pointer-events: auto;
+    width: 46px;
+    height: 46px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.35);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    transition: transform 0.18s ease, background 0.18s ease;
   }
-  .arrow:hover{background:rgba(0,0,0,.40)}
-  .arrow:active{transform:scale(.98)}
-
-  .dots{
-    margin-top:14px;
-    display:flex;
-    justify-content:center;
-    gap:8px;
+  .arrow:hover {
+    background: rgba(0, 0, 0, 0.48);
   }
-  .dot{
-    width:7px;height:7px;
-    border-radius:999px;
-    background:rgba(0,0,0,.22);
-    border:1px solid rgba(0,0,0,.10);
-    transition: transform .2s ease, background .2s ease;
-  }
-  .dot.active{background:rgba(0,0,0,.78); transform: scale(1.2);}
-
-  /* Micro animations */
-  .viewport.pulse [data-anim]{
-    animation: microPulse .34s ease-out both;
-  }
-  @keyframes microPulse{
-    0%{ transform: translateY(0); filter: none; }
-    45%{ transform: translateY(-2px); filter: drop-shadow(0 10px 22px rgba(0,0,0,.18)); }
-    100%{ transform: translateY(0); filter: none; }
+  .arrow:active {
+    transform: scale(0.98);
   }
 
-  /* Mobile: fit nicely without clipping or horizontal overflow */
-  @media (max-width: 720px){
-    .stage{ padding: 14px var(--pad, 24px) 18px; }
+  .dots {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .dot.active {
+    background: rgba(0, 0, 0, 0.78);
+    transform: scale(1.2);
+  }
 
-    .viewport{
-      /* svh handles iOS address bar better than vh */
-      height: calc(100svh - 170px);
-      min-height: 420px;
-      max-height: 560px;
+  .viewport.pulse [data-anim] {
+    animation: microPulse 0.36s ease-out both;
+  }
+  @keyframes microPulse {
+    0% {
+      transform: translateY(0);
+      filter: none;
     }
-
-    .slide{ padding: 18px; }
-    .arrow{ width:42px; height:42px; }
-
-    .subtitle{ font-size: 14px; }
+    45% {
+      transform: translateY(-2px);
+      filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.18));
+    }
+    100% {
+      transform: translateY(0);
+      filter: none;
+    }
   }
 
-  /* Very small phones */
-  @media (max-width: 380px){
-    .viewport{ min-height: 390px; }
-    .title{ font-size: 34px; }
-    .kicker{ font-size: 11px; }
+  @media (max-width: 720px) {
+    /* Use svh so iOS address bar doesn't break layout */
+    .viewport {
+      min-height: 460px;
+      height: calc(100svh - 150px);
+    }
+    .slide {
+      padding: 22px;
+    }
+    .arrow {
+      width: 42px;
+      height: 42px;
+    }
   }
 
-  @media (prefers-reduced-motion: reduce){
-    .track{transition:none}
-    .viewport.pulse [data-anim]{animation:none}
+  @media (prefers-reduced-motion: reduce) {
+    .track {
+      transition: none;
+    }
+    .viewport.pulse [data-anim] {
+      animation: none;
+    }
   }
 </style>
 
-<script>
+<script is:inline>
   const track = document.getElementById('track');
   const viewport = document.getElementById('viewport');
-  const slides = Array.from(document.querySelectorAll('.slide'));
+  const slideEls = Array.from(document.querySelectorAll('.slide'));
   const prevBtn = document.getElementById('prev');
   const nextBtn = document.getElementById('next');
   const dotsWrap = document.getElementById('dots');
@@ -315,8 +335,7 @@ const slides = [
   let startY = 0;
   let dragging = false;
 
-  // dots
-  const dots = slides.map((_, i) => {
+  const dots = slideEls.map((_, i) => {
     const d = document.createElement('div');
     d.className = 'dot' + (i === 0 ? ' active' : '');
     d.addEventListener('click', () => go(i));
@@ -324,63 +343,56 @@ const slides = [
     return d;
   });
 
-  function setPulse(){
+  function setPulse() {
     viewport.classList.remove('pulse');
-    void viewport.offsetWidth; // restart animation
+    void viewport.offsetWidth;
     viewport.classList.add('pulse');
-    window.setTimeout(() => viewport.classList.remove('pulse'), 380);
+    window.setTimeout(() => viewport.classList.remove('pulse'), 420);
   }
 
-  function update(){
+  function update() {
     const tx = -index * 100;
     track.style.transform = `translate3d(${tx}%, 0, 0)`;
-    dots.forEach((d,i) => d.classList.toggle('active', i === index));
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
     setPulse();
   }
 
-  function go(i){
-    index = (i + slides.length) % slides.length;
+  function go(i) {
+    index = (i + slideEls.length) % slideEls.length;
     update();
   }
 
   prevBtn.addEventListener('click', () => go(index - 1));
   nextBtn.addEventListener('click', () => go(index + 1));
 
-  // Keyboard arrows (desktop)
   window.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') go(index - 1);
     if (e.key === 'ArrowRight') go(index + 1);
   });
 
-  // Touch swipe (mobile)
-  function onStart(e){
+  function onStart(e) {
     const p = e.touches ? e.touches[0] : e;
     dragging = true;
     startX = p.clientX;
     startY = p.clientY;
   }
 
-  function onEnd(e){
+  function onEnd(e) {
     if (!dragging) return;
     dragging = false;
     const p = e.changedTouches ? e.changedTouches[0] : e;
     const dx = p.clientX - startX;
     const dy = p.clientY - startY;
-
-    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)){
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) {
       if (dx < 0) go(index + 1);
       else go(index - 1);
     }
   }
 
-  viewport.addEventListener('touchstart', onStart, {passive:true});
-  viewport.addEventListener('touchend', onEnd, {passive:true});
-
-  // Optional mouse drag (desktop)
+  viewport.addEventListener('touchstart', onStart, { passive: true });
+  viewport.addEventListener('touchend', onEnd, { passive: true });
   viewport.addEventListener('mousedown', onStart);
   window.addEventListener('mouseup', onEnd);
-
-  // Prevent accidental drag
   viewport.addEventListener('dragstart', (e) => e.preventDefault());
 
   update();
