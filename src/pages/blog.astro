@@ -1,23 +1,38 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FilterBar from "../components/FilterBar.astro";
 
 const audioSrc = "/audio/pale-blue-dot.mp3";
+
+// JLOG post cards
+const posts = [
+  {
+    href: "/jlog/story-of-my-life",
+    category: "LIFE",
+    title: "the story of my life",
+    excerpt:
+      "A personal thread: curiosity, migration, building, learning — and becoming.",
+    img: "/images/story-of-my-life.jpg",
+  },
+];
+
+const filters = ["ALL", "LIFE"];
 ---
 
 <Layout title="JLOG! — Ugurcan">
   <main class="jlog">
+    <!-- Only JLOG! under UGURCAN -->
     <header class="head" aria-label="JLOG header">
       <p class="kicker">JLOG!</p>
-      <h1 class="h1">{title}</h1>
-      <p class="meta">{subtitle}</p>
     </header>
 
+    <!-- AUDIO CARD -->
     <section class="card" aria-label="Audio recording">
       <div class="card-top">
         <div class="wave" aria-hidden="true">
           <svg viewBox="0 0 120 24" width="120" height="24">
             <path
-              d="M2 12c6 0 6-8 12-8s6 16 12 16 6-16 12-16 6 16 12 16 6-16 12-16 6 16 12 16 6-16 12-16 6 8 12 8"
+              d="M2 12c6 0 6-8 12-8s6 16 12 16 6-16 12-16 6 16 12 16 6-16 12-16 6 16 12 16 6-16 12-16 6 16 12 16 6-16 12-16 6 8 12 8"
               fill="none"
               stroke="currentColor"
               stroke-width="2.2"
@@ -28,8 +43,8 @@ const audioSrc = "/audio/pale-blue-dot.mp3";
         </div>
 
         <div class="card-title">
-          <div class="small">{subtitle}</div>
-          <div class="big">{title}</div>
+          <div class="small">Carl Sagan · Audio recording</div>
+          <div class="big">The Pale Blue Dot</div>
         </div>
 
         <a class="download" href={audioSrc} download aria-label="Download audio">Download</a>
@@ -63,6 +78,39 @@ const audioSrc = "/audio/pale-blue-dot.mp3";
         Your browser does not support the audio element.
       </audio>
     </section>
+
+    <!-- JLOG label + Filter (Apple-like, minimal, sweet spacing) -->
+    <section class="below-audio" aria-label="JLOG posts">
+      <div class="posts-head">
+        <p class="posts-kicker">JLOG!</p>
+      </div>
+
+      <FilterBar
+        filters={filters}
+        cardSelector=".jlog-card"
+        queryKey="cat"
+        defaultFilter="ALL"
+      />
+
+      <div class="post-list">
+        {posts.map((p) => (
+          <a class="jlog-card" href={p.href} data-category={p.category} aria-label={p.title}>
+            <div class="jlog-card__bg" aria-hidden="true">
+              <img src={p.img} alt="" loading="lazy" />
+            </div>
+
+            <div class="jlog-card__overlay" aria-hidden="true"></div>
+
+            <div class="jlog-card__text">
+              <div class="jlog-card__title">{p.title}</div>
+              <div class="jlog-card__excerpt">{p.excerpt}</div>
+            </div>
+
+            <div class="jlog-card__badge">{p.category}</div>
+          </a>
+        ))}
+      </div>
+    </section>
   </main>
 
   <style>
@@ -74,14 +122,15 @@ const audioSrc = "/audio/pale-blue-dot.mp3";
       gap: 16px;
     }
 
-    /* Centered “JLOG!” under UGURCAN header */
+    /* Only JLOG! under UGURCAN header */
     .head{
       text-align: center;
       padding-top: 18px;
+      padding-bottom: 6px;
     }
 
     .kicker{
-      margin: 0 0 12px;
+      margin: 0;
       font-size: 12px;
       font-weight: 900;
       letter-spacing: .26em;
@@ -89,22 +138,7 @@ const audioSrc = "/audio/pale-blue-dot.mp3";
       color: rgba(11,11,15,0.62);
     }
 
-    .h1{
-      margin: 0 0 8px;
-      font-size: 44px;
-      font-weight: 850;
-      letter-spacing: -0.035em;
-      line-height: 1.05;
-      color: rgba(11,11,15,0.92);
-    }
-
-    .meta{
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.6;
-      color: rgba(11,11,15,0.60);
-    }
-
+    /* Audio card (kept) */
     .card{
       width: min(980px, 100%);
       margin: 0 auto;
@@ -252,10 +286,125 @@ const audioSrc = "/audio/pale-blue-dot.mp3";
       min-height: 18px;
     }
 
+    /* Below-audio block */
+    .below-audio{
+      width: min(980px, 100%);
+      margin: 2px auto 0;
+      padding-top: 6px;
+    }
+
+    .posts-head{
+      text-align: center;
+      margin: 10px 0 6px;
+    }
+
+    .posts-kicker{
+      margin: 0;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: rgba(11,11,15,0.62);
+    }
+
+    /* Posts list */
+    .post-list{
+      display:flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .jlog-card{
+      position: relative;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.06);
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 14px 48px rgba(0,0,0,0.07);
+      min-height: 220px;
+      display:flex;
+      align-items:flex-end;
+      text-decoration:none;
+      isolation: isolate;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .jlog-card:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.09);
+    }
+
+    .jlog-card__bg{
+      position:absolute;
+      inset:0;
+      z-index: 0;
+    }
+    .jlog-card__bg img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
+      transform: scale(1.02);
+      filter: saturate(0.95) contrast(0.98);
+    }
+
+    .jlog-card__overlay{
+      position:absolute;
+      inset:0;
+      z-index: 1;
+      background:
+        linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.55) 82%, rgba(0,0,0,0.62) 100%);
+    }
+
+    .jlog-card__text{
+      position: relative;
+      z-index: 2;
+      padding: 18px 18px 16px;
+      max-width: 70ch;
+    }
+
+    .jlog-card__title{
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: rgba(255,255,255,0.96);
+      text-transform: lowercase;
+    }
+
+    .jlog-card__excerpt{
+      margin-top: 6px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.78);
+    }
+
+    .jlog-card__badge{
+      position:absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 3;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.80);
+      color: rgba(11,11,15,0.80);
+      border: 1px solid rgba(0,0,0,0.10);
+      backdrop-filter: blur(12px);
+      user-select:none;
+    }
+
+    /* FilterBar hides this */
+    .jlog-card.is-hidden{ display:none; }
+
     @media (max-width: 520px){
-      .h1{ font-size: 34px; }
+      .jlog{ padding: 14px 12px 70px; }
       .time{ min-width: 38px; }
       .download{ padding: 9px 10px; }
+      .jlog-card{ min-height: 200px; }
+      .jlog-card__title{ font-size: 20px; }
     }
   </style>
 
@@ -291,7 +440,8 @@ const audioSrc = "/audio/pale-blue-dot.mp3";
     }
 
     async function tryAutoplay(){
-      // Best-effort autoplay. Some browsers block it unless user interacted.
+      // Best-effort autoplay. Many browsers block autoplay with sound.
+      // We do NOT force unmuted playback; user can click Play if blocked.
       try{
         await audio.play();
         setPlaying(true);
@@ -328,7 +478,6 @@ const audioSrc = "/audio/pale-blue-dot.mp3";
       audio.currentTime = v * dur;
     });
 
-    // Start automatically when page opens (best effort)
     if (document.readyState === "loading"){
       document.addEventListener("DOMContentLoaded", () => {
         update();
