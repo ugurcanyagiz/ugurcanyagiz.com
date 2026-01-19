@@ -1,0 +1,264 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+const cards = [
+  {
+    href: "/future/artificial-intelligence",
+    category: "AI",
+    subtitle: "Intelligence • Automation",
+    title: "Artificial Intelligence After the Hype",
+    excerpt:
+      "AI is powerful, but not magical. The real impact comes from how humans choose to use, limit, and verify it.",
+    img: "https://images.unsplash.com/photo-1526378722484-bd91ca387e72?w=200&q=80",
+  },
+  {
+    href: "/future/future-of-work",
+    category: "SOCIETY",
+    subtitle: "Jobs • Meaning",
+    title: "The Future of Work",
+    excerpt:
+      "Automation will remove tasks, not purpose. The challenge is redesigning work around human strengths.",
+    img: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=200&q=80",
+  },
+  {
+    href: "/future/energy-transition",
+    category: "CLIMATE",
+    subtitle: "Energy • Sustainability",
+    title: "The Energy Transition",
+    excerpt:
+      "The future depends less on invention and more on scaling what already works — cleanly and affordably.",
+    img: "https://images.unsplash.com/photo-1509395176047-4a66953fd231?w=200&q=80",
+  },
+  {
+    href: "/future/biotechnology",
+    category: "BIO",
+    subtitle: "Health • Engineering",
+    title: "Biotechnology and Human Limits",
+    excerpt:
+      "Gene editing and bioengineering promise longer, healthier lives — but raise deep ethical questions.",
+    img: "https://images.unsplash.com/photo-1581092334651-ddf26d9a09d1?w=200&q=80",
+  },
+  {
+    href: "/future/space-exploration",
+    category: "SPACE",
+    subtitle: "Exploration • Survival",
+    title: "Why Humanity Looks to Space",
+    excerpt:
+      "Space is not an escape plan — but it may become a long-term insurance policy for civilization.",
+    img: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=200&q=80",
+  },
+  {
+    href: "/future/smart-cities",
+    category: "TECH",
+    subtitle: "Infrastructure • Data",
+    title: "Smart Cities: Promise and Risk",
+    excerpt:
+      "Sensors can optimize cities — or quietly centralize control. Governance matters as much as technology.",
+    img: "https://images.unsplash.com/photo-1494526585095-c41746248156?w=200&q=80",
+  },
+  {
+    href: "/future/meaning-in-the-future",
+    category: "PHILOSOPHY",
+    subtitle: "Purpose • Values",
+    title: "Meaning in a High-Tech Future",
+    excerpt:
+      "As technology accelerates, the human question becomes sharper: what should we optimize for?",
+    img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=200&q=80",
+  },
+];
+
+const filters = ["ALL", "AI", "TECH", "BIO", "SPACE", "CLIMATE", "SOCIETY", "PHILOSOPHY"];
+---
+
+<Layout title="Future — Ugurcan">
+  <section class="future-wrap">
+    <div class="hero">
+      <h1 class="page-title">Future</h1>
+      <p class="page-subtitle">
+        Technology, humanity, and the choices that shape what comes next.
+      </p>
+    </div>
+
+    <div class="filter-bar" role="toolbar" aria-label="Filter future topics">
+      {filters.map((f) => (
+        <button class={`filter-pill ${f === "ALL" ? "active" : ""}`} type="button" data-filter={f}>
+          {f}
+        </button>
+      ))}
+    </div>
+
+    <div class="card-list">
+      {cards.map((c) => (
+        <a class="future-card" href={c.href} data-category={c.category}>
+          <div class="card-icon">
+            <img src={c.img} alt={c.title} loading="lazy" />
+          </div>
+
+          <div class="card-text">
+            <span class="subtitle">{c.subtitle}</span>
+            <h2>{c.title}</h2>
+            <p>{c.excerpt}</p>
+          </div>
+
+          <span class={`badge badge--${c.category}`}>{c.category}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <style>
+    .future-wrap{
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 34px 18px 80px;
+    }
+
+    .page-title{
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin: 0 0 10px;
+    }
+
+    .page-subtitle{
+      font-size: 14px;
+      color: rgba(11,11,15,.62);
+      margin-bottom: 18px;
+      max-width: 60ch;
+    }
+
+    .filter-bar{
+      position: sticky;
+      top: 64px;
+      z-index: 25;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 0 14px;
+      background: rgba(245,245,247,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+
+    .filter-pill{
+      border-radius: 999px;
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      border: 1px solid rgba(0,0,0,.1);
+      background: white;
+      cursor: pointer;
+    }
+
+    .filter-pill.active{
+      background: #111;
+      color: white;
+    }
+
+    .card-list{
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .future-card{
+      position: relative;
+      display: flex;
+      gap: 14px;
+      padding: 16px 18px;
+      background: rgba(255,255,255,.9);
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,.06);
+      box-shadow: 0 8px 28px rgba(0,0,0,.06);
+      text-decoration: none;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+
+    .future-card:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 12px 36px rgba(0,0,0,.08);
+    }
+
+    .card-icon{
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #eee;
+      flex-shrink: 0;
+    }
+
+    .card-icon img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+    }
+
+    .card-text{
+      padding-right: 110px;
+    }
+
+    .subtitle{
+      font-size: 12px;
+      font-weight: 700;
+      color: rgba(11,11,15,.55);
+    }
+
+    .card-text h2{
+      margin: 4px 0 0;
+      font-size: 16px;
+      font-weight: 800;
+    }
+
+    .card-text p{
+      margin: 6px 0 0;
+      font-size: 14px;
+      color: rgba(11,11,15,.62);
+    }
+
+    .badge{
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 6px 10px;
+      border-radius: 999px;
+      letter-spacing: .14em;
+      border: 1px solid rgba(0,0,0,.08);
+    }
+
+    /* Future color palette */
+    .badge--AI{ background: rgba(0,122,255,.15); color: #007aff; }
+    .badge--TECH{ background: rgba(90,200,250,.2); color: #007aff; }
+    .badge--BIO{ background: rgba(52,199,89,.18); color: #1e9646; }
+    .badge--SPACE{ background: rgba(88,86,214,.18); color: #5856d6; }
+    .badge--CLIMATE{ background: rgba(48,209,88,.18); color: #248a3d; }
+    .badge--SOCIETY{ background: rgba(255,149,0,.18); color: #ff9500; }
+    .badge--PHILOSOPHY{ background: rgba(142,142,147,.22); color: #3c3c43; }
+
+    .future-card.is-hidden{ display:none; }
+  </style>
+
+  <script is:inline>
+    const pills = document.querySelectorAll('.filter-pill');
+    const cards = document.querySelectorAll('.future-card');
+
+    pills.forEach(p => {
+      p.addEventListener('click', () => {
+        pills.forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+
+        const f = p.dataset.filter;
+        cards.forEach(c => {
+          c.classList.toggle(
+            'is-hidden',
+            f !== 'ALL' && c.dataset.category !== f
+          );
+        });
+      });
+    });
+  </script>
+</Layout>
