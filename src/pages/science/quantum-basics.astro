@@ -1,0 +1,439 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "Quantum Basics — Science";
+const updated = "Updated: 2026";
+---
+
+<Layout title={title}>
+  <article class="page">
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-top">
+        <a class="back" href="/science">← Back to Science</a>
+        <span class="chip chip--physics">PHYSICS</span>
+      </div>
+
+      <h1>Quantum Basics</h1>
+      <p class="subtitle">
+        Quantum physics is the rulebook for the very small. It doesn’t replace reality with “magic” —
+        it replaces our everyday intuition with a more precise description: probabilities, waves,
+        and measurement.
+      </p>
+
+      <div class="hero-grid">
+        <section class="card card--soft">
+          <h2 class="hsmall">What you’ll learn</h2>
+          <ul class="list">
+            <li>What a <b>quantum state</b> is (and what it isn’t).</li>
+            <li>Why probability is <b>built-in</b>, not just “missing information”.</li>
+            <li>How <b>measurement</b> changes what you can predict.</li>
+          </ul>
+        </section>
+
+        <section class="card card--ink">
+          <p class="quote">
+            “Quantum theory doesn’t say reality is random for fun. It says the best possible predictions
+            are probabilistic — and that’s been confirmed over and over.”
+          </p>
+          <p class="meta">{updated}</p>
+        </section>
+      </div>
+    </header>
+
+    <!-- TL;DR -->
+    <section class="section">
+      <h2>TL;DR</h2>
+      <div class="tldr">
+        <div class="tldr-item">
+          <div class="dot dot--a" aria-hidden="true"></div>
+          <div>
+            <h3>States are like “recipes” for outcomes</h3>
+            <p>A quantum state tells you the probabilities of measurement results.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--b" aria-hidden="true"></div>
+          <div>
+            <h3>Waves = probabilities</h3>
+            <p>The wave function is not a water wave — it’s a mathematical wave of likelihoods.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--c" aria-hidden="true"></div>
+          <div>
+            <h3>Measurement matters</h3>
+            <p>What you choose to measure affects what can be known about the system next.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: What is a quantum state -->
+    <section class="section">
+      <h2>1) Quantum state: the “best possible description”</h2>
+      <p class="lead">
+        In classical physics, if you know position and speed, you can predict the future exactly (in principle).
+        In quantum physics, even with perfect knowledge, predictions are fundamentally probabilistic.
+        That full knowledge is encoded in the <b>quantum state</b>.
+      </p>
+
+      <div class="two-col">
+        <div class="card">
+          <h3 class="hsmall">Think of it like this</h3>
+          <div class="stack">
+            <div class="callout">
+              <h4>Classical</h4>
+              <p>“The ball is exactly here, moving exactly like this.”</p>
+            </div>
+            <div class="callout">
+              <h4>Quantum</h4>
+              <p>“If you measure position, here are the probabilities. If you measure momentum, here are those.”</p>
+            </div>
+            <div class="callout">
+              <h4>Not just ignorance</h4>
+              <p>
+                It’s not merely that we don’t know. The theory itself limits what can be simultaneously definite.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <figure class="figure card">
+          <figcaption class="figcap"><b>State → outcomes</b> — probability distribution</figcaption>
+
+          <svg viewBox="0 0 720 360" role="img" aria-label="Probability curve showing where a particle is likely to be found">
+            <rect x="0" y="0" width="720" height="360" fill="rgba(245,245,247,1)"/>
+
+            <!-- axes -->
+            <line x1="70" y1="280" x2="660" y2="280" stroke="rgba(0,0,0,0.18)" stroke-width="2"/>
+            <line x1="70" y1="80" x2="70" y2="280" stroke="rgba(0,0,0,0.18)" stroke-width="2"/>
+
+            <text x="660" y="305" text-anchor="end" font-size="12" fill="rgba(11,11,15,0.55)">position</text>
+            <text x="75" y="78" font-size="12" fill="rgba(11,11,15,0.55)">probability</text>
+
+            <!-- curve -->
+            <path
+              d="M90 280
+                 C160 278, 190 260, 230 235
+                 C270 210, 300 140, 360 125
+                 C420 110, 470 160, 505 200
+                 C540 240, 590 275, 660 280"
+              fill="none"
+              stroke="rgba(0,122,255,0.95)"
+              stroke-width="4"
+              stroke-linecap="round"
+            />
+
+            <!-- highlighted likely region -->
+            <rect x="300" y="100" width="120" height="190" rx="16" fill="rgba(0,122,255,0.10)" />
+            <text x="360" y="325" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.60)">
+              most likely region
+            </text>
+
+            <text x="360" y="55" text-anchor="middle" font-size="14" fill="rgba(11,11,15,0.70)">
+              A quantum state often predicts a range of outcomes, not a single point.
+            </text>
+          </svg>
+
+          <p class="note">
+            The curve doesn’t mean the particle is “smeared like fog” in a classical sense — it means measurements have
+            a spread of possible results.
+          </p>
+        </figure>
+      </div>
+    </section>
+
+    <!-- SECTION: Wavefunction -->
+    <section class="section">
+      <h2>2) The wave function: a wave of likelihoods</h2>
+      <p class="lead">
+        The wave function (often written as ψ) is a compact way to store probability information. Where |ψ| is larger,
+        you’re more likely to measure the particle there. It evolves smoothly over time — until measurement.
+      </p>
+
+      <div class="card">
+        <div class="grid3">
+          <div class="mini">
+            <h4>Not a water wave</h4>
+            <p>It’s a mathematical object that produces probabilities.</p>
+          </div>
+          <div class="mini">
+            <h4>Interference is real</h4>
+            <p>Probabilities can add or cancel — that’s why double-slit patterns appear.</p>
+          </div>
+          <div class="mini">
+            <h4>Phase matters</h4>
+            <p>Hidden “angles” in ψ affect interference even if |ψ| looks the same.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: Double slit -->
+    <section class="section">
+      <h2>3) The double-slit idea (without the drama)</h2>
+      <p class="lead">
+        If you send particles through two slits, you get an interference pattern — like waves. If you measure
+        “which slit” each particle goes through, the interference disappears. This isn’t because particles “hate”
+        being watched; it’s because measurement changes what can remain coherent.
+      </p>
+
+      <figure class="figure card">
+        <figcaption class="figcap"><b>Interference</b> — waves of probability</figcaption>
+
+        <svg viewBox="0 0 860 320" role="img" aria-label="Double slit diagram showing interference vs no interference when measuring which slit">
+          <rect x="0" y="0" width="860" height="320" fill="rgba(245,245,247,1)"/>
+
+          <!-- source -->
+          <circle cx="90" cy="160" r="10" fill="rgba(255,45,85,0.92)"/>
+          <text x="90" y="135" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">source</text>
+
+          <!-- barrier -->
+          <rect x="260" y="60" width="14" height="200" fill="rgba(11,11,15,0.18)"/>
+          <rect x="274" y="60" width="14" height="200" fill="rgba(11,11,15,0.10)"/>
+          <!-- slits -->
+          <rect x="260" y="120" width="28" height="18" fill="rgba(245,245,247,1)"/>
+          <rect x="260" y="182" width="28" height="18" fill="rgba(245,245,247,1)"/>
+
+          <text x="274" y="48" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">slits</text>
+
+          <!-- screen -->
+          <rect x="770" y="60" width="18" height="200" rx="9" fill="rgba(0,0,0,0.10)"/>
+          <text x="780" y="48" text-anchor="middle" font-size="12" fill="rgba(11,11,15,0.55)">screen</text>
+
+          <!-- paths -->
+          <path d="M100 160 C160 140, 210 135, 260 130" fill="none" stroke="rgba(255,45,85,0.55)" stroke-width="3"/>
+          <path d="M100 160 C160 180, 210 195, 260 190" fill="none" stroke="rgba(255,45,85,0.55)" stroke-width="3"/>
+
+          <!-- wavefront / interference bands on screen (left half label) -->
+          <g>
+            <rect x="792" y="70" width="46" height="8" rx="4" fill="rgba(0,122,255,0.50)"/>
+            <rect x="792" y="92" width="46" height="10" rx="5" fill="rgba(0,122,255,0.18)"/>
+            <rect x="792" y="120" width="46" height="14" rx="7" fill="rgba(0,122,255,0.60)"/>
+            <rect x="792" y="150" width="46" height="12" rx="6" fill="rgba(0,122,255,0.20)"/>
+            <rect x="792" y="176" width="46" height="16" rx="8" fill="rgba(0,122,255,0.65)"/>
+            <rect x="792" y="206" width="46" height="10" rx="5" fill="rgba(0,122,255,0.18)"/>
+            <rect x="792" y="230" width="46" height="8" rx="4" fill="rgba(0,122,255,0.50)"/>
+          </g>
+
+          <text x="520" y="300" text-anchor="middle" font-size="13" fill="rgba(11,11,15,0.60)">
+            No “which-slit” info → interference. Which-slit measured → interference fades.
+          </text>
+        </svg>
+
+        <p class="note">
+          The key word is <b>coherence</b>: maintaining phase relationships. Measurement (or environment) can destroy coherence.
+        </p>
+      </figure>
+    </section>
+
+    <!-- SECTION: Measurement -->
+    <section class="section">
+      <h2>4) Measurement: what changes?</h2>
+      <p class="lead">
+        Measurement forces a specific outcome from a range of possibilities. After measurement, the state updates to match
+        what you learned. Practically, this means you can’t keep all “wave-like” relationships once you extract path information.
+      </p>
+
+      <div class="card">
+        <div class="grid3">
+          <div class="mini">
+            <h4>Before</h4>
+            <p>State encodes multiple possible results.</p>
+          </div>
+          <div class="mini">
+            <h4>During</h4>
+            <p>Interaction with measuring device/environment selects an outcome.</p>
+          </div>
+          <div class="mini">
+            <h4>After</h4>
+            <p>The state is updated; future predictions depend on the measurement.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Explain to a child -->
+    <section class="section">
+      <h2>Explain it to a child</h2>
+      <div class="card">
+        <p class="lead">
+          Imagine you have a mystery box that can give different prizes.
+        </p>
+        <ol class="steps">
+          <li>Before opening, the box has chances for different prizes.</li>
+          <li>When you open it, you get one prize — and now you know which one.</li>
+          <li>Quantum things are like that, but the “chances” can interfere like waves.</li>
+        </ol>
+        <p class="note">
+          The box idea is not perfect, but it helps: quantum theory is a rulebook for predicting what you’ll see.
+        </p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details class="card" open>
+          <summary>Is quantum randomness “real”?</summary>
+          <p>
+            According to standard quantum theory, yes — outcomes are fundamentally probabilistic, not just unknown.
+            There are alternative interpretations, but they reproduce the same tested predictions.
+          </p>
+        </details>
+
+        <details class="card">
+          <summary>Does observation require a human?</summary>
+          <p>
+            No. “Observation” means interaction that records information (a detector, environment, etc.).
+          </p>
+        </details>
+
+        <details class="card">
+          <summary>Why does quantum matter for technology?</summary>
+          <p>
+            Semiconductors, lasers, MRI, and atomic clocks rely on quantum behavior. Modern computing is built on it.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <!-- FOOT NAV -->
+    <nav class="footnav">
+      <a class="btn" href="/science/time">← Previous: Time</a>
+      <a class="btn btn--ghost" href="/science/superposition">Next: Superposition →</a>
+    </nav>
+  </article>
+
+  <style>
+    .page{ max-width: 980px; margin: 0 auto; padding: 28px 18px 90px; }
+    .hero{ padding-top: 6px; }
+    .hero-top{ display:flex; align-items:center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .back{ color: rgba(11,11,15,0.60); font-size: 13px; font-weight: 650; text-decoration: none; }
+    .back:hover{ color: rgba(11,11,15,0.90); }
+
+    h1{ margin: 0 0 10px; font-size: 44px; font-weight: 850; letter-spacing: -0.035em; line-height: 1.05; }
+    .subtitle{ margin: 0 0 18px; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,0.62); max-width: 78ch; }
+
+    .hero-grid{ display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 14px; margin-top: 16px; }
+
+    .section{ margin-top: 28px; }
+    .section > h2{ margin: 0 0 12px; font-size: 20px; font-weight: 850; letter-spacing: -0.02em; color: rgba(11,11,15,0.92); }
+    .lead{ margin: 0 0 14px; font-size: 15px; line-height: 1.7; color: rgba(11,11,15,0.70); max-width: 84ch; }
+
+    .card{
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 18px;
+      box-shadow: 0 10px 34px rgba(0,0,0,0.06);
+      padding: 16px 18px;
+    }
+    .card--soft{ background: rgba(255,255,255,0.85); }
+    .card--ink{
+      background: rgba(11,11,15,0.92);
+      border-color: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.92);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    }
+    .quote{ margin: 0; font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.92); }
+    .meta{ margin: 12px 0 0; font-size: 12px; color: rgba(255,255,255,0.70); }
+
+    .hsmall{ margin: 0 0 10px; font-size: 13px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; color: rgba(11,11,15,0.72); }
+    .list{ margin: 0; padding-left: 18px; color: rgba(11,11,15,0.72); line-height: 1.65; font-size: 14px; }
+
+    .chip{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.08);
+      user-select: none;
+      background: rgba(255,255,255,0.70);
+      backdrop-filter: blur(10px);
+    }
+    .chip--physics{
+      color: rgba(0,122,255,0.95);
+      border-color: rgba(0,122,255,0.20);
+      background: rgba(0,122,255,0.12);
+    }
+
+    .tldr{ display:grid; gap: 12px; }
+    .tldr-item{
+      display:flex; gap: 12px; align-items:flex-start;
+      padding: 14px 16px; border-radius: 18px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 10px 34px rgba(0,0,0,0.06);
+    }
+    .tldr-item h3{ margin: 0 0 4px; font-size: 15px; font-weight: 850; letter-spacing: -0.01em; }
+    .tldr-item p{ margin: 0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .dot{ width: 10px; height: 10px; border-radius: 999px; margin-top: 5px; flex-shrink:0; }
+    .dot--a{ background: rgba(0,122,255,0.95); box-shadow: 0 0 0 4px rgba(0,122,255,0.12); }
+    .dot--b{ background: rgba(255,45,85,0.95); box-shadow: 0 0 0 4px rgba(255,45,85,0.12); }
+    .dot--c{ background: rgba(52,199,89,0.95); box-shadow: 0 0 0 4px rgba(52,199,89,0.12); }
+
+    .two-col{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items:start; margin-top: 12px; }
+    .stack{ display:flex; flex-direction:column; gap: 10px; }
+
+    .callout{
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(245,245,247,0.85);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .callout h4{ margin: 0 0 4px; font-size: 13px; font-weight: 850; letter-spacing: -0.01em; color: rgba(11,11,15,0.86); }
+    .callout p{ margin: 0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .figure svg{ width: 100%; height: auto; border-radius: 14px; display:block; overflow:hidden; }
+    .figcap{ margin: 0 0 10px; font-size: 13px; color: rgba(11,11,15,0.70); }
+    .note{ margin: 10px 0 0; font-size: 13px; line-height: 1.6; color: rgba(11,11,15,0.55); }
+
+    .grid3{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+    .mini{
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(245,245,247,0.70);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+    .mini h4{ margin: 0 0 6px; font-size: 14px; font-weight: 850; letter-spacing: -0.01em; }
+    .mini p{ margin: 0; font-size: 13.5px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .steps{ margin: 10px 0 0; padding-left: 18px; color: rgba(11,11,15,0.70); line-height: 1.7; font-size: 14px; }
+
+    .faq{ display:flex; flex-direction:column; gap: 10px; }
+    details summary{ cursor: pointer; font-weight: 850; font-size: 14px; color: rgba(11,11,15,0.86); list-style: none; }
+    details summary::-webkit-details-marker{ display:none; }
+    details p{ margin: 10px 0 0; font-size: 14px; line-height: 1.7; color: rgba(11,11,15,0.62); }
+
+    .footnav{ margin-top: 28px; display:flex; justify-content: space-between; gap: 12px; }
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 10px 12px; border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.90);
+      font-size: 13px; font-weight: 750;
+      color: rgba(11,11,15,0.84);
+      text-decoration:none;
+      transition: transform .15s ease, background .15s ease;
+      white-space: nowrap;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,1); }
+    .btn--ghost{ background: rgba(245,245,247,0.75); }
+
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .two-col{ grid-template-columns: 1fr; }
+      .grid3{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px){
+      h1{ font-size: 34px; }
+      .footnav{ flex-direction: column; }
+      .btn{ width: 100%; }
+    }
+  </style>
+</Layout>
