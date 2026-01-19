@@ -1,0 +1,294 @@
+---
+const cards = [
+  { title: "JLOG", href: "/blog", kicker: "Journal · Writing", desc: "Short notes, clear thinking. Minimal and timeless.",
+    img: "https://images.unsplash.com/photo-1455390582262-044cdead277a?w=2000&q=80" },
+  { title: "SCIENCE", href: "/science", kicker: "Cosmos · Physics · Mind", desc: "Evidence, models, and the edge of what we know.",
+    img: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=2000&q=80" },
+  { title: "HISTORY", href: "/history", kicker: "Civilizations · Patterns", desc: "What repeats, what breaks, what matters.",
+    img: "https://images.unsplash.com/photo-1461360228754-6e81c478b882?w=2000&q=80" },
+  { title: "ART", href: "/art", kicker: "Design · Music · Craft", desc: "Taste, composition, and creative decisions.",
+    img: "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=2000&q=80" },
+  { title: "FUTURE", href: "/future", kicker: "AI · Systems · Tomorrow", desc: "Signals, trajectories, grounded speculation.",
+    img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=2000&q=80" },
+];
+---
+
+<section class="home">
+  <div class="carousel" aria-label="Main navigation carousel">
+    <div class="viewport" id="viewport">
+      <div class="track" id="track">
+        {cards.map((c, i) => (
+          <a class={`slide ${i === 0 ? "is-active" : ""}`} href={c.href} style={`--img:url('${c.img}')`} data-index={i}>
+            <div class="slide-content">
+              <div class="kicker">{c.kicker}</div>
+              <div class="title">{c.title}</div>
+              <p class="subtitle">{c.desc}</p>
+              <span class="cta">Open {c.title} →</span>
+            </div>
+          </a>
+        ))}
+      </div>
+
+      <button class="arrow prev" id="prev" aria-label="Previous">‹</button>
+      <button class="arrow next" id="next" aria-label="Next">›</button>
+    </div>
+
+    <div class="dots" id="dots" aria-label="Carousel position"></div>
+  </div>
+</section>
+
+<style>
+  .home{ padding: 0 0 14px; }
+
+  .carousel{ position:relative; }
+  .viewport{
+    position:relative;
+    height: min(78vh, 680px);
+    min-height: 520px;
+    overflow:hidden;
+    border-radius: 28px;
+    border: 1px solid var(--line);
+    background: #fff;
+    box-shadow: var(--shadow);
+
+    /* defter hissi: perspektif */
+    perspective: 1200px;
+  }
+
+  .track{
+    height:100%;
+    display:flex;
+    will-change: transform;
+    transition: transform .55s cubic-bezier(.2,.8,.2,1);
+  }
+
+  /* page-turn: geçiş anında track'e küçük 3D */
+  .viewport.turning .track{
+    transition: transform .55s cubic-bezier(.2,.8,.2,1);
+  }
+  .viewport.turning.dir-next .track{
+    transform: translateX(var(--tx)) rotateY(-10deg);
+  }
+  .viewport.turning.dir-prev .track{
+    transform: translateX(var(--tx)) rotateY(10deg);
+  }
+
+  .slide{
+    width:100%;
+    flex:0 0 100%;
+    position:relative;
+    display:flex;
+    align-items:flex-end;
+    padding: 28px;
+    color:#fff;
+    user-select:none;
+    -webkit-user-select:none;
+    touch-action: pan-y;
+  }
+
+  .slide::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:var(--img);
+    background-size:cover;
+    background-position:center;
+    transform:scale(1.02);
+  }
+  .slide::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,.08) 0%, rgba(0,0,0,.24) 45%, rgba(0,0,0,.65) 100%);
+  }
+
+  .slide-content{ position:relative; z-index:2; max-width: 680px; }
+
+  /* Mikro animasyon: aktif slide content “focus” */
+  .kicker, .title, .subtitle, .cta{
+    transform: translateY(10px);
+    opacity: 0;
+    filter: blur(6px);
+    transition: transform .5s ease, opacity .5s ease, filter .5s ease;
+  }
+  .slide.is-active .kicker{ transition-delay: .06s; }
+  .slide.is-active .title{ transition-delay: .12s; }
+  .slide.is-active .subtitle{ transition-delay: .18s; }
+  .slide.is-active .cta{ transition-delay: .24s; }
+
+  .slide.is-active .kicker,
+  .slide.is-active .title,
+  .slide.is-active .subtitle,
+  .slide.is-active .cta{
+    transform: translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
+
+  .kicker{
+    display:inline-flex;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.14);
+    border: 1px solid rgba(255,255,255,.20);
+    backdrop-filter: blur(10px);
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    font-weight:700;
+  }
+  .title{
+    margin:14px 0 10px;
+    font-size: clamp(36px, 6vw, 64px);
+    line-height:1.02;
+    letter-spacing:-0.04em;
+    font-weight:800;
+  }
+  .subtitle{
+    margin:0;
+    color:rgba(255,255,255,.82);
+    font-size:15px;
+    line-height:1.55;
+    max-width: 52ch;
+  }
+  .cta{
+    margin-top:18px;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:12px 14px;
+    border-radius:999px;
+    background: rgba(255,255,255,.92);
+    color: var(--text);
+    font-weight:700;
+    font-size:13px;
+  }
+
+  .arrow{
+    position:absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width:46px;height:46px;
+    border-radius:999px;
+    border: 1px solid rgba(255,255,255,.25);
+    background: rgba(0,0,0,.35);
+    color:#fff;
+    backdrop-filter: blur(10px);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .arrow:hover{ background: rgba(0,0,0,.48); }
+  .arrow:active{ transform: translateY(-50%) scale(.98); }
+  .arrow.prev{ left: 12px; }
+  .arrow.next{ right: 12px; }
+
+  .dots{
+    margin-top: 14px;
+    display:flex;
+    justify-content:center;
+    gap: 8px;
+  }
+  .dot{
+    width:7px;height:7px;border-radius:999px;
+    background: rgba(0,0,0,.22);
+    border: 1px solid rgba(0,0,0,.10);
+    cursor:pointer;
+  }
+  .dot.active{ background: rgba(0,0,0,.78); }
+
+  @media (max-width: 720px){
+    .viewport{ height: calc(100vh - 190px); min-height: 520px; }
+    .slide{ padding: 22px; }
+    .arrow{ width:42px; height:42px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .track, .kicker, .title, .subtitle, .cta{ transition: none !important; }
+  }
+</style>
+
+<script>
+  const track = document.getElementById('track');
+  const viewport = document.getElementById('viewport');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const dotsWrap = document.getElementById('dots');
+
+  let index = 0;
+  let startX = 0, startY = 0;
+  let dragging = false;
+
+  // dots
+  const dots = slides.map((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => go(i, i > index ? 'next' : 'prev'));
+    dotsWrap.appendChild(d);
+    return d;
+  });
+
+  function setActive(){
+    slides.forEach((s, i) => s.classList.toggle('is-active', i === index));
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+  }
+
+  function applyTransform(){
+    const tx = -index * 100;
+    track.style.transform = `translateX(${tx}%)`;
+    // page-turn helper için CSS custom prop:
+    viewport.style.setProperty('--tx', `${tx}%`);
+  }
+
+  function animateTurn(dir){
+    viewport.classList.remove('dir-next', 'dir-prev');
+    viewport.classList.add('turning', dir === 'prev' ? 'dir-prev' : 'dir-next');
+    // Transition bitince sınıfları temizle
+    window.setTimeout(() => viewport.classList.remove('turning','dir-next','dir-prev'), 580);
+  }
+
+  function go(i, dir='next'){
+    const nextIndex = (i + slides.length) % slides.length;
+    if (nextIndex === index) return;
+    index = nextIndex;
+
+    animateTurn(dir);
+    applyTransform();
+    setActive();
+  }
+
+  prevBtn.addEventListener('click', () => go(index - 1, 'prev'));
+  nextBtn.addEventListener('click', () => go(index + 1, 'next'));
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') go(index - 1, 'prev');
+    if (e.key === 'ArrowRight') go(index + 1, 'next');
+  });
+
+  function onStart(e){
+    const p = e.touches ? e.touches[0] : e;
+    dragging = true;
+    startX = p.clientX;
+    startY = p.clientY;
+  }
+
+  function onEnd(e){
+    if (!dragging) return;
+    dragging = false;
+    const p = e.changedTouches ? e.changedTouches[0] : e;
+    const dx = p.clientX - startX;
+    const dy = p.clientY - startY;
+
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)){
+      if (dx < 0) go(index + 1, 'next');
+      else go(index - 1, 'prev');
+    }
+  }
+
+  viewport.addEventListener('touchstart', onStart, {passive:true});
+  viewport.addEventListener('touchend', onEnd, {passive:true});
+  viewport.addEventListener('mousedown', onStart);
+  window.addEventListener('mouseup', onEnd);
+  viewport.addEventListener('dragstart', (e) => e.preventDefault());
+
+  // init
+  applyTransform();
+  setActive();
+</script>
