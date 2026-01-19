@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import FilterBar from "../components/FilterBar.astro";
 
 const cards = [
   {
@@ -184,11 +185,13 @@ const cards = [
   },
 ];
 
-// filter options shown in UI (order matters)
 const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY", "MIND"];
 ---
 
 <Layout title="Science — Ugurcan">
+  <!-- This renders inside Layout's sticky header, under UGURCAN -->
+  <FilterBar slot="subnav" filters={filters} cardSelector=".science-card" />
+
   <section class="science-wrap">
     <div class="hero">
       <h1 class="page-title">Science</h1>
@@ -197,16 +200,7 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       </p>
     </div>
 
-    {/* Filter bar: sits right under the global header (UGURCAN) */}
-    <div class="filter-bar" role="toolbar" aria-label="Filter science topics">
-      {filters.map((f) => (
-        <button class={`filter-pill ${f === "ALL" ? "active" : ""}`} type="button" data-filter={f}>
-          {f}
-        </button>
-      ))}
-    </div>
-
-    <div class="card-list" id="cardList">
+    <div class="card-list">
       {cards.map((c) => (
         <a class="science-card" href={c.href} data-category={c.category}>
           <div class="card-icon">
@@ -233,10 +227,8 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
     .science-wrap {
       max-width: 880px;
       margin: 0 auto;
-      padding: 34px 18px 80px;
+      padding: 28px 18px 80px;
     }
-
-    .hero { padding-top: 6px; }
 
     .page-title {
       font-size: 42px;
@@ -251,49 +243,6 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       line-height: 1.55;
       color: rgba(11, 11, 15, 0.62);
       max-width: 62ch;
-    }
-
-    /* Filter bar sits under the sticky header (Layout header is 64px) */
-    .filter-bar{
-      position: sticky;
-      top: 64px;
-      z-index: 25;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 12px 0 14px;
-      margin-bottom: 6px;
-      background: rgba(245,245,247,0.85);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(0,0,0,0.06);
-    }
-
-    .filter-pill{
-      appearance: none;
-      border: 1px solid rgba(0,0,0,0.10);
-      background: rgba(255,255,255,0.85);
-      color: rgba(11,11,15,0.70);
-      border-radius: 999px;
-      padding: 9px 12px;
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: transform .15s ease, background .15s ease, color .15s ease;
-      white-space: nowrap;
-    }
-
-    .filter-pill:hover{
-      transform: translateY(-1px);
-      background: rgba(255,255,255,1);
-      color: rgba(11,11,15,0.88);
-    }
-
-    .filter-pill.active{
-      background: rgba(11,11,15,0.90);
-      color: rgba(255,255,255,0.94);
-      border-color: rgba(11,11,15,0.12);
     }
 
     .card-list {
@@ -336,12 +285,12 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       width: 100%;
       height: 100%;
       object-fit: cover;
-      display:block;
+      display: block;
     }
 
     .card-text{
       min-width: 0;
-      padding-right: 88px; /* room for badge on right */
+      padding-right: 88px; /* room for badge on right (desktop) */
     }
 
     .subtitle-row{
@@ -355,8 +304,6 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       font-size: 12px;
       font-weight: 700;
       color: rgba(11,11,15,0.55);
-      letter-spacing: .02em;
-      text-transform: none;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -390,10 +337,10 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       text-transform: uppercase;
       border: 1px solid rgba(0,0,0,0.08);
       backdrop-filter: blur(10px);
-      user-select:none;
+      user-select: none;
     }
 
-    /* Color system (Apple-like: muted but distinct) */
+    /* Color system */
     .badge--SPACE{
       background: rgba(88, 86, 214, 0.14);
       color: rgba(88, 86, 214, 0.95);
@@ -425,8 +372,8 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       border-color: rgba(175, 82, 222, 0.22);
     }
 
-    /* Filtering: hide cards */
-    .science-card.is-hidden{ display:none; }
+    /* FilterBar toggles this class */
+    .science-card.is-hidden{ display: none; }
 
     @media (max-width: 480px) {
       .page-title { font-size: 34px; }
@@ -435,25 +382,4 @@ const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY"
       .science-card{ gap: 12px; }
     }
   </style>
-
-  <script is:inline>
-    const pills = Array.from(document.querySelectorAll('.filter-pill'));
-    const cards = Array.from(document.querySelectorAll('.science-card'));
-
-    function setActive(filter) {
-      pills.forEach(p => p.classList.toggle('active', p.dataset.filter === filter));
-      cards.forEach(card => {
-        const cat = card.dataset.category;
-        const show = (filter === 'ALL') || (cat === filter);
-        card.classList.toggle('is-hidden', !show);
-      });
-    }
-
-    pills.forEach(pill => {
-      pill.addEventListener('click', () => setActive(pill.dataset.filter));
-    });
-
-    // default
-    setActive('ALL');
-  </script>
 </Layout>
