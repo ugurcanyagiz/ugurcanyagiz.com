@@ -2,250 +2,184 @@
 import Layout from "../../layouts/Layout.astro";
 
 /**
- * JLOG entry: we must believe (?)
  * Images:
- * - Put your main image here:
- *   public/images/din.jpg
- *
- * Optional (if you want to add later):
- *   public/images/jlog/belief/ancient.jpg
- *   public/images/jlog/belief/temple.jpg
- *   public/images/jlog/belief/science.jpg
- *   public/images/jlog/belief/tech.jpg
+ * - Required (you already have): /images/din.jpg
+ * - Optional: /images/jlog-belief-hero.jpg
  */
+const heroImg = "/images/jlog-belief-hero.jpg"; // optional; if missing, it will fall back
+const fallbackHero = "/images/din.jpg";
 
-const hero = {
-  kicker: "JLOG!",
-  title: "we must believe (?)",
-  meta: "Belief · Culture · Evolution · Technology",
-  cover: "/images/din.jpg",
-  coverAlt: "A symbolic image representing belief across history",
-};
+const title = "we must believe (?)";
+const subtitle = "On old gods, modern gods, and what happens when explanations get better — but meaning stays hungry.";
+const category = "BELIEF";
+const dateLine = "JLOG · belief note";
 ---
 
-<Layout title="we must believe (?) — JLOG!">
+<Layout title={`JLOG! — ${title}`}>
   <main class="page">
     <!-- HERO -->
-    <header class="hero" aria-label="JLOG entry header">
-      <p class="kicker">{hero.kicker}</p>
+    <header class="hero" aria-label="Page header">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">{dateLine}</p>
+          <h1 class="h1">{title}</h1>
+          <p class="sub">{subtitle}</p>
 
-      <h1 class="h1">{hero.title}</h1>
-      <p class="meta">{hero.meta}</p>
+          <div class="meta-row" aria-label="Meta">
+            <span class="chip">{category}</span>
+            <span class="dot" aria-hidden="true"></span>
+            <span class="meta">Personal note · reflective · not a lecture</span>
+          </div>
+        </div>
 
-      <figure class="cover" aria-label="Cover image">
-        <img src={hero.cover} alt={hero.coverAlt} loading="eager" />
-        <div class="coverFade" aria-hidden="true"></div>
-      </figure>
+        <figure class="hero-media" aria-label="Cover image">
+          <img
+            src={heroImg}
+            onerror={`this.onerror=null;this.src='${fallbackHero}'`}
+            alt="Belief, symbols, and the human need for meaning"
+            loading="eager"
+            decoding="async"
+          />
+          <div class="hero-sheen" aria-hidden="true"></div>
+        </figure>
+      </div>
     </header>
 
-    <!-- INTRO -->
-    <section class="paper" aria-label="Essay">
+    <!-- CONTENT -->
+    <article class="paper" aria-label="Essay">
       <p class="lede">
-        Humans don’t only want answers — we want <em>meaning</em>.
-        When nature is loud and uncertain, the mind builds a story that makes the world livable.
-        That story becomes belief. Belief becomes structure. Structure becomes culture.
+        I keep noticing something in myself: even when I don’t want to “believe,” my mind still searches for a shape
+        to hold onto. A story. A reason. A center of gravity. And I think that impulse is ancient.
       </p>
 
       <div class="body">
+        <h2>Belief is older than knowledge</h2>
         <p>
-          This page is a short map of a long journey: from ancient spirits to organized religions,
-          from philosophy to science, from modern “gods” like ideology and money to a future that
-          may be less about worship — and more about understanding.
+          If you drop me into a world where lightning splits the sky, crops fail, a child gets sick, and the night is
+          full of predators, I’m not going to calmly wait for a peer-reviewed explanation. I will reach for something
+          that reduces fear and uncertainty <em>now</em>. I will attach meaning to patterns. I will invent causes when I
+          don’t have answers.
+        </p>
+        <p>
+          That’s not stupidity. It’s survival. Belief is a tool the brain uses to compress chaos into something you can
+          carry. A way to coordinate with other people. A way to make pain feel less random. In that sense, belief isn’t
+          the opposite of intelligence — it’s a default human response to not knowing.
         </p>
 
-        <div class="callout" role="note" aria-label="Key idea">
-          <p class="calloutTitle">A simple hypothesis</p>
-          <p class="calloutText">
-            Belief systems tend to expand when uncertainty is high and contract when reliable explanations become common.
-            But belief doesn’t disappear — it <em>migrates</em>.
+        <h2>From spirits to systems</h2>
+        <p>
+          When I look at history, it feels like a long migration of explanations. First, we had spirits: the river is
+          angry, the forest is watching, the storm has a personality. Then gods: specialized, named, negotiated with,
+          punished by, protected by. Then religions: organized belief — with ethics, rituals, belonging, identity.
+        </p>
+        <p>
+          And then something subtle happened: we started getting reliable answers from nature itself. Not from temples,
+          not from kings, not from myths — from experiments. From repeating the same test and getting the same result.
+          From technology that works even if you don’t “believe” in it.
+        </p>
+
+        <div class="callout" role="note" aria-label="Callout">
+          <p class="callout-title">A thought I can’t unsee</p>
+          <p class="callout-text">
+            A belief can survive without proof. A technology can’t. If it doesn’t work, it dies.
+            That pressure shapes cultures over time.
           </p>
         </div>
-      </div>
-    </section>
 
-    <!-- ANIMATION: Belief → Knowledge Map -->
-    <section class="viz" aria-label="Belief-to-knowledge timeline">
-      <div class="vizHead">
-        <h2 class="h2">A minimal timeline of belief</h2>
-        <p class="sub">
-          Not “true vs false” — more like a changing interface between uncertainty, story, and explanation.
+        <h2>Modern gods don’t look like gods</h2>
+        <p>
+          Here’s the part that feels uncomfortable: I don’t think we “stopped believing.” I think we just upgraded the
+          costumes.
+        </p>
+        <p>
+          Today, many of our gods are abstract:
+          money, nation, ideology, status, the algorithm, productivity, “the market,” “the future,” “success.”
+          None of these are physical objects you can touch — yet people will sacrifice sleep, relationships, health,
+          and sometimes morality for them.
+        </p>
+        <p>
+          They function like gods because they:
+          offer identity (“who am I?”), promise safety (“what will protect me?”), define virtue (“what is good?”),
+          and punish heresy (“what happens if I refuse?”).
+        </p>
+
+        <h2>Why new gods are harder to create now</h2>
+        <p>
+          I have this theory — not as a physicist, not as a historian, just as someone watching the world closely:
+          in older eras, gaps in knowledge were huge, and belief could colonize those gaps easily.
+          But now, many gaps are shrinking fast.
+        </p>
+        <p>
+          When we can explain eclipses, disease, the motion of planets, the age of the Earth, the chemistry of life —
+          a lot of the “mystery space” that used to be filled with confident gods becomes… smaller.
+          Not because the universe is less mysterious, but because our explanations are more precise.
+        </p>
+        <p>
+          That precision changes culture. It doesn’t erase belief, but it makes it harder for a brand-new god to
+          become universally convincing. The world is too connected, too cross-checked, too recorded.
+          A new belief system gets stress-tested immediately.
+        </p>
+
+        <h2>But meaning still has to live somewhere</h2>
+        <p>
+          Even if science answers “how,” it doesn’t automatically answer “why should I care?”.
+          And that’s where belief sneaks back in — through values. Through what we choose to protect.
+          Through what we treat as sacred.
+        </p>
+        <p>
+          Sometimes I wonder if the next “gods” won’t be supernatural at all — but ethical frameworks we treat as
+          untouchable: dignity, consciousness, truth, responsibility. Or maybe the sacred will become smaller and more
+          personal: your family, your craft, your integrity. A private religion of attention.
+        </p>
+
+        <hr class="rule" />
+
+        <h2>Where I land today</h2>
+        <p>
+          I don’t want to pretend I’m above belief. I have my own versions too. I just try to notice them.
+          I try to keep the door open: “What if I’m wrong?”.
+        </p>
+        <p>
+          If there’s one thing I want to practice, it’s this: replacing blind belief with
+          <strong>curious belief</strong> — beliefs that are allowed to evolve when reality disagrees.
+          Not faith as a wall, but faith as a temporary bridge.
+        </p>
+
+        <p class="sig">
+          — Ugurcan
         </p>
       </div>
+    </article>
 
-      <div class="timeline" role="img" aria-label="Animated timeline from myth to knowledge">
-        <div class="track" aria-hidden="true"></div>
+    <!-- RELATED (optional) -->
+    <section class="related" aria-label="Related posts">
+      <h3 class="h3">Related</h3>
 
-        <!-- Stops -->
-        <div class="stop s1">
-          <div class="dot"></div>
-          <div class="label">
-            <div class="labelTop">Myth & spirits</div>
-            <div class="labelBot">fear → story</div>
+      <div class="cards">
+        <a class="mini" href="/jlog/story-of-my-life" aria-label="Go to story of my life">
+          <div class="mini-img" style={`background-image:url('/images/story-of-my-life.jpg')`}></div>
+          <div class="mini-txt">
+            <div class="mini-k">LIFE</div>
+            <div class="mini-h">the story of my life</div>
+            <div class="mini-p">Curiosity, migration, building, learning — and becoming.</div>
           </div>
-        </div>
+        </a>
 
-        <div class="stop s2">
-          <div class="dot"></div>
-          <div class="label">
-            <div class="labelTop">Gods & temples</div>
-            <div class="labelBot">ritual → order</div>
+        <a class="mini" href="/jlog/what-is-real" aria-label="Go to do we really know what is real?">
+          <div class="mini-img" style={`background-image:url('/images/reality-dali.jpg')`}></div>
+          <div class="mini-txt">
+            <div class="mini-k">REALITY</div>
+            <div class="mini-h">do we really know what is real?</div>
+            <div class="mini-p">Perception, memory, and the edges of certainty.</div>
           </div>
-        </div>
-
-        <div class="stop s3">
-          <div class="dot"></div>
-          <div class="label">
-            <div class="labelTop">Monotheism</div>
-            <div class="labelBot">unity → law</div>
-          </div>
-        </div>
-
-        <div class="stop s4">
-          <div class="dot"></div>
-          <div class="label">
-            <div class="labelTop">Philosophy</div>
-            <div class="labelBot">reason → argument</div>
-          </div>
-        </div>
-
-        <div class="stop s5">
-          <div class="dot"></div>
-          <div class="label">
-            <div class="labelTop">Science</div>
-            <div class="labelBot">test → predict</div>
-          </div>
-        </div>
-
-        <div class="stop s6">
-          <div class="dot"></div>
-          <div class="label">
-            <div class="labelTop">Technology</div>
-            <div class="labelBot">tools → power</div>
-          </div>
-        </div>
-
-        <div class="stop s7">
-          <div class="dot"></div>
-          <div class="label">
-            <div class="labelTop">Future culture</div>
-            <div class="labelBot">humility → care</div>
-          </div>
-        </div>
-
-        <!-- Moving cursor (animated) -->
-        <div class="cursor" aria-hidden="true">
-          <div class="cursorRing"></div>
-        </div>
-
-        <div class="legend" aria-hidden="true">
-          <span class="pill p-belief">belief</span>
-          <span class="pill p-knowledge">knowledge</span>
-          <span class="pill p-meaning">meaning</span>
-        </div>
+        </a>
       </div>
-    </section>
-
-    <!-- SECTIONS -->
-    <section class="paper" aria-label="Main sections">
-      <h2 class="h2">Why we “must” believe</h2>
-      <p class="p">
-        In the earliest ages, nature didn’t offer explanations — it offered consequences.
-        Lightning burns. Winter kills. Disease arrives without warning. The mind hates a vacuum.
-        So the first “gods” were often names for patterns we couldn’t control.
-      </p>
-
-      <div class="grid2" aria-label="Key patterns">
-        <article class="tile">
-          <h3 class="h3">Uncertainty</h3>
-          <p class="p">
-            When you can’t predict, you negotiate — with rituals, prayers, symbols, taboos.
-            It’s a psychological insurance policy.
-          </p>
-        </article>
-
-        <article class="tile">
-          <h3 class="h3">Coordination</h3>
-          <p class="p">
-            Shared belief is a social technology. It lets millions cooperate, trust, punish, forgive,
-            and build identities bigger than the family.
-          </p>
-        </article>
-
-        <article class="tile">
-          <h3 class="h3">Meaning</h3>
-          <p class="p">
-            Even when we can predict the world, we still ask: “Why should I live well?”
-            Meaning doesn’t fall out of physics.
-          </p>
-        </article>
-
-        <article class="tile">
-          <h3 class="h3">Power</h3>
-          <p class="p">
-            Belief systems can be used to protect people — or to control them.
-            The same structure that holds a society can also cage it.
-          </p>
-        </article>
-      </div>
-
-      <hr class="sep" />
-
-      <h2 class="h2">Modern gods</h2>
-      <p class="p">
-        As science explains more of nature, many traditional claims lose public authority.
-        But the need for certainty doesn’t vanish. It often attaches to new objects:
-        ideologies, brands, money, nationalism, “progress,” even technology itself.
-      </p>
-
-      <div class="chips" aria-label="Modern gods list">
-        <span class="chip">Nation</span>
-        <span class="chip">Ideology</span>
-        <span class="chip">Money</span>
-        <span class="chip">Status</span>
-        <span class="chip">Influence</span>
-        <span class="chip">Techno-optimism</span>
-        <span class="chip">Conspiracies</span>
-        <span class="chip">Identity tribes</span>
-      </div>
-
-      <div class="quote" aria-label="Quote">
-        <p class="q">
-          “The more we explain, the less we worship — but the more we risk worshipping our explanations.”
-        </p>
-        <p class="a">— a note to myself</p>
-      </div>
-
-      <hr class="sep" />
-
-      <h2 class="h2">A culture where new gods don’t form</h2>
-      <p class="p">
-        Maybe the next step is not “no belief,” but <em>better humility</em>:
-        an adult relationship with uncertainty. Not cynicism — clarity.
-        A culture that can say “I don’t know” without panic.
-      </p>
-
-      <div class="ending" aria-label="Closing reflection">
-        <p class="p">
-          If the future is wise, it won’t replace old gods with new idols.
-          It will replace certainty with curiosity, and fear with responsibility —
-          toward each other, and toward the fragile world that holds all of us.
-        </p>
-      </div>
-    </section>
-
-    <!-- FOOTNOTE -->
-    <section class="foot" aria-label="Footer note">
-      <p class="footText">
-        Note: This is a personal synthesis, not a claim of final truth. The point is to keep the question alive —
-        without turning it into a weapon.
-      </p>
     </section>
   </main>
 
   <style>
-    /* Page frame */
     .page{
-      max-width: 1100px;
+      max-width: 980px;
       margin: 0 auto;
       padding: 18px 18px 90px;
       display: grid;
@@ -254,392 +188,274 @@ const hero = {
 
     /* HERO */
     .hero{
-      text-align: center;
-      padding-top: 10px;
+      margin-top: 6px;
+      padding: 18px;
+      border-radius: 24px;
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 14px 48px rgba(0,0,0,0.06);
+    }
+
+    .hero-grid{
       display: grid;
-      gap: 10px;
-      justify-items: center;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .hero-copy{
+      padding: 10px 10px 10px 6px;
     }
 
     .kicker{
-      margin: 0;
+      margin: 0 0 10px;
       font-size: 12px;
       font-weight: 900;
       letter-spacing: .26em;
       text-transform: uppercase;
-      color: rgba(11,11,15,0.62);
+      color: rgba(11,11,15,0.55);
     }
 
     .h1{
-      margin: 0;
-      font-size: 46px;
+      margin: 0 0 10px;
+      font-size: 44px;
       font-weight: 850;
-      letter-spacing: -0.04em;
+      letter-spacing: -0.035em;
       line-height: 1.05;
-      color: rgba(11,11,15,0.92);
-      text-wrap: balance;
+      color: rgba(11,11,15,0.94);
     }
 
-    .meta{
-      margin: 0;
+    .sub{
+      margin: 0 0 14px;
+      max-width: 62ch;
       font-size: 14px;
       line-height: 1.6;
-      color: rgba(11,11,15,0.60);
+      color: rgba(11,11,15,0.62);
     }
 
-    .cover{
-      width: min(980px, 100%);
-      margin: 10px auto 0;
-      border-radius: 24px;
-      overflow: hidden;
-      position: relative;
-      background: rgba(255,255,255,0.7);
-      border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 18px 60px rgba(0,0,0,.10);
-      aspect-ratio: 2.2 / 1;
-    }
-    .cover img{
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transform: scale(1.02);
-    }
-    .coverFade{
-      position:absolute;
-      inset:0;
-      background: radial-gradient(120% 90% at 50% 0%, rgba(0,0,0,0.15), rgba(0,0,0,0.00) 60%),
-                  linear-gradient(to top, rgba(0,0,0,0.34), rgba(0,0,0,0.00) 55%);
-      pointer-events:none;
+    .meta-row{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    /* Paper */
-    .paper{
-      width: min(980px, 100%);
-      margin: 0 auto;
-      background: rgba(255,255,255,0.92);
-      border: 1px solid rgba(0,0,0,0.06);
-      border-radius: 24px;
-      box-shadow: 0 14px 48px rgba(0,0,0,0.07);
-      padding: 22px 22px 20px;
-    }
-
-    .lede{
-      margin: 0 0 14px;
-      font-size: 16px;
-      line-height: 1.75;
-      color: rgba(11,11,15,0.80);
-      letter-spacing: -0.01em;
-    }
-    .body{ display: grid; gap: 14px; }
-
-    .h2{
-      margin: 0 0 8px;
-      font-size: 18px;
-      font-weight: 850;
-      letter-spacing: -0.02em;
-      color: rgba(11,11,15,0.92);
-    }
-    .h3{
-      margin: 0 0 6px;
-      font-size: 14px;
-      font-weight: 850;
-      letter-spacing: -0.01em;
-      color: rgba(11,11,15,0.92);
-    }
-    .p{
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.75;
-      color: rgba(11,11,15,0.68);
-    }
-
-    .callout{
-      border-radius: 18px;
-      padding: 14px 14px;
-      background: rgba(245,245,247,0.75);
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-    .calloutTitle{
-      margin: 0 0 6px;
-      font-size: 12px;
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 11px;
       font-weight: 900;
       letter-spacing: .14em;
       text-transform: uppercase;
-      color: rgba(11,11,15,0.62);
-    }
-    .calloutText{
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.75;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.8);
       color: rgba(11,11,15,0.70);
     }
 
-    .sep{
-      border: 0;
-      height: 1px;
-      background: rgba(0,0,0,0.06);
-      margin: 16px 0;
+    .dot{
+      width: 4px;
+      height: 4px;
+      border-radius: 99px;
+      background: rgba(11,11,15,0.25);
     }
 
-    /* Timeline / animation */
-    .viz{
-      width: min(980px, 100%);
-      margin: 0 auto;
-      display: grid;
-      gap: 10px;
-    }
-
-    .vizHead{
-      padding: 4px 2px 0;
-      text-align: left;
-    }
-    .sub{
-      margin: 0;
+    .meta{
       font-size: 13px;
-      line-height: 1.6;
-      color: rgba(11,11,15,0.58);
-      max-width: 70ch;
+      color: rgba(11,11,15,0.55);
     }
 
-    .timeline{
+    .hero-media{
       position: relative;
+      margin: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.06);
+      background: rgba(245,245,247,0.9);
+      min-height: 240px;
+    }
+
+    .hero-media img{
+      width: 100%;
+      height: 100%;
+      display:block;
+      object-fit: cover;
+      transform: scale(1.02);
+      filter: contrast(1.02) saturate(0.95);
+    }
+
+    .hero-sheen{
+      position:absolute;
+      inset: 0;
+      background: radial-gradient(1000px 300px at 10% 10%, rgba(255,255,255,0.35), transparent 60%);
+      pointer-events:none;
+    }
+
+    /* PAPER */
+    .paper{
+      width: min(880px, 100%);
+      margin: 0 auto;
+      padding: 26px 22px;
       border-radius: 24px;
       background: rgba(255,255,255,0.92);
       border: 1px solid rgba(0,0,0,0.06);
       box-shadow: 0 14px 48px rgba(0,0,0,0.07);
-      padding: 18px 16px 16px;
-      overflow: hidden;
-      min-height: 190px;
     }
 
-    .track{
-      position: absolute;
-      left: 18px;
-      right: 18px;
-      top: 78px;
-      height: 8px;
-      border-radius: 999px;
-      background: linear-gradient(90deg,
-        rgba(11,11,15,0.14),
-        rgba(11,11,15,0.10) 45%,
-        rgba(11,11,15,0.08)
-      );
-    }
-
-    .stop{
-      position: absolute;
-      top: 52px;
-      transform: translateX(-50%);
-      width: 1px;
-    }
-
-    .stop .dot{
-      width: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(11,11,15,0.70);
-      box-shadow: 0 0 0 4px rgba(11,11,15,0.08);
-      margin: 0 auto 10px;
-    }
-
-    .label{
-      width: 130px;
-      text-align: center;
-      transform: translateX(-50%);
-      margin-left: 0px;
-    }
-
-    .labelTop{
-      font-size: 12px;
-      font-weight: 850;
-      letter-spacing: -0.01em;
-      color: rgba(11,11,15,0.86);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .labelBot{
-      margin-top: 2px;
-      font-size: 12px;
-      font-weight: 650;
-      color: rgba(11,11,15,0.55);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* stop positions */
-    .s1{ left: 7%; }
-    .s2{ left: 20%; }
-    .s3{ left: 35%; }
-    .s4{ left: 50%; }
-    .s5{ left: 65%; }
-    .s6{ left: 80%; }
-    .s7{ left: 93%; }
-
-    .cursor{
-      position: absolute;
-      top: 74px;
-      left: 7%;
-      width: 20px;
-      height: 20px;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-      animation: glide 10.5s ease-in-out infinite;
-    }
-    .cursorRing{
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.85);
-      border: 1px solid rgba(0,0,0,0.18);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-    }
-
-    @keyframes glide{
-      0%   { left: 7%;  }
-      22%  { left: 20%; }
-      40%  { left: 35%; }
-      58%  { left: 50%; }
-      76%  { left: 65%; }
-      90%  { left: 80%; }
-      100% { left: 93%; }
-    }
-
-    .legend{
-      position: absolute;
-      bottom: 14px;
-      left: 14px;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .pill{
-      border-radius: 999px;
-      padding: 7px 10px;
-      font-size: 11px;
-      font-weight: 850;
-      letter-spacing: .10em;
-      text-transform: uppercase;
-      border: 1px solid rgba(0,0,0,0.08);
-      background: rgba(245,245,247,0.7);
-      color: rgba(11,11,15,0.68);
-    }
-    .p-belief{ background: rgba(175,82,222,0.12); color: rgba(120,50,170,0.92); border-color: rgba(175,82,222,0.18); }
-    .p-knowledge{ background: rgba(0,122,255,0.12); color: rgba(0,122,255,0.92); border-color: rgba(0,122,255,0.18); }
-    .p-meaning{ background: rgba(255,149,0,0.12); color: rgba(255,149,0,0.92); border-color: rgba(255,149,0,0.18); }
-
-    /* Tiles */
-    .grid2{
-      margin-top: 14px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-    .tile{
-      border-radius: 18px;
-      padding: 14px 14px;
-      background: rgba(245,245,247,0.75);
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-
-    .chips{
-      margin-top: 12px;
-      display:flex;
-      flex-wrap:wrap;
-      gap: 8px;
-    }
-    .chip{
-      border-radius: 999px;
-      padding: 8px 10px;
-      font-size: 12px;
-      font-weight: 750;
-      letter-spacing: -0.01em;
-      background: rgba(245,245,247,0.75);
-      border: 1px solid rgba(0,0,0,0.06);
-      color: rgba(11,11,15,0.70);
-      user-select:none;
-    }
-
-    .quote{
-      margin-top: 14px;
-      border-radius: 18px;
-      padding: 14px 14px;
-      background: rgba(11,11,15,0.04);
-      border: 1px solid rgba(0,0,0,0.06);
-    }
-    .q{
-      margin: 0;
-      font-size: 14px;
+    .lede{
+      margin: 0 0 16px;
+      font-size: 16px;
       line-height: 1.75;
+      color: rgba(11,11,15,0.82);
+      font-weight: 650;
+      letter-spacing: -0.01em;
+    }
+
+    .body{
+      font-size: 15px;
+      line-height: 1.85;
       color: rgba(11,11,15,0.76);
     }
-    .a{
-      margin: 8px 0 0;
-      font-size: 12px;
-      font-weight: 800;
-      color: rgba(11,11,15,0.55);
-      letter-spacing: -0.01em;
+
+    .body h2{
+      margin: 18px 0 8px;
+      font-size: 15px;
+      font-weight: 850;
+      letter-spacing: -0.015em;
+      color: rgba(11,11,15,0.92);
     }
 
-    .ending{
-      margin-top: 12px;
-      border-radius: 18px;
+    .body p{
+      margin: 0 0 14px;
+    }
+
+    .callout{
+      margin: 16px 0 16px;
       padding: 14px 14px;
-      background: rgba(245,245,247,0.75);
+      border-radius: 16px;
+      background: rgba(245,245,247,0.9);
       border: 1px solid rgba(0,0,0,0.06);
     }
 
-    .foot{
-      width: min(980px, 100%);
-      margin: 0 auto;
-      padding: 0 4px;
-    }
-    .footText{
-      margin: 0;
+    .callout-title{
+      margin: 0 0 6px;
       font-size: 12px;
-      line-height: 1.65;
-      color: rgba(11,11,15,0.52);
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: rgba(11,11,15,0.60);
     }
 
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      .cursor{ animation: none; left: 50%; }
+    .callout-text{
+      margin: 0;
+      color: rgba(11,11,15,0.72);
     }
 
-    /* Mobile */
-    @media (max-width: 720px){
-      .h1{ font-size: 36px; }
-      .cover{ border-radius: 20px; aspect-ratio: 1.8 / 1; }
-      .paper{ padding: 18px 16px 16px; border-radius: 20px; }
-      .timeline{ border-radius: 20px; min-height: 240px; }
-      .grid2{ grid-template-columns: 1fr; }
-      .label{ width: 120px; }
-      .track{ top: 98px; }
-      .stop{ top: 72px; }
-      .cursor{ top: 94px; }
+    .rule{
+      border: 0;
+      height: 1px;
+      background: rgba(0,0,0,0.08);
+      margin: 18px 0 16px;
     }
 
-    @media (max-width: 420px){
-      .page{ padding: 16px 14px 80px; }
-      .h1{ font-size: 32px; }
-      .labelTop{ font-size: 11.5px; }
-      .labelBot{ font-size: 11.5px; }
+    .sig{
+      margin: 18px 0 0;
+      color: rgba(11,11,15,0.62);
+      font-weight: 750;
+    }
+
+    /* RELATED */
+    .related{
+      width: min(880px, 100%);
+      margin: 0 auto;
+      padding: 0 2px;
+    }
+
+    .h3{
+      margin: 8px 0 10px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: .20em;
+      text-transform: uppercase;
+      color: rgba(11,11,15,0.55);
+    }
+
+    .cards{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .mini{
+      display:flex;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 10px 34px rgba(0,0,0,0.06);
+      transition: transform .15s ease, box-shadow .15s ease;
+      overflow:hidden;
+    }
+
+    .mini:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 14px 44px rgba(0,0,0,0.08);
+    }
+
+    .mini-img{
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(0,0,0,0.06);
+      flex-shrink:0;
+    }
+
+    .mini-txt{ min-width: 0; }
+
+    .mini-k{
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: rgba(11,11,15,0.55);
+      margin-bottom: 4px;
+    }
+
+    .mini-h{
+      font-size: 15px;
+      font-weight: 850;
+      letter-spacing: -0.015em;
+      color: rgba(11,11,15,0.92);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-p{
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(11,11,15,0.62);
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    @media (max-width: 860px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .hero-media{ min-height: 220px; }
+    }
+
+    @media (max-width: 520px){
+      .page{ padding: 16px 12px 80px; }
+      .h1{ font-size: 34px; }
+      .paper{ padding: 20px 16px; }
+      .cards{ grid-template-columns: 1fr; }
     }
   </style>
-
-  <script is:inline>
-    // Optional enhancement: pause the cursor when the user hovers the timeline.
-    const tl = document.querySelector(".timeline");
-    const cursor = document.querySelector(".cursor");
-    if (tl && cursor) {
-      tl.addEventListener("mouseenter", () => {
-        cursor.style.animationPlayState = "paused";
-      });
-      tl.addEventListener("mouseleave", () => {
-        cursor.style.animationPlayState = "running";
-      });
-    }
-  </script>
 </Layout>
