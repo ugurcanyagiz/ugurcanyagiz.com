@@ -1,210 +1,187 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import Layout from "../layouts/Layout.astro";
 
-/**
- * Images:
- * - Required (you already have): /images/din.jpg
- * - Optional: /images/jlog-belief-hero.jpg
- */
-const heroImg = "/images/jlog-belief-hero.jpg"; // optional; if missing, it will fall back
-const fallbackHero = "/images/din.jpg";
+const audioSrc = "/audio/belief.mp3";
 
-const title = "we must believe (?)";
-const subtitle = "On old gods, modern gods, and what happens when explanations get better — but meaning stays hungry.";
-const category = "BELIEF";
-const dateLine = "JLOG · belief note";
+// Page labels (hero kısmında, senin ekranındaki gibi)
+const heroTitle = "we must believe (?)";
+const heroSubtitle =
+  "On old gods, modern gods, and what happens when explanations get better — but meaning stays hungry.";
+
+// Audio card (kart içinde gözükecek)
+const audioTitle = "belief note";
+const audioMeta = "Audio recording · JLOG!";
 ---
 
-<Layout title={`JLOG! — ${title}`}>
-  <main class="page">
-    <!-- HERO -->
+<Layout title="we must believe (?) — Ugurcan">
+  <main class="wrap">
+    <!-- HERO (senin mevcut tasarımın hissiyle) -->
     <header class="hero" aria-label="Page header">
-      <div class="hero-grid">
-        <div class="hero-copy">
-          <p class="kicker">{dateLine}</p>
-          <h1 class="h1">{title}</h1>
-          <p class="sub">{subtitle}</p>
+      <div class="hero-text">
+        <p class="kicker">JLOG · BELIEF NOTE</p>
+        <h1 class="h1">{heroTitle}</h1>
+        <p class="sub">{heroSubtitle}</p>
 
-          <div class="meta-row" aria-label="Meta">
-            <span class="chip">{category}</span>
-            <span class="dot" aria-hidden="true"></span>
-            <span class="meta">Personal note · reflective · not a lecture</span>
-          </div>
+        <div class="chips" aria-label="Tags">
+          <span class="chip">BELIEF</span>
+          <span class="dot">•</span>
+          <span class="chip-plain">Personal note · reflective · not a lecture</span>
         </div>
+      </div>
 
-        <figure class="hero-media" aria-label="Cover image">
-          <img
-            src={heroImg}
-            onerror={`this.onerror=null;this.src='${fallbackHero}'`}
-            alt="Belief, symbols, and the human need for meaning"
-            loading="eager"
-            decoding="async"
-          />
-          <div class="hero-sheen" aria-hidden="true"></div>
-        </figure>
+      <!-- Sağdaki görsel senin din.jpg’nin yerini temsil ediyor.
+           Eğer zaten sayfanda farklı isimle kullanıyorsan sadece src'yi değiştir. -->
+      <div class="hero-media" aria-label="Cover image">
+        <img src="/images/din.jpg" alt="Belief evolution illustration" loading="eager" />
       </div>
     </header>
 
-    <!-- CONTENT -->
-    <article class="paper" aria-label="Essay">
+    <!-- AUDIO CARD (Hero ile yazı arasına) -->
+    <section class="audio-card" aria-label="Audio recording">
+      <div class="card-top">
+        <div class="wave" aria-hidden="true">
+          <svg viewBox="0 0 120 24" width="120" height="24">
+            <path
+              d="M2 12c6 0 6-8 12-8s6 16 12 16 6-16 12-16 6 16 12 16 6-16 12-16 6 16 12 16 6-16 12-16 6 8 12 8"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              opacity=".55"
+            />
+          </svg>
+        </div>
+
+        <div class="card-title">
+          <div class="small">{audioMeta}</div>
+          <div class="big">{audioTitle}</div>
+        </div>
+
+        <a class="download" href={audioSrc} download aria-label="Download audio">Download</a>
+      </div>
+
+      <div class="player" aria-label="Audio controls">
+        <button class="play" type="button" aria-label="Play/Pause" id="playBtn">▶</button>
+
+        <div class="time" id="tNow">0:00</div>
+
+        <input
+          class="seek"
+          id="seek"
+          type="range"
+          min="0"
+          max="1000"
+          value="0"
+          step="1"
+          aria-label="Seek"
+        />
+
+        <div class="time" id="tDur">0:00</div>
+
+        <button class="mute" type="button" aria-label="Mute/Unmute" id="muteBtn">🔈</button>
+      </div>
+
+      <div class="autoplay-hint" id="hint" aria-live="polite"></div>
+
+      <audio id="audio" preload="metadata" playsinline>
+        <source src={audioSrc} type="audio/mpeg" />
+        Your browser does not support the audio element.
+      </audio>
+    </section>
+
+    <!-- ESSAY -->
+    <article class="paper" aria-label="Entry">
       <p class="lede">
-        I keep noticing something in myself: even when I don’t want to “believe,” my mind still searches for a shape
-        to hold onto. A story. A reason. A center of gravity. And I think that impulse is ancient.
+        I keep noticing something in myself: even when I don’t want to “believe,” my mind still searches for a
+        shape to hold onto. A story. A reason. A center of gravity.
       </p>
 
       <div class="body">
-        <h2>Belief is older than knowledge</h2>
         <p>
-          If you drop me into a world where lightning splits the sky, crops fail, a child gets sick, and the night is
-          full of predators, I’m not going to calmly wait for a peer-reviewed explanation. I will reach for something
-          that reduces fear and uncertainty <em>now</em>. I will attach meaning to patterns. I will invent causes when I
-          don’t have answers.
-        </p>
-        <p>
-          That’s not stupidity. It’s survival. Belief is a tool the brain uses to compress chaos into something you can
-          carry. A way to coordinate with other people. A way to make pain feel less random. In that sense, belief isn’t
-          the opposite of intelligence — it’s a default human response to not knowing.
+          I’m not writing this as a professor, or a theologian, or someone who has the “right” model of history.
+          I’m writing it as a curious person who grew up watching how belief moves through people — and how it
+          quietly moves through me too.
         </p>
 
-        <h2>From spirits to systems</h2>
         <p>
-          When I look at history, it feels like a long migration of explanations. First, we had spirits: the river is
-          angry, the forest is watching, the storm has a personality. Then gods: specialized, named, negotiated with,
-          punished by, protected by. Then religions: organized belief — with ethics, rituals, belonging, identity.
-        </p>
-        <p>
-          And then something subtle happened: we started getting reliable answers from nature itself. Not from temples,
-          not from kings, not from myths — from experiments. From repeating the same test and getting the same result.
-          From technology that works even if you don’t “believe” in it.
+          When I look back at older cultures, it’s hard not to feel the practical pressure of uncertainty. Storms,
+          droughts, illness, death, a bad harvest — the world could turn against you with no warning, and no clear
+          explanation. If you couldn’t predict it, the next best thing was to give it a name. To personify it.
+          To negotiate with it. To make it social. A god of the sea, a god of war, a god of fertility. Not because
+          people were “stupid,” but because uncertainty is painful — and story is one of the oldest painkillers.
         </p>
 
-        <div class="callout" role="note" aria-label="Callout">
-          <p class="callout-title">A thought I can’t unsee</p>
-          <p class="callout-text">
-            A belief can survive without proof. A technology can’t. If it doesn’t work, it dies.
-            That pressure shapes cultures over time.
-          </p>
-        </div>
-
-        <h2>Modern gods don’t look like gods</h2>
         <p>
-          Here’s the part that feels uncomfortable: I don’t think we “stopped believing.” I think we just upgraded the
-          costumes.
-        </p>
-        <p>
-          Today, many of our gods are abstract:
-          money, nation, ideology, status, the algorithm, productivity, “the market,” “the future,” “success.”
-          None of these are physical objects you can touch — yet people will sacrifice sleep, relationships, health,
-          and sometimes morality for them.
-        </p>
-        <p>
-          They function like gods because they:
-          offer identity (“who am I?”), promise safety (“what will protect me?”), define virtue (“what is good?”),
-          and punish heresy (“what happens if I refuse?”).
+          Over time, belief systems didn’t only explain nature. They also explained <em>us</em>: why society needs
+          rules, why we should be loyal, why suffering might have meaning, why death might not be the final line.
+          Belief became a kind of architecture — a way to organize a life, not only a way to interpret thunder.
         </p>
 
-        <h2>Why new gods are harder to create now</h2>
         <p>
-          I have this theory — not as a physicist, not as a historian, just as someone watching the world closely:
-          in older eras, gaps in knowledge were huge, and belief could colonize those gaps easily.
-          But now, many gaps are shrinking fast.
-        </p>
-        <p>
-          When we can explain eclipses, disease, the motion of planets, the age of the Earth, the chemistry of life —
-          a lot of the “mystery space” that used to be filled with confident gods becomes… smaller.
-          Not because the universe is less mysterious, but because our explanations are more precise.
-        </p>
-        <p>
-          That precision changes culture. It doesn’t erase belief, but it makes it harder for a brand-new god to
-          become universally convincing. The world is too connected, too cross-checked, too recorded.
-          A new belief system gets stress-tested immediately.
+          Then something strange happened: our explanations started getting better. Not “perfect,” not complete —
+          just better. We learned patterns. We measured. We predicted. We found causes that didn’t require gods to
+          have moods. And little by little, the old roles began to shrink. The god of lightning lost territory to
+          electricity. The god of disease lost territory to microbes. The god of the sky lost territory to physics.
         </p>
 
-        <h2>But meaning still has to live somewhere</h2>
         <p>
-          Even if science answers “how,” it doesn’t automatically answer “why should I care?”.
-          And that’s where belief sneaks back in — through values. Through what we choose to protect.
-          Through what we treat as sacred.
-        </p>
-        <p>
-          Sometimes I wonder if the next “gods” won’t be supernatural at all — but ethical frameworks we treat as
-          untouchable: dignity, consciousness, truth, responsibility. Or maybe the sacred will become smaller and more
-          personal: your family, your craft, your integrity. A private religion of attention.
+          But the need didn’t disappear — it just moved. I think this is the part that fascinates me most. When a
+          culture stops needing gods for nature, the hunger for meaning can still remain. And when meaning remains
+          hungry, we tend to build new altars.
         </p>
 
-        <hr class="rule" />
-
-        <h2>Where I land today</h2>
         <p>
-          I don’t want to pretend I’m above belief. I have my own versions too. I just try to notice them.
-          I try to keep the door open: “What if I’m wrong?”.
-        </p>
-        <p>
-          If there’s one thing I want to practice, it’s this: replacing blind belief with
-          <strong>curious belief</strong> — beliefs that are allowed to evolve when reality disagrees.
-          Not faith as a wall, but faith as a temporary bridge.
+          Some of our modern “gods” don’t wear mythological names. They wear different clothes: ideology, identity,
+          money, status, progress, certainty, the algorithm, the tribe. Sometimes even “science” can become a god —
+          not as a method, but as a badge, a personality, a way to feel superior or safe. And technology… technology
+          can become a god very easily, because it actually <em>works</em>. It produces miracles on schedule.
         </p>
 
-        <p class="sig">
-          — Ugurcan
+        <p>
+          The irony is that as knowledge grows, it also reveals deeper unknowns. We don’t end belief — we relocate it.
+          We trade one mystery for another. We don’t worship thunder; we worship certainty. We don’t fear eclipses;
+          we fear being wrong. And being wrong is terrifying, because it means we don’t control the story.
         </p>
+
+        <p>
+          I sometimes wonder if the long arc of culture is not “from religion to science,” but “from superstition to
+          responsibility.” When we can’t outsource explanations to gods, we become responsible for our choices. When
+          we can’t blame fate, we have to face our incentives. When we can’t expect salvation from elsewhere, we
+          must build systems that reduce suffering here.
+        </p>
+
+        <p>
+          And maybe — just maybe — the next stage isn’t “new gods,” but a culture strong enough to live with
+          uncertainty without panic. A culture that can say: I don’t know… and still stay kind. Still stay curious.
+          Still keep building.
+        </p>
+
+        <p class="sig">— Ugurcan</p>
       </div>
     </article>
-
-    <!-- RELATED (optional) -->
-    <section class="related" aria-label="Related posts">
-      <h3 class="h3">Related</h3>
-
-      <div class="cards">
-        <a class="mini" href="/jlog/story-of-my-life" aria-label="Go to story of my life">
-          <div class="mini-img" style={`background-image:url('/images/story-of-my-life.jpg')`}></div>
-          <div class="mini-txt">
-            <div class="mini-k">LIFE</div>
-            <div class="mini-h">the story of my life</div>
-            <div class="mini-p">Curiosity, migration, building, learning — and becoming.</div>
-          </div>
-        </a>
-
-        <a class="mini" href="/jlog/what-is-real" aria-label="Go to do we really know what is real?">
-          <div class="mini-img" style={`background-image:url('/images/reality-dali.jpg')`}></div>
-          <div class="mini-txt">
-            <div class="mini-k">REALITY</div>
-            <div class="mini-h">do we really know what is real?</div>
-            <div class="mini-p">Perception, memory, and the edges of certainty.</div>
-          </div>
-        </a>
-      </div>
-    </section>
   </main>
 
   <style>
-    .page{
-      max-width: 980px;
+    .wrap{
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 18px 18px 90px;
+      padding: 18px 18px 96px;
       display: grid;
-      gap: 18px;
+      gap: 16px;
     }
 
     /* HERO */
     .hero{
-      margin-top: 6px;
-      padding: 18px;
-      border-radius: 24px;
-      background: rgba(255,255,255,0.55);
-      border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 14px 48px rgba(0,0,0,0.06);
-    }
-
-    .hero-grid{
       display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
+      grid-template-columns: 1.1fr .9fr;
       gap: 16px;
+      padding-top: 8px;
       align-items: stretch;
     }
 
-    .hero-copy{
-      padding: 10px 10px 10px 6px;
+    .hero-text{
+      background: rgba(255,255,255,0.0);
+      padding: 14px 2px;
     }
 
     .kicker{
@@ -213,7 +190,7 @@ const dateLine = "JLOG · belief note";
       font-weight: 900;
       letter-spacing: .26em;
       text-transform: uppercase;
-      color: rgba(11,11,15,0.55);
+      color: rgba(11,11,15,0.58);
     }
 
     .h1{
@@ -222,240 +199,333 @@ const dateLine = "JLOG · belief note";
       font-weight: 850;
       letter-spacing: -0.035em;
       line-height: 1.05;
-      color: rgba(11,11,15,0.94);
+      color: rgba(11,11,15,0.92);
     }
 
     .sub{
       margin: 0 0 14px;
-      max-width: 62ch;
       font-size: 14px;
       line-height: 1.6;
-      color: rgba(11,11,15,0.62);
+      color: rgba(11,11,15,0.60);
+      max-width: 70ch;
     }
 
-    .meta-row{
+    .chips{
       display:flex;
       align-items:center;
       gap: 10px;
       flex-wrap: wrap;
+      color: rgba(11,11,15,0.55);
+      font-size: 13px;
     }
 
     .chip{
       display:inline-flex;
       align-items:center;
-      padding: 7px 10px;
+      height: 28px;
+      padding: 0 10px;
       border-radius: 999px;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(0,0,0,0.08);
+      font-weight: 800;
+      letter-spacing: .12em;
       font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      border: 1px solid rgba(0,0,0,0.10);
-      background: rgba(255,255,255,0.8);
-      color: rgba(11,11,15,0.70);
+      color: rgba(11,11,15,0.72);
     }
 
-    .dot{
-      width: 4px;
-      height: 4px;
-      border-radius: 99px;
-      background: rgba(11,11,15,0.25);
-    }
-
-    .meta{
-      font-size: 13px;
-      color: rgba(11,11,15,0.55);
-    }
+    .chip-plain{ font-weight: 650; }
+    .dot{ opacity: .7; }
 
     .hero-media{
-      position: relative;
-      margin: 0;
-      border-radius: 18px;
+      border-radius: 22px;
       overflow: hidden;
+      background: rgba(255,255,255,0.92);
       border: 1px solid rgba(0,0,0,0.06);
-      background: rgba(245,245,247,0.9);
-      min-height: 240px;
+      box-shadow: 0 14px 48px rgba(0,0,0,0.06);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height: 220px;
     }
 
     .hero-media img{
       width: 100%;
       height: 100%;
-      display:block;
       object-fit: cover;
-      transform: scale(1.02);
-      filter: contrast(1.02) saturate(0.95);
+      display:block;
     }
 
-    .hero-sheen{
-      position:absolute;
-      inset: 0;
-      background: radial-gradient(1000px 300px at 10% 10%, rgba(255,255,255,0.35), transparent 60%);
-      pointer-events:none;
-    }
-
-    /* PAPER */
-    .paper{
-      width: min(880px, 100%);
+    /* AUDIO CARD (JLOG style) */
+    .audio-card{
+      width: min(980px, 100%);
       margin: 0 auto;
-      padding: 26px 22px;
-      border-radius: 24px;
       background: rgba(255,255,255,0.92);
       border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 22px;
       box-shadow: 0 14px 48px rgba(0,0,0,0.07);
+      padding: 16px 16px 14px;
+      overflow: hidden;
     }
 
-    .lede{
-      margin: 0 0 16px;
-      font-size: 16px;
-      line-height: 1.75;
-      color: rgba(11,11,15,0.82);
-      font-weight: 650;
-      letter-spacing: -0.01em;
+    .card-top{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      margin-bottom: 12px;
     }
 
-    .body{
-      font-size: 15px;
-      line-height: 1.85;
-      color: rgba(11,11,15,0.76);
-    }
-
-    .body h2{
-      margin: 18px 0 8px;
-      font-size: 15px;
-      font-weight: 850;
-      letter-spacing: -0.015em;
-      color: rgba(11,11,15,0.92);
-    }
-
-    .body p{
-      margin: 0 0 14px;
-    }
-
-    .callout{
-      margin: 16px 0 16px;
-      padding: 14px 14px;
-      border-radius: 16px;
+    .wave{
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       background: rgba(245,245,247,0.9);
       border: 1px solid rgba(0,0,0,0.06);
+      color: rgba(11,11,15,0.55);
+      flex-shrink: 0;
     }
 
-    .callout-title{
-      margin: 0 0 6px;
+    .card-title{ min-width:0; flex:1; }
+
+    .small{
       font-size: 12px;
-      font-weight: 900;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: rgba(11,11,15,0.60);
-    }
-
-    .callout-text{
-      margin: 0;
-      color: rgba(11,11,15,0.72);
-    }
-
-    .rule{
-      border: 0;
-      height: 1px;
-      background: rgba(0,0,0,0.08);
-      margin: 18px 0 16px;
-    }
-
-    .sig{
-      margin: 18px 0 0;
-      color: rgba(11,11,15,0.62);
-      font-weight: 750;
-    }
-
-    /* RELATED */
-    .related{
-      width: min(880px, 100%);
-      margin: 0 auto;
-      padding: 0 2px;
-    }
-
-    .h3{
-      margin: 8px 0 10px;
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: .20em;
-      text-transform: uppercase;
+      font-weight: 650;
       color: rgba(11,11,15,0.55);
-    }
-
-    .cards{
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .mini{
-      display:flex;
-      gap: 12px;
-      padding: 12px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.85);
-      border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 10px 34px rgba(0,0,0,0.06);
-      transition: transform .15s ease, box-shadow .15s ease;
-      overflow:hidden;
-    }
-
-    .mini:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 14px 44px rgba(0,0,0,0.08);
-    }
-
-    .mini-img{
-      width: 64px;
-      height: 64px;
-      border-radius: 14px;
-      background-size: cover;
-      background-position: center;
-      border: 1px solid rgba(0,0,0,0.06);
-      flex-shrink:0;
-    }
-
-    .mini-txt{ min-width: 0; }
-
-    .mini-k{
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: rgba(11,11,15,0.55);
-      margin-bottom: 4px;
-    }
-
-    .mini-h{
-      font-size: 15px;
-      font-weight: 850;
-      letter-spacing: -0.015em;
-      color: rgba(11,11,15,0.92);
-      margin-bottom: 4px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .mini-p{
-      font-size: 13px;
-      line-height: 1.5;
-      color: rgba(11,11,15,0.62);
+    .big{
+      margin-top: 2px;
+      font-size: 16px;
+      font-weight: 850;
+      letter-spacing: -0.02em;
+      color: rgba(11,11,15,0.90);
+      white-space: nowrap;
       overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      text-overflow: ellipsis;
+      text-transform: lowercase;
+    }
+
+    .download{
+      flex-shrink:0;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.90);
+      color: rgba(11,11,15,0.78);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform .15s ease, background .15s ease;
+    }
+    .download:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,1);
+      color: rgba(11,11,15,0.92);
+    }
+
+    .player{
+      display:flex;
+      align-items:center;
+      gap: 12px;
+      padding: 2px 2px 4px;
+    }
+
+    .play, .mute{
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,0.10);
+      background: rgba(255,255,255,0.92);
+      color: rgba(11,11,15,0.86);
+      cursor: pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      transition: transform .15s ease, background .15s ease;
+      user-select:none;
+    }
+    .play:hover, .mute:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,1);
+    }
+
+    .time{
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      font-weight: 750;
+      color: rgba(11,11,15,0.58);
+      min-width: 44px;
+      text-align:center;
+      user-select:none;
+    }
+
+    .seek{
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.12);
+      outline: none;
+    }
+    .seek::-webkit-slider-thumb{
+      -webkit-appearance:none;
+      appearance:none;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(11,11,15,0.85);
+      border: 2px solid rgba(255,255,255,0.90);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+    .seek::-moz-range-thumb{
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      background: rgba(11,11,15,0.85);
+      border: 2px solid rgba(255,255,255,0.90);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+
+    .autoplay-hint{
+      margin: 6px 2px 0;
+      font-size: 12px;
+      line-height: 1.45;
+      color: rgba(11,11,15,0.52);
+      min-height: 18px;
+    }
+
+    /* ESSAY */
+    .paper{
+      width: min(980px, 100%);
+      margin: 0 auto;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 22px;
+      box-shadow: 0 14px 48px rgba(0,0,0,0.06);
+      padding: 22px 22px 18px;
+    }
+
+    .lede{
+      margin: 0 0 14px;
+      font-size: 18px;
+      line-height: 1.55;
+      font-weight: 750;
+      color: rgba(11,11,15,0.88);
+    }
+
+    .body p{
+      margin: 0 0 12px;
+      font-size: 15px;
+      line-height: 1.75;
+      color: rgba(11,11,15,0.72);
+    }
+
+    .sig{
+      margin-top: 10px;
+      color: rgba(11,11,15,0.55);
+      font-weight: 750;
     }
 
     @media (max-width: 860px){
-      .hero-grid{ grid-template-columns: 1fr; }
-      .hero-media{ min-height: 220px; }
+      .hero{ grid-template-columns: 1fr; }
+      .hero-media{ min-height: 200px; }
     }
 
     @media (max-width: 520px){
-      .page{ padding: 16px 12px 80px; }
       .h1{ font-size: 34px; }
-      .paper{ padding: 20px 16px; }
-      .cards{ grid-template-columns: 1fr; }
+      .time{ min-width: 38px; }
+      .download{ padding: 9px 10px; }
+      .paper{ padding: 18px 16px 14px; }
+      .lede{ font-size: 16.5px; }
     }
   </style>
+
+  <script is:inline>
+    const audio = document.getElementById("audio");
+    const playBtn = document.getElementById("playBtn");
+    const muteBtn = document.getElementById("muteBtn");
+    const seek = document.getElementById("seek");
+    const tNow = document.getElementById("tNow");
+    const tDur = document.getElementById("tDur");
+    const hint = document.getElementById("hint");
+
+    function fmt(s){
+      if (!isFinite(s)) return "0:00";
+      const m = Math.floor(s / 60);
+      const r = Math.floor(s % 60);
+      return `${m}:${String(r).padStart(2,"0")}`;
+    }
+
+    function update(){
+      const dur = audio.duration || 0;
+      const cur = audio.currentTime || 0;
+      tNow.textContent = fmt(cur);
+      tDur.textContent = fmt(dur);
+      if (dur > 0){
+        const v = Math.round((cur / dur) * 1000);
+        seek.value = String(v);
+      }
+    }
+
+    function setPlaying(on){
+      playBtn.textContent = on ? "❚❚" : "▶";
+    }
+
+    async function tryAutoplay(){
+      try{
+        await audio.play();
+        setPlaying(true);
+        hint.textContent = "";
+      }catch(e){
+        setPlaying(false);
+        hint.textContent = "Autoplay may be blocked by your browser. Press Play to start.";
+      }
+    }
+
+    audio.addEventListener("loadedmetadata", update);
+    audio.addEventListener("timeupdate", update);
+    audio.addEventListener("play", () => setPlaying(true));
+    audio.addEventListener("pause", () => setPlaying(false));
+    audio.addEventListener("ended", () => setPlaying(false));
+
+    playBtn.addEventListener("click", async () => {
+      if (audio.paused){
+        try { await audio.play(); } catch(e) {}
+      } else {
+        audio.pause();
+      }
+    });
+
+    muteBtn.addEventListener("click", () => {
+      audio.muted = !audio.muted;
+      muteBtn.textContent = audio.muted ? "🔇" : "🔈";
+    });
+
+    seek.addEventListener("input", () => {
+      const dur = audio.duration || 0;
+      if (dur <= 0) return;
+      const v = Number(seek.value) / 1000;
+      audio.currentTime = v * dur;
+    });
+
+    if (document.readyState === "loading"){
+      document.addEventListener("DOMContentLoaded", () => {
+        update();
+        tryAutoplay();
+      }, { once: true });
+    } else {
+      update();
+      tryAutoplay();
+    }
+  </script>
 </Layout>
