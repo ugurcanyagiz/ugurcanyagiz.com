@@ -1,0 +1,240 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "Brushwork: You Can See the Artist’s Decisions — Art";
+const updated = "Updated: 2026";
+---
+
+<Layout title={title}>
+  <article class="page">
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-top">
+        <a class="back" href="/art">← Back to Art</a>
+        <span class="chip chip--painting">PAINTING</span>
+      </div>
+
+      <div class="hero-grid">
+        <div class="hero-left">
+          <h1>Brushwork: You Can See the Artist’s Decisions</h1>
+          <p class="lead">Brushwork is visible decision-making. Every stroke shows speed, pressure, and intent — and that’s why it can feel intimate.</p>
+
+          <div class="meta">
+            <span class="meta-pill">Texture • Time</span>
+            <span class="meta-pill">{updated}</span>
+          </div>
+        </div>
+
+        <div class="hero-right card">
+          <img class="hero-img" src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=200&q=80" alt="Brushwork: You Can See the Artist’s Decisions" loading="lazy" />
+          <div class="hero-img-cap">Strokes reveal the hand.</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- TLDR -->
+    <section class="card section">
+      <h2>TL;DR</h2>
+      <div class="tldr">
+        <div class="tldr-item">
+          <div class="dot" aria-hidden="true"></div>
+          <div>
+            <h3>Strokes carry time</h3>
+            <p>You can ‘read’ the motion: fast, slow, hesitant, confident.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot" aria-hidden="true"></div>
+          <div>
+            <h3>Texture equals emotion</h3>
+            <p>Rough marks can feel raw; smooth blending can feel calm or distant.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot" aria-hidden="true"></div>
+          <div>
+            <h3>Edges create focus</h3>
+            <p>Sharp edges attract; lost edges let forms dissolve into atmosphere.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BODY -->
+    <section class="section">
+      <div class="two-col">
+        <div class="card pad">
+          <h2>A stroke is a choice</h2>
+          <p>Brushwork records how the artist solved problems: where to simplify, where to insist on detail, where to leave mystery.</p>
+          <p>In a way, brushwork is the artist’s handwriting — you recognize it even without the subject.</p>
+
+          <div class="callouts">
+            <div class="callout">
+              <h4>Try this exercise</h4>
+              <p>Paint the same object twice: once with 200 tiny strokes, once with 20 bold strokes. Compare the emotional feel.</p>
+            </div>
+            <div class="callout">
+              <h4>Edge control</h4>
+              <p>Soft edges push things back; crisp edges pull them forward. Use that to create depth without extra detail.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <h2>Three brushwork ‘languages’</h2>
+          <p>Most styles lean on a few core approaches. Mixing them intentionally creates richness.</p>
+
+          <div class="grid3">
+            <div class="mini">
+              <b>Scumbling</b>
+              <p>Dry, broken strokes that let underlayers peek through — great for atmosphere.</p>
+            </div>
+            <div class="mini">
+              <b>Impasto</b>
+              <p>Thick paint that catches light — makes the surface itself part of the image.</p>
+            </div>
+            <div class="mini">
+              <b>Glazing</b>
+              <p>Thin transparent layers — adds depth and color complexity without heavy texture.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="card section">
+      <h2>FAQ</h2>
+
+      <div class="faq">
+        <details>
+          <summary>Should brushwork be ‘hidden’?</summary>
+          <p>Only if that’s the concept. Visible brushwork can be the point — it signals humanity and process.</p>
+        </details>
+        <details>
+          <summary>Why do my strokes look messy?</summary>
+          <p>Often it’s inconsistent value. Keep light/dark relationships clear; strokes will feel intentional.</p>
+        </details>
+        <details>
+          <summary>Do I need expensive brushes?</summary>
+          <p>Not to learn. Control and observation matter more than tools early on.</p>
+        </details>
+      </div>
+
+      <div class="footnav">
+        <a class="btn btn--ghost" href="/art/film-sound-design">← Sound Design: The Secret Weapon of Cinema</a>
+        <a class="btn" href="/art/music-tension-release">Why Music Feels Like a Story →</a>
+      </div>
+    </section>
+  </article>
+
+  <style>
+    .page{ max-width: 980px; margin: 0 auto; padding: 24px 16px 60px; }
+    .hero{ display:flex; flex-direction: column; gap: 16px; margin-top: 10px; }
+    .hero-top{ display:flex; align-items:center; justify-content: space-between; gap: 12px; }
+    .back{ color: rgba(11,11,15,0.62); text-decoration:none; font-size: 14px; }
+    .back:hover{ text-decoration: underline; }
+
+    .chip{
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(245,245,247,0.9);
+      border: 1px solid rgba(11,11,15,0.08);
+    }
+    .chip--music{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(120,90,255,0.22); }
+    .chip--painting{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(255,120,90,0.22); }
+    .chip--architecture{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(90,180,255,0.22); }
+    .chip--film{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(255,200,90,0.22); }
+    .chip--design{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(90,255,190,0.22); }
+    .chip--photography{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(160,160,160,0.30); }
+
+    .hero-grid{ display:grid; grid-template-columns: 1.2fr .8fr; gap: 14px; align-items: stretch; }
+    h1{ font-size: 44px; line-height: 1.05; margin: 0; }
+    .lead{ font-size: 16px; line-height: 1.7; color: rgba(11,11,15,0.72); margin: 10px 0 0; }
+    .meta{ margin-top: 14px; display:flex; flex-wrap: wrap; gap: 8px; }
+    .meta-pill{
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(245,245,247,0.8);
+      border: 1px solid rgba(11,11,15,0.08);
+      color: rgba(11,11,15,0.70);
+    }
+
+    .card{
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(11,11,15,0.08);
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    .hero-img{ width: 100%; height: 100%; object-fit: cover; display:block; min-height: 220px; }
+    .hero-img-cap{
+      padding: 10px 12px;
+      font-size: 12px;
+      color: rgba(11,11,15,0.62);
+      border-top: 1px solid rgba(11,11,15,0.08);
+      background: rgba(245,245,247,0.65);
+    }
+
+    .section{ margin-top: 14px; }
+    .section h2{ font-size: 20px; margin: 0 0 10px; }
+    .pad{ padding: 16px; }
+    .section.card{ padding: 16px; }
+
+    .tldr{ display:grid; grid-template-columns: 1fr; gap: 10px; }
+    .tldr-item{ display:flex; gap: 10px; align-items: flex-start; padding: 10px 10px; border-radius: 14px; background: rgba(245,245,247,0.6); border: 1px solid rgba(11,11,15,0.06); }
+    .dot{ width: 10px; height: 10px; border-radius: 999px; margin-top: 6px; background: rgba(11,11,15,0.28); }
+    .tldr-item h3{ font-size: 14px; margin: 0; }
+    .tldr-item p{ margin: 6px 0 0; font-size: 14px; line-height: 1.7; color: rgba(11,11,15,0.68); }
+
+    .two-col{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .two-col p{ font-size: 14px; line-height: 1.75; color: rgba(11,11,15,0.72); margin: 10px 0 0; }
+    .callouts{ display:grid; grid-template-columns: 1fr; gap: 10px; margin-top: 14px; }
+    .callout{ padding: 12px; border-radius: 14px; background: rgba(245,245,247,0.7); border: 1px solid rgba(11,11,15,0.06); }
+    .callout h4{ margin: 0; font-size: 13px; }
+    .callout p{ margin: 6px 0 0; font-size: 13px; line-height: 1.7; color: rgba(11,11,15,0.66); }
+
+    .grid3{ display:grid; grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
+    .mini{ padding: 12px; border-radius: 14px; background: rgba(245,245,247,0.65); border: 1px solid rgba(11,11,15,0.06); }
+    .mini b{ font-size: 13px; }
+    .mini p{ margin: 6px 0 0; font-size: 13px; line-height: 1.7; color: rgba(11,11,15,0.66); }
+
+    .faq{ display:grid; gap: 10px; }
+    details{ border: 1px solid rgba(11,11,15,0.08); border-radius: 14px; padding: 10px 12px; background: rgba(245,245,247,0.55); }
+    details summary{ cursor:pointer; list-style:none; font-weight: 600; }
+    details summary::-webkit-details-marker{ display:none; }
+    details p{ margin: 10px 0 0; font-size: 14px; line-height: 1.7; color: rgba(11,11,15,0.62); }
+
+    .footnav{ margin-top: 16px; display:flex; justify-content: space-between; gap: 12px; }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(11,11,15,0.10);
+      background: rgba(11,11,15,0.92);
+      color: white;
+      text-decoration:none;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .btn:hover{ opacity: 0.92; }
+    .btn--ghost{ background: rgba(245,245,247,0.75); color: rgba(11,11,15,0.86); }
+
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .two-col{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px){
+      h1{ font-size: 34px; }
+      .footnav{ flex-direction: column; }
+      .btn{ width: 100%; }
+    }
+  </style>
+</Layout>

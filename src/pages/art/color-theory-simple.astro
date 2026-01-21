@@ -1,0 +1,240 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "Color Theory (Made Simple) — Art";
+const updated = "Updated: 2026";
+---
+
+<Layout title={title}>
+  <article class="page">
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-top">
+        <a class="back" href="/art">← Back to Art</a>
+        <span class="chip chip--design">DESIGN</span>
+      </div>
+
+      <div class="hero-grid">
+        <div class="hero-left">
+          <h1>Color Theory (Made Simple)</h1>
+          <p class="lead">Color theory can be simple: hue sets identity, value sets readability, and saturation sets emotional intensity.</p>
+
+          <div class="meta">
+            <span class="meta-pill">Color • Perception</span>
+            <span class="meta-pill">{updated}</span>
+          </div>
+        </div>
+
+        <div class="hero-right card">
+          <img class="hero-img" src="https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=200&q=80" alt="Color Theory (Made Simple)" loading="lazy" />
+          <div class="hero-img-cap">Color = emotion + structure.</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- TLDR -->
+    <section class="card section">
+      <h2>TL;DR</h2>
+      <div class="tldr">
+        <div class="tldr-item">
+          <div class="dot" aria-hidden="true"></div>
+          <div>
+            <h3>Value first</h3>
+            <p>If it reads in black-and-white, it will read in color.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot" aria-hidden="true"></div>
+          <div>
+            <h3>Temperature is mood</h3>
+            <p>Warm feels near/active; cool feels far/calm (in general).</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot" aria-hidden="true"></div>
+          <div>
+            <h3>Saturation is volume</h3>
+            <p>High saturation shouts; low saturation whispers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BODY -->
+    <section class="section">
+      <div class="two-col">
+        <div class="card pad">
+          <h2>Three knobs you can control</h2>
+          <p>You can get far by thinking in three dimensions: hue (what color), value (how light/dark), saturation (how intense).</p>
+          <p>Most ‘bad color’ is actually bad value: not enough contrast for the message to be legible.</p>
+
+          <div class="callouts">
+            <div class="callout">
+              <h4>Fast workflow</h4>
+              <p>Start grayscale to lock composition. Then add limited color accents where you want attention.</p>
+            </div>
+            <div class="callout">
+              <h4>Harmony cheat</h4>
+              <p>Pick one dominant hue, one supporting hue, and one accent. Limit the palette and everything feels intentional.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <h2>Classic color relationships</h2>
+          <p>You don’t need to memorize wheels — just understand a few reliable pairings.</p>
+
+          <div class="grid3">
+            <div class="mini">
+              <b>Complementary</b>
+              <p>Opposites pop (blue/orange). Use one as dominant, the other as accent.</p>
+            </div>
+            <div class="mini">
+              <b>Analogous</b>
+              <p>Neighbors feel smooth (blue/teal/green). Great for calm and cohesion.</p>
+            </div>
+            <div class="mini">
+              <b>Triadic</b>
+              <p>Three evenly spaced hues. Use carefully: it can become playful or chaotic.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="card section">
+      <h2>FAQ</h2>
+
+      <div class="faq">
+        <details>
+          <summary>Why do my colors look muddy?</summary>
+          <p>Likely low value contrast or too many mid-saturation colors competing.</p>
+        </details>
+        <details>
+          <summary>Should I always use complementary colors?</summary>
+          <p>No. They’re powerful, but can feel loud. Many elegant palettes are analogous + one accent.</p>
+        </details>
+        <details>
+          <summary>Does color meaning depend on culture?</summary>
+          <p>Yes. Some associations are learned, so test with your intended audience.</p>
+        </details>
+      </div>
+
+      <div class="footnav">
+        <a class="btn btn--ghost" href="/art/photography-light">← Light: The One Thing Every Great Photo Shares</a>
+        <a class="btn" href="/art/film-sound-design">Sound Design: The Secret Weapon of Cinema →</a>
+      </div>
+    </section>
+  </article>
+
+  <style>
+    .page{ max-width: 980px; margin: 0 auto; padding: 24px 16px 60px; }
+    .hero{ display:flex; flex-direction: column; gap: 16px; margin-top: 10px; }
+    .hero-top{ display:flex; align-items:center; justify-content: space-between; gap: 12px; }
+    .back{ color: rgba(11,11,15,0.62); text-decoration:none; font-size: 14px; }
+    .back:hover{ text-decoration: underline; }
+
+    .chip{
+      font-size: 12px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(245,245,247,0.9);
+      border: 1px solid rgba(11,11,15,0.08);
+    }
+    .chip--music{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(120,90,255,0.22); }
+    .chip--painting{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(255,120,90,0.22); }
+    .chip--architecture{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(90,180,255,0.22); }
+    .chip--film{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(255,200,90,0.22); }
+    .chip--design{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(90,255,190,0.22); }
+    .chip--photography{ box-shadow: 0 0 0 2px rgba(0,0,0,0.02), inset 0 0 0 1px rgba(160,160,160,0.30); }
+
+    .hero-grid{ display:grid; grid-template-columns: 1.2fr .8fr; gap: 14px; align-items: stretch; }
+    h1{ font-size: 44px; line-height: 1.05; margin: 0; }
+    .lead{ font-size: 16px; line-height: 1.7; color: rgba(11,11,15,0.72); margin: 10px 0 0; }
+    .meta{ margin-top: 14px; display:flex; flex-wrap: wrap; gap: 8px; }
+    .meta-pill{
+      font-size: 12px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(245,245,247,0.8);
+      border: 1px solid rgba(11,11,15,0.08);
+      color: rgba(11,11,15,0.70);
+    }
+
+    .card{
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(11,11,15,0.08);
+      border-radius: 18px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    .hero-img{ width: 100%; height: 100%; object-fit: cover; display:block; min-height: 220px; }
+    .hero-img-cap{
+      padding: 10px 12px;
+      font-size: 12px;
+      color: rgba(11,11,15,0.62);
+      border-top: 1px solid rgba(11,11,15,0.08);
+      background: rgba(245,245,247,0.65);
+    }
+
+    .section{ margin-top: 14px; }
+    .section h2{ font-size: 20px; margin: 0 0 10px; }
+    .pad{ padding: 16px; }
+    .section.card{ padding: 16px; }
+
+    .tldr{ display:grid; grid-template-columns: 1fr; gap: 10px; }
+    .tldr-item{ display:flex; gap: 10px; align-items: flex-start; padding: 10px 10px; border-radius: 14px; background: rgba(245,245,247,0.6); border: 1px solid rgba(11,11,15,0.06); }
+    .dot{ width: 10px; height: 10px; border-radius: 999px; margin-top: 6px; background: rgba(11,11,15,0.28); }
+    .tldr-item h3{ font-size: 14px; margin: 0; }
+    .tldr-item p{ margin: 6px 0 0; font-size: 14px; line-height: 1.7; color: rgba(11,11,15,0.68); }
+
+    .two-col{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .two-col p{ font-size: 14px; line-height: 1.75; color: rgba(11,11,15,0.72); margin: 10px 0 0; }
+    .callouts{ display:grid; grid-template-columns: 1fr; gap: 10px; margin-top: 14px; }
+    .callout{ padding: 12px; border-radius: 14px; background: rgba(245,245,247,0.7); border: 1px solid rgba(11,11,15,0.06); }
+    .callout h4{ margin: 0; font-size: 13px; }
+    .callout p{ margin: 6px 0 0; font-size: 13px; line-height: 1.7; color: rgba(11,11,15,0.66); }
+
+    .grid3{ display:grid; grid-template-columns: 1fr; gap: 10px; margin-top: 12px; }
+    .mini{ padding: 12px; border-radius: 14px; background: rgba(245,245,247,0.65); border: 1px solid rgba(11,11,15,0.06); }
+    .mini b{ font-size: 13px; }
+    .mini p{ margin: 6px 0 0; font-size: 13px; line-height: 1.7; color: rgba(11,11,15,0.66); }
+
+    .faq{ display:grid; gap: 10px; }
+    details{ border: 1px solid rgba(11,11,15,0.08); border-radius: 14px; padding: 10px 12px; background: rgba(245,245,247,0.55); }
+    details summary{ cursor:pointer; list-style:none; font-weight: 600; }
+    details summary::-webkit-details-marker{ display:none; }
+    details p{ margin: 10px 0 0; font-size: 14px; line-height: 1.7; color: rgba(11,11,15,0.62); }
+
+    .footnav{ margin-top: 16px; display:flex; justify-content: space-between; gap: 12px; }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap: 8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(11,11,15,0.10);
+      background: rgba(11,11,15,0.92);
+      color: white;
+      text-decoration:none;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .btn:hover{ opacity: 0.92; }
+    .btn--ghost{ background: rgba(245,245,247,0.75); color: rgba(11,11,15,0.86); }
+
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .two-col{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px){
+      h1{ font-size: 34px; }
+      .footnav{ flex-direction: column; }
+      .btn{ width: 100%; }
+    }
+  </style>
+</Layout>
