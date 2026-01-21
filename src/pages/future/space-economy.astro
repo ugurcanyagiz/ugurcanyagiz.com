@@ -1,0 +1,189 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "The Space Economy: When Orbit Becomes a Workplace — Future";
+const updated = "Updated: 2026";
+---
+
+<Layout title={title}>
+  <article class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <a class="back" href="/future">← Back to Future</a>
+        <span class="chip chip--topic">SPACE</span>
+      </div>
+
+      <h1>The Space Economy: When Orbit Becomes a Workplace</h1>
+      <p class="subtitle">Cheaper launch and better robotics could turn orbit into a factory floor — communications, materials, energy, and research.</p>
+
+      <div class="hero-grid">
+        <section class="card card--soft">
+          <h2 class="hsmall">What you’ll learn</h2>
+          <ul class="list">
+            <li>Why launch cost is the main gatekeeper.</li>
+            <li>Which markets already work: <b>satellites</b> and <b>data</b>.</li>
+            <li>What might come next: manufacturing, power, and in-space servicing.</li>
+          </ul>
+        </section>
+
+        <section class="card card--ink">
+          <p class="quote">“Space is still hard. The trick is making it boring enough to be an industry.”</p>
+          <p class="meta">{updated}</p>
+        </section>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2>TL;DR</h2>
+      <div class="tldr">
+        <div class="tldr-item">
+          <div class="dot dot--a" aria-hidden="true"></div>
+          <div>
+            <h3>Satellites are the engine</h3>
+            <p>Most space revenue today is communication, imaging, GPS, and data services.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--b" aria-hidden="true"></div>
+          <div>
+            <h3>Robotics expands what's possible</h3>
+            <p>Servicing, refueling, and assembly in orbit reduce risk and cost.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--c" aria-hidden="true"></div>
+          <div>
+            <h3>Manufacturing is a long bet</h3>
+            <p>Some materials may benefit from microgravity — but economics must beat Earth.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>What counts as a “space economy”?</h2>
+      <p class="lead">A space economy is any business that depends on space infrastructure: launch, satellites, stations, or in-orbit operations.</p>
+      <div class="card"><div class="grid3">
+          <div class="mini"><h4>Today</h4><p>Comms, Earth observation, navigation, and defense-related services.</p></div>
+          <div class="mini"><h4>Next</h4><p>In-space servicing, debris removal, and on-orbit assembly.</p></div>
+          <div class="mini"><h4>Longer-term</h4><p>Manufacturing niches, space-based power experiments, deep-space logistics.</p></div>
+        </div></div>
+    </section>
+
+    <section class="section">
+      <h2>The two real constraints</h2>
+      <p class="lead">Space progress is mostly about getting two curves to fall: <b>cost</b> and <b>risk</b>.</p>
+      <div class="two-col">
+        <div class="card">
+          <h3 class="hsmall">Cost</h3>
+          <ul class="list">
+            <li>Launch + insurance costs define who can play.</li>
+            <li>Mass to orbit is expensive — design fights every gram.</li>
+            <li>Reusability pushes costs down, but not to zero.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3 class="hsmall">Risk</h3>
+          <ul class="list">
+            <li>Radiation, debris, and harsh thermal cycles.</li>
+            <li>Long supply chains and impossible on-site repair (yet).</li>
+            <li>Regulation and geopolitics shape access.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="note">Robotics helps both: fewer astronauts, more automation, and safer maintenance.</p>
+    </section>
+
+    <section class="section">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details><summary>Will we mine asteroids soon?</summary><p>Some prospecting may happen, but large-scale mining needs many steps: scouting, processing, transport, and markets.</p></details>
+        <details><summary>What's the near-term business?</summary><p>More satellites — and better data products built on top of them.</p></details>
+      </div>
+    </section>
+
+    <nav class="footnav" aria-label="Next and previous">
+      <a class="btn btn--ghost" href="/future/longevity-biotech">← Prev: Longevity</a>
+      <a class="btn" href="/future/fusion-and-grid">Next: Energy →</a>
+    </nav>
+  </article>
+
+
+  <style>
+    .page{ max-width: 980px; margin: 0 auto; padding: 28px 18px 80px; }
+
+    .hero{ margin-bottom: 26px; }
+    .hero-top{ display:flex; align-items:center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .back{ color: rgba(11,11,15,0.70); text-decoration:none; font-weight: 750; font-size: 13px; }
+    .back:hover{ text-decoration: underline; }
+
+    h1{ margin: 0 0 10px; font-size: 44px; font-weight: 900; letter-spacing: -0.04em; }
+    .subtitle{ margin: 0 0 16px; font-size: 15px; line-height: 1.65; color: rgba(11,11,15,0.62); max-width: 72ch; }
+
+    .hero-grid{ display:grid; grid-template-columns: 1.3fr 0.7fr; gap: 14px; margin-top: 10px; }
+
+    .card{ background: rgba(255,255,255,0.90); border: 1px solid rgba(0,0,0,0.06); border-radius: 18px; padding: 16px 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+    .card--soft{ background: rgba(245,245,247,0.75); }
+    .card--ink{ background: radial-gradient(120% 120% at 20% 10%, rgba(88,86,214,0.18), rgba(11,11,15,0.92)); color: rgba(255,255,255,0.92); border-color: rgba(255,255,255,0.10); }
+
+    .quote{ margin: 0; font-size: 15px; line-height: 1.7; font-weight: 650; }
+    .meta{ margin: 12px 0 0; font-size: 12px; opacity: 0.8; }
+
+    .hsmall{ margin: 0 0 10px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 900; color: rgba(11,11,15,0.72); }
+    .card--ink .hsmall{ color: rgba(255,255,255,0.85); }
+
+    .list{ margin: 0; padding-left: 18px; color: rgba(11,11,15,0.70); line-height: 1.7; font-size: 14px; }
+
+    .section{ margin-top: 22px; }
+    .section h2{ margin: 0 0 10px; font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
+    .lead{ margin: 0 0 12px; font-size: 14.5px; line-height: 1.75; color: rgba(11,11,15,0.66); }
+    .note{ margin: 10px 0 0; font-size: 13.5px; line-height: 1.65; color: rgba(11,11,15,0.58); }
+
+    .tldr{ display:flex; flex-direction: column; gap: 10px; }
+    .tldr-item{ display:flex; gap: 12px; padding: 14px 16px; border-radius: 18px; background: rgba(245,245,247,0.75); border: 1px solid rgba(0,0,0,0.06); }
+    .tldr-item h3{ margin: 0; font-size: 14px; font-weight: 900; letter-spacing: -0.01em; }
+    .tldr-item p{ margin: 4px 0 0; font-size: 13.5px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .dot{ width: 12px; height: 12px; border-radius: 999px; margin-top: 4px; flex-shrink:0; }
+    .dot--a{ background: rgba(88,86,214,0.95); }
+    .dot--b{ background: rgba(0,122,255,0.95); }
+    .dot--c{ background: rgba(255,45,85,0.92); }
+
+    .two-col{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .stack{ display:flex; flex-direction: column; gap: 10px; }
+    .callout{ padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,0.70); border: 1px solid rgba(0,0,0,0.06); }
+    .callout h4{ margin: 0 0 6px; font-size: 14px; font-weight: 900; }
+    .callout p{ margin: 0; font-size: 13.5px; line-height: 1.65; color: rgba(11,11,15,0.62); }
+
+    .grid3{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .mini{ padding: 12px 14px; border-radius: 16px; background: rgba(245,245,247,0.70); border: 1px solid rgba(0,0,0,0.06); }
+    .mini h4{ margin: 0 0 6px; font-size: 14px; font-weight: 900; letter-spacing: -0.01em; }
+    .mini p{ margin: 0; font-size: 13.5px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .faq{ display:flex; flex-direction:column; gap: 10px; }
+    details{ padding: 12px 14px; border-radius: 16px; background: rgba(245,245,247,0.75); border: 1px solid rgba(0,0,0,0.06); }
+    details summary{ cursor: pointer; font-weight: 900; font-size: 14px; color: rgba(11,11,15,0.86); list-style: none; }
+    details summary::-webkit-details-marker{ display:none; }
+    details p{ margin: 10px 0 0; font-size: 14px; line-height: 1.7; color: rgba(11,11,15,0.62); }
+
+    .footnav{ margin-top: 28px; display:flex; justify-content: space-between; gap: 12px; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; padding: 10px 12px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.10); background: rgba(255,255,255,0.90); font-size: 13px; font-weight: 800; color: rgba(11,11,15,0.84); text-decoration:none; transition: transform .15s ease, background .15s ease; white-space: nowrap; }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,1); }
+    .btn--ghost{ background: rgba(245,245,247,0.75); }
+
+    .chip{ padding: 7px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; border: 1px solid rgba(0,0,0,0.10); background: rgba(255,255,255,0.75); }
+    .chip--topic{ background: rgba(88,86,214,0.14); color: rgba(88,86,214,0.95); border-color: rgba(88,86,214,0.2); }
+
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .two-col{ grid-template-columns: 1fr; }
+      .grid3{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px){
+      h1{ font-size: 34px; }
+      .footnav{ flex-direction: column; }
+      .btn{ width: 100%; }
+    }
+  </style>
+
+</Layout>

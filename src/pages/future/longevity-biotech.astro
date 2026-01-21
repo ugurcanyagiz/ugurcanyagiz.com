@@ -1,0 +1,189 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "Longevity: Treating Aging Like an Engineering Problem — Future";
+const updated = "Updated: 2026";
+---
+
+<Layout title={title}>
+  <article class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <a class="back" href="/future">← Back to Future</a>
+        <span class="chip chip--topic">BIOTECH</span>
+      </div>
+
+      <h1>Longevity: Treating Aging Like an Engineering Problem</h1>
+      <p class="subtitle">The big shift is prevention: measure the body continuously, catch problems early, and repair damage before it becomes disease.</p>
+
+      <div class="hero-grid">
+        <section class="card card--soft">
+          <h2 class="hsmall">What you’ll learn</h2>
+          <ul class="list">
+            <li>Why “aging” is a bundle of processes, not one switch.</li>
+            <li>What's real today: <b>screening</b>, <b>risk reduction</b>, and better diagnostics.</li>
+            <li>What's experimental: <b>senolytics</b>, <b>gene therapies</b>, and regeneration.</li>
+          </ul>
+        </section>
+
+        <section class="card card--ink">
+          <p class="quote">“Longevity isn't one miracle pill — it's a boring system: measurement, maintenance, and repair.”</p>
+          <p class="meta">{updated}</p>
+        </section>
+      </div>
+    </header>
+
+    <section class="section">
+      <h2>TL;DR</h2>
+      <div class="tldr">
+        <div class="tldr-item">
+          <div class="dot dot--a" aria-hidden="true"></div>
+          <div>
+            <h3>Most gains are prevention</h3>
+            <p>Blood pressure, lipids, glucose, sleep, fitness, and screenings still dominate outcomes.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--b" aria-hidden="true"></div>
+          <div>
+            <h3>Diagnostics compound</h3>
+            <p>Cheaper sequencing + better biomarkers = earlier detection and better targeting.</p>
+          </div>
+        </div>
+        <div class="tldr-item">
+          <div class="dot dot--c" aria-hidden="true"></div>
+          <div>
+            <h3>Repair is the frontier</h3>
+            <p>Cell cleanup, immune tuning, and regeneration are promising — but slow to prove.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>What “aging as engineering” means</h2>
+      <p class="lead">Aging is accumulated damage: DNA errors, misfolded proteins, worn mitochondria, chronic inflammation, and senescent “zombie” cells. The goal is to <b>measure</b> damage and <b>reduce</b> or <b>repair</b> it.</p>
+      <div class="two-col">
+        <div class="card">
+          <h3 class="hsmall">Three layers</h3>
+          <div class="stack">
+            <div class="callout"><h4>Monitoring</h4><p>Better biomarkers, imaging, and wearables to see risk earlier.</p></div>
+            <div class="callout"><h4>Prevention</h4><p>Lowering failure probability: cardio-metabolic health, strength, sleep.</p></div>
+            <div class="callout"><h4>Repair</h4><p>Removing damage (senescent cells), restoring function, tuning immune response.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="hsmall">Realistic now</h3>
+          <ul class="list">
+            <li><b>Risk factors:</b> BP, ApoB/LDL, glucose, body composition, fitness.</li>
+            <li><b>Screening:</b> evidence-based schedules and trend tracking.</li>
+            <li><b>Habits:</b> strength + zone-2 cardio, sleep consistency, low smoking.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>What's coming (likely)</h2>
+      <p class="lead">Expect gradual gains: better detection and targeted therapies for narrow conditions first.</p>
+      <div class="card"><div class="grid3">
+          <div class="mini"><h4>Biomarkers</h4><p>Blood signals for inflammation, organ stress, and early tumor detection.</p></div>
+          <div class="mini"><h4>Personalized plans</h4><p>Interventions tailored to risk profiles and measurable response.</p></div>
+          <div class="mini"><h4>Targeted therapies</h4><p>More precise drugs and gene therapies, scaling over time.</p></div>
+        </div></div>
+        <p class="note">The limiting factor is evidence: humans live long, so trials take time and money.</p>
+    </section>
+
+    <section class="section">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details><summary>Will we ‘cure aging’ soon?</summary><p>Not as a single event. Expect incremental improvements and targeted repairs for specific problems first.</p></details>
+        <details><summary>What's the most underrated lever?</summary><p>Maintaining muscle and cardio fitness — it protects metabolism, mobility, and resilience.</p></details>
+      </div>
+    </section>
+
+    <nav class="footnav" aria-label="Next and previous">
+      <a class="btn btn--ghost" href="/future/ai-agents">← Prev: AI Agents</a>
+      <a class="btn" href="/future/space-economy">Next: Space Economy →</a>
+    </nav>
+  </article>
+
+
+  <style>
+    .page{ max-width: 980px; margin: 0 auto; padding: 28px 18px 80px; }
+
+    .hero{ margin-bottom: 26px; }
+    .hero-top{ display:flex; align-items:center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+    .back{ color: rgba(11,11,15,0.70); text-decoration:none; font-weight: 750; font-size: 13px; }
+    .back:hover{ text-decoration: underline; }
+
+    h1{ margin: 0 0 10px; font-size: 44px; font-weight: 900; letter-spacing: -0.04em; }
+    .subtitle{ margin: 0 0 16px; font-size: 15px; line-height: 1.65; color: rgba(11,11,15,0.62); max-width: 72ch; }
+
+    .hero-grid{ display:grid; grid-template-columns: 1.3fr 0.7fr; gap: 14px; margin-top: 10px; }
+
+    .card{ background: rgba(255,255,255,0.90); border: 1px solid rgba(0,0,0,0.06); border-radius: 18px; padding: 16px 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
+    .card--soft{ background: rgba(245,245,247,0.75); }
+    .card--ink{ background: radial-gradient(120% 120% at 20% 10%, rgba(52,199,89,0.2), rgba(11,11,15,0.92)); color: rgba(255,255,255,0.92); border-color: rgba(255,255,255,0.10); }
+
+    .quote{ margin: 0; font-size: 15px; line-height: 1.7; font-weight: 650; }
+    .meta{ margin: 12px 0 0; font-size: 12px; opacity: 0.8; }
+
+    .hsmall{ margin: 0 0 10px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; font-weight: 900; color: rgba(11,11,15,0.72); }
+    .card--ink .hsmall{ color: rgba(255,255,255,0.85); }
+
+    .list{ margin: 0; padding-left: 18px; color: rgba(11,11,15,0.70); line-height: 1.7; font-size: 14px; }
+
+    .section{ margin-top: 22px; }
+    .section h2{ margin: 0 0 10px; font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
+    .lead{ margin: 0 0 12px; font-size: 14.5px; line-height: 1.75; color: rgba(11,11,15,0.66); }
+    .note{ margin: 10px 0 0; font-size: 13.5px; line-height: 1.65; color: rgba(11,11,15,0.58); }
+
+    .tldr{ display:flex; flex-direction: column; gap: 10px; }
+    .tldr-item{ display:flex; gap: 12px; padding: 14px 16px; border-radius: 18px; background: rgba(245,245,247,0.75); border: 1px solid rgba(0,0,0,0.06); }
+    .tldr-item h3{ margin: 0; font-size: 14px; font-weight: 900; letter-spacing: -0.01em; }
+    .tldr-item p{ margin: 4px 0 0; font-size: 13.5px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .dot{ width: 12px; height: 12px; border-radius: 999px; margin-top: 4px; flex-shrink:0; }
+    .dot--a{ background: rgba(52,199,89,0.95); }
+    .dot--b{ background: rgba(0,122,255,0.95); }
+    .dot--c{ background: rgba(255,149,0,0.95); }
+
+    .two-col{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .stack{ display:flex; flex-direction: column; gap: 10px; }
+    .callout{ padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,0.70); border: 1px solid rgba(0,0,0,0.06); }
+    .callout h4{ margin: 0 0 6px; font-size: 14px; font-weight: 900; }
+    .callout p{ margin: 0; font-size: 13.5px; line-height: 1.65; color: rgba(11,11,15,0.62); }
+
+    .grid3{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .mini{ padding: 12px 14px; border-radius: 16px; background: rgba(245,245,247,0.70); border: 1px solid rgba(0,0,0,0.06); }
+    .mini h4{ margin: 0 0 6px; font-size: 14px; font-weight: 900; letter-spacing: -0.01em; }
+    .mini p{ margin: 0; font-size: 13.5px; line-height: 1.6; color: rgba(11,11,15,0.62); }
+
+    .faq{ display:flex; flex-direction:column; gap: 10px; }
+    details{ padding: 12px 14px; border-radius: 16px; background: rgba(245,245,247,0.75); border: 1px solid rgba(0,0,0,0.06); }
+    details summary{ cursor: pointer; font-weight: 900; font-size: 14px; color: rgba(11,11,15,0.86); list-style: none; }
+    details summary::-webkit-details-marker{ display:none; }
+    details p{ margin: 10px 0 0; font-size: 14px; line-height: 1.7; color: rgba(11,11,15,0.62); }
+
+    .footnav{ margin-top: 28px; display:flex; justify-content: space-between; gap: 12px; }
+    .btn{ display:inline-flex; align-items:center; justify-content:center; padding: 10px 12px; border-radius: 999px; border: 1px solid rgba(0,0,0,0.10); background: rgba(255,255,255,0.90); font-size: 13px; font-weight: 800; color: rgba(11,11,15,0.84); text-decoration:none; transition: transform .15s ease, background .15s ease; white-space: nowrap; }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,1); }
+    .btn--ghost{ background: rgba(245,245,247,0.75); }
+
+    .chip{ padding: 7px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; border: 1px solid rgba(0,0,0,0.10); background: rgba(255,255,255,0.75); }
+    .chip--topic{ background: rgba(52,199,89,0.14); color: rgba(30,150,70,0.95); border-color: rgba(52,199,89,0.22); }
+
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .two-col{ grid-template-columns: 1fr; }
+      .grid3{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px){
+      h1{ font-size: 34px; }
+      .footnav{ flex-direction: column; }
+      .btn{ width: 100%; }
+    }
+  </style>
+
+</Layout>
