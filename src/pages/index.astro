@@ -1,8 +1,602 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import HomeCarousel from "../components/HomeCarousel.astro";
+import IntroOverlay from "../components/IntroOverlay.astro";
+
+const profile = {
+  name: "Ugurcan YAGIZ",
+  title: "Senior Accountant / Financial Analyst",
+  email: "info@ugurcanyagiz.com",
+  linkedin: "https://www.linkedin.com",
+  resumeView: "/resume.pdf",
+  resumeDownload: "/resume.pdf"
+};
+
+const strengths = [
+  "Financial Reporting",
+  "Account Reconciliation",
+  "Forecasting & Variance Analysis",
+  "SAP Business One",
+  "Excel VBA / Macros",
+  "Management Reporting",
+  "Process Improvement",
+  "Internal Audit",
+  "Payroll / Closings",
+  "Multi-state Tax Exposure"
+];
+
+const impacts = [
+  {
+    metric: "25%+",
+    title: "Collection Improvement",
+    detail: "Designed and implemented a stronger collection workflow that increased recovery performance."
+  },
+  {
+    metric: "20%+",
+    title: "Faster Order Processing",
+    detail: "Improved operational process flow and shortened processing cycles while increasing consistency."
+  },
+  {
+    metric: "12% → 0.3%",
+    title: "Error Reduction",
+    detail: "Reduced order pick mistakes with process redesign and tighter controls."
+  },
+  {
+    metric: "$450K → $700K",
+    title: "Weekly Order Processing",
+    detail: "Built a register for sales orders and scheduled deliveries to unlock higher throughput."
+  },
+  {
+    metric: "$60M",
+    title: "Distribution Environment",
+    detail: "Led reporting operations and supported accounting for three warehouses."
+  }
+];
 ---
 
-<Layout title="UGURCAN" minimal={true}>
-  <HomeCarousel />
+<Layout title="Ugurcan Yagiz | Senior Accountant / Financial Analyst">
+  <IntroOverlay
+    name={profile.name}
+    title={profile.title}
+    primaryHref="#resume"
+    secondaryHref="#experience"
+    hook="Financial reporting, automation, and process improvement — built on precision."
+    support="Structured, analytical, and reliable professional translating complex financial data into clear, actionable direction for leadership teams."
+  />
+
+  <div class="home-wrap">
+    <section class="hero container">
+      <div class="hero-main">
+        <p class="section-label">Senior Finance Profile</p>
+        <h1>{profile.name}</h1>
+        <p class="hero-title">{profile.title}</p>
+        <p class="hero-summary">
+          10+ years of experience across banking, internal audit, and corporate accounting, with a strong track
+          record in reporting accuracy, reconciliation discipline, tax exposure support, and operational process
+          improvements.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href={profile.resumeDownload} download>Download Resume</a>
+          <a class="btn btn-secondary" href="#experience">View Experience</a>
+          <a class="btn btn-secondary" href="#contact">Contact Me</a>
+        </div>
+      </div>
+
+      <aside class="hero-panel" aria-label="Core profile metrics">
+        <h2>Core Value Snapshot</h2>
+        <ul>
+          <li><strong>10+ Years Experience</strong><span>Banking, audit, and accounting</span></li>
+          <li><strong>SAP B1</strong><span>Applied in daily accounting operations</span></li>
+          <li><strong>Excel VBA / Automation</strong><span>Advanced reporting and workflow optimization</span></li>
+          <li><strong>Financial Reporting</strong><span>Leadership-ready reporting and insights</span></li>
+          <li><strong>Internal Audit</strong><span>Control-minded and compliance-oriented</span></li>
+          <li><strong>Forecasting & Analysis</strong><span>Variance-driven, decision-support focus</span></li>
+        </ul>
+      </aside>
+    </section>
+
+    <section id="strengths" class="section container">
+      <div class="section-head">
+        <p class="section-label">Core Strengths</p>
+        <h2>Specialized capabilities recruiters can quickly validate.</h2>
+      </div>
+      <div class="strength-grid">
+        {strengths.map((strength) => (
+          <article class="strength-card">
+            <h3>{strength}</h3>
+            <p>Focused execution with clear controls, measurable accuracy, and business context.</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section section-impact container">
+      <div class="section-head">
+        <p class="section-label">Impact Highlights</p>
+        <h2>Proven outcomes with measurable operational and financial value.</h2>
+      </div>
+      <div class="impact-grid">
+        {impacts.map((impact) => (
+          <article class="impact-card">
+            <p class="impact-metric">{impact.metric}</p>
+            <h3>{impact.title}</h3>
+            <p>{impact.detail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section id="experience" class="section container">
+      <div class="section-head">
+        <p class="section-label">Experience Timeline</p>
+        <h2>Leadership in reporting, controls, and process reliability.</h2>
+      </div>
+
+      <div class="timeline">
+        <article>
+          <p class="timeline-period">Recent</p>
+          <h3>Turkana Food Inc.</h3>
+          <p class="timeline-role">Sr. Accountant Manager / Senior Accountant</p>
+          <p>
+            Directed financial reporting operations, managed core accounting activities, and supported multi-site
+            warehouse operations in a high-volume $60M distribution environment.
+          </p>
+        </article>
+
+        <article>
+          <p class="timeline-period">Prior</p>
+          <h3>Turkey Is Bank</h3>
+          <p class="timeline-role">Internal Audit Specialist / Financial Reporting & Accounting Analyst</p>
+          <p>
+            Built a strong foundation in internal controls, audit execution, management reporting, and analysis for
+            informed decision-making.
+          </p>
+        </article>
+
+        <article>
+          <p class="timeline-period">Additional Experience</p>
+          <h3>Cross-functional Finance & Operations Support</h3>
+          <p class="timeline-role">Accounting, Reporting, and Process Improvement</p>
+          <p>
+            Delivered reconciliations, close support, and automation-led improvements across workflows requiring
+            precision, consistency, and stakeholder alignment.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section id="resume" class="section container">
+      <div class="resume-preview">
+        <div>
+          <p class="section-label">Resume</p>
+          <h2>View complete experience and credentials.</h2>
+          <p>
+            A detailed record of accounting, reporting, audit, and process improvement achievements tailored for
+            Senior Accountant and Financial Analyst opportunities.
+          </p>
+          <div class="resume-actions">
+            <a class="btn btn-primary" href={profile.resumeView} target="_blank" rel="noreferrer">View Full Resume</a>
+            <a class="btn btn-secondary" href={profile.resumeDownload} download>Download PDF</a>
+          </div>
+        </div>
+
+        <div class="resume-frame" aria-label="Resume preview card">
+          <div class="resume-sheet">
+            <p>{profile.name}</p>
+            <span>{profile.title}</span>
+            <ul>
+              <li>Financial Reporting & Controls</li>
+              <li>SAP Business One</li>
+              <li>Excel VBA / Automation</li>
+              <li>Forecasting & Variance Analysis</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="section container contact-section">
+      <div class="section-head">
+        <p class="section-label">Contact</p>
+        <h2>Open to Senior Accountant, Financial Analyst, and related opportunities.</h2>
+      </div>
+      <div class="contact-grid">
+        <a href={`mailto:${profile.email}`}>Email: {profile.email}</a>
+        <a href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn Profile</a>
+      </div>
+    </section>
+  </div>
 </Layout>
+
+<style>
+  :global(html) {
+    scroll-behavior: smooth;
+  }
+
+  .home-wrap {
+    padding: 2rem 0 4rem;
+    background:
+      radial-gradient(circle at top right, rgba(58, 81, 119, 0.1), transparent 35%),
+      linear-gradient(180deg, #f7f8fb, #f2f4f8 45%, #eff2f7);
+  }
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 1.2rem;
+    align-items: stretch;
+  }
+
+  .hero-main,
+  .hero-panel,
+  .section,
+  .resume-preview {
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 20px 56px rgba(8, 10, 16, 0.08);
+  }
+
+  .hero-main {
+    padding: clamp(1.2rem, 2.2vw, 2rem);
+  }
+
+  .section-label {
+    margin: 0;
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: rgba(15, 23, 42, 0.55);
+  }
+
+  h1 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.9rem, 4.2vw, 3rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #0b1220;
+  }
+
+  .hero-title {
+    margin: 0.4rem 0 0;
+    font-weight: 560;
+    color: #1e293b;
+  }
+
+  .hero-summary {
+    margin: 1.1rem 0 0;
+    line-height: 1.75;
+    color: rgba(15, 23, 42, 0.78);
+    max-width: 66ch;
+  }
+
+  .hero-actions,
+  .resume-actions {
+    margin-top: 1.4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  .btn {
+    border-radius: 12px;
+    padding: 0.68rem 1.1rem;
+    font-size: 0.93rem;
+    font-weight: 600;
+    transition: all 180ms ease;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background: #0f172a;
+    color: #eef2ff;
+  }
+
+  .btn-primary:hover {
+    background: #111f38;
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    border-color: rgba(15, 23, 42, 0.16);
+    color: #0f172a;
+    background: #fff;
+  }
+
+  .btn-secondary:hover {
+    border-color: rgba(15, 23, 42, 0.36);
+  }
+
+  .hero-panel {
+    padding: 1.4rem;
+  }
+
+  .hero-panel h2 {
+    margin: 0;
+    font-size: 1.04rem;
+    color: #0f172a;
+  }
+
+  .hero-panel ul {
+    list-style: none;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 0.72rem;
+  }
+
+  .hero-panel li {
+    padding-bottom: 0.72rem;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    display: grid;
+    gap: 0.15rem;
+  }
+
+  .hero-panel li:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .hero-panel strong {
+    font-size: 0.95rem;
+    color: #0f172a;
+  }
+
+  .hero-panel span {
+    font-size: 0.87rem;
+    color: rgba(15, 23, 42, 0.66);
+  }
+
+  .section {
+    margin-top: 1.2rem;
+    padding: clamp(1rem, 2vw, 1.7rem);
+  }
+
+  .section-head h2 {
+    margin: 0.45rem 0 0;
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    letter-spacing: -0.02em;
+    color: #0b1220;
+    max-width: 32ch;
+  }
+
+  .strength-grid {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.66rem;
+  }
+
+  .strength-card {
+    border: 1px solid rgba(15, 23, 42, 0.1);
+    border-radius: 14px;
+    padding: 0.9rem;
+    background: #fff;
+  }
+
+  .strength-card h3 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #0f172a;
+  }
+
+  .strength-card p {
+    margin: 0.45rem 0 0;
+    font-size: 0.84rem;
+    line-height: 1.55;
+    color: rgba(15, 23, 42, 0.66);
+  }
+
+  .impact-grid {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.75rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .impact-card {
+    border-radius: 14px;
+    background: #111827;
+    color: #f8fafc;
+    padding: 1rem;
+    transition: transform 180ms ease;
+  }
+
+  .impact-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .impact-metric {
+    margin: 0;
+    font-size: clamp(1.15rem, 2.4vw, 1.55rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .impact-card h3 {
+    margin: 0.34rem 0 0;
+    font-size: 0.95rem;
+  }
+
+  .impact-card p {
+    margin: 0.45rem 0 0;
+    font-size: 0.84rem;
+    line-height: 1.55;
+    color: rgba(248, 250, 252, 0.8);
+  }
+
+  .timeline {
+    margin-top: 1rem;
+    border-left: 2px solid rgba(15, 23, 42, 0.12);
+    padding-left: 1rem;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .timeline article {
+    position: relative;
+    padding: 0.2rem 0 0.2rem 0.9rem;
+  }
+
+  .timeline article::before {
+    content: "";
+    position: absolute;
+    left: -1.46rem;
+    top: 0.6rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #0f172a;
+    box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.11);
+  }
+
+  .timeline-period {
+    margin: 0;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(15, 23, 42, 0.58);
+  }
+
+  .timeline h3 {
+    margin: 0.3rem 0 0;
+    font-size: 1rem;
+    color: #0f172a;
+  }
+
+  .timeline-role {
+    margin: 0.2rem 0 0;
+    font-size: 0.91rem;
+    color: rgba(15, 23, 42, 0.75);
+  }
+
+  .timeline p {
+    margin-top: 0.5rem;
+    color: rgba(15, 23, 42, 0.74);
+    line-height: 1.65;
+  }
+
+  .resume-preview {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 1rem;
+    padding: clamp(1rem, 2vw, 1.7rem);
+  }
+
+  .resume-preview h2 {
+    margin: 0.45rem 0 0;
+    font-size: clamp(1.2rem, 2vw, 1.55rem);
+    letter-spacing: -0.02em;
+    color: #0b1220;
+    max-width: 30ch;
+  }
+
+  .resume-preview p {
+    margin: 0.7rem 0 0;
+    color: rgba(15, 23, 42, 0.74);
+    line-height: 1.65;
+  }
+
+  .resume-frame {
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    background: linear-gradient(180deg, #f8fafc, #edf2f7);
+    padding: 1rem;
+    display: grid;
+    place-items: center;
+  }
+
+  .resume-sheet {
+    width: min(280px, 100%);
+    min-height: 300px;
+    border-radius: 12px;
+    background: #fff;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.13);
+    padding: 1rem;
+  }
+
+  .resume-sheet p {
+    margin: 0;
+    color: #0f172a;
+    font-weight: 700;
+  }
+
+  .resume-sheet span {
+    margin-top: 0.3rem;
+    display: block;
+    font-size: 0.85rem;
+    color: rgba(15, 23, 42, 0.68);
+  }
+
+  .resume-sheet ul {
+    margin: 1rem 0 0;
+    padding-left: 1rem;
+    display: grid;
+    gap: 0.5rem;
+    font-size: 0.86rem;
+    color: rgba(15, 23, 42, 0.8);
+  }
+
+  .contact-section {
+    margin-bottom: 0;
+  }
+
+  .contact-grid {
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  .contact-grid a {
+    border: 1px solid rgba(15, 23, 42, 0.15);
+    border-radius: 12px;
+    background: #fff;
+    padding: 0.66rem 1rem;
+    font-size: 0.93rem;
+    color: #0f172a;
+  }
+
+  @media (max-width: 1080px) {
+    .hero,
+    .resume-preview {
+      grid-template-columns: 1fr;
+    }
+
+    .strength-grid,
+    .impact-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .home-wrap {
+      padding-top: 1.1rem;
+    }
+
+    .strength-grid,
+    .impact-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .strength-grid,
+    .impact-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .timeline {
+      padding-left: 0.6rem;
+    }
+
+    .timeline article {
+      padding-left: 0.6rem;
+    }
+
+    .timeline article::before {
+      left: -1.08rem;
+    }
+  }
+</style>
