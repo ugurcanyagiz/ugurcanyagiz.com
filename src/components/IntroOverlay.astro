@@ -1,0 +1,201 @@
+---
+const {
+  name = "Ugurcan YAGIZ",
+  title = "Senior Accountant / Financial Analyst",
+  hook = "Turning financial complexity into clear, reliable decisions.",
+  support = "10+ years across banking, internal audit, and corporate accounting — focused on reporting clarity, process discipline, and measurable business outcomes.",
+  primaryHref = "#resume",
+  secondaryHref = "#experience",
+  storageKey = "uy_intro_seen_v1"
+} = Astro.props;
+---
+
+<div id="intro-overlay" class="intro-overlay" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+  <div class="intro-backdrop" data-close-overlay></div>
+
+  <section class="intro-panel">
+    <button class="intro-close" type="button" aria-label="Close intro" data-close-overlay>✕</button>
+    <p class="intro-eyebrow">Professional Profile</p>
+    <h1 id="intro-title" class="intro-name">{name}</h1>
+    <p class="intro-role">{title}</p>
+    <p class="intro-hook">{hook}</p>
+    <p class="intro-support">{support}</p>
+
+    <div class="intro-actions">
+      <a href={primaryHref} class="intro-btn intro-btn-primary" data-close-overlay>View Resume</a>
+      <a href={secondaryHref} class="intro-btn intro-btn-secondary" data-close-overlay>Explore Experience</a>
+    </div>
+  </section>
+</div>
+
+<script define:vars={{ storageKey }}>
+  const overlay = document.getElementById("intro-overlay");
+  if (!overlay) {
+    throw new Error("Intro overlay not found");
+  }
+
+  const closeOverlay = () => {
+    overlay.classList.add("is-closing");
+    localStorage.setItem(storageKey, "true");
+    setTimeout(() => {
+      overlay.setAttribute("hidden", "true");
+    }, 300);
+  };
+
+  const hasSeenOverlay = localStorage.getItem(storageKey) === "true";
+  if (hasSeenOverlay) {
+    overlay.setAttribute("hidden", "true");
+  } else {
+    requestAnimationFrame(() => overlay.classList.add("is-visible"));
+  }
+
+  overlay.querySelectorAll("[data-close-overlay]").forEach((element) => {
+    element.addEventListener("click", closeOverlay);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !overlay.hasAttribute("hidden")) {
+      closeOverlay();
+    }
+  });
+</script>
+
+<style>
+  .intro-overlay {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms ease;
+  }
+
+  .intro-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .intro-overlay.is-closing {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .intro-backdrop {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(140deg, rgba(8, 10, 16, 0.72), rgba(8, 10, 16, 0.5));
+    backdrop-filter: blur(10px);
+  }
+
+  .intro-panel {
+    position: relative;
+    width: min(760px, calc(100% - 2rem));
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(11, 15, 24, 0.08);
+    border-radius: 24px;
+    padding: 2.2rem;
+    box-shadow: 0 30px 90px rgba(8, 10, 16, 0.28);
+    transform: translateY(18px);
+    transition: transform 380ms ease;
+  }
+
+  .intro-overlay.is-visible .intro-panel {
+    transform: translateY(0);
+  }
+
+  .intro-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    border: 1px solid rgba(11, 15, 24, 0.14);
+    background: #fff;
+    color: rgba(11, 15, 24, 0.8);
+    cursor: pointer;
+  }
+
+  .intro-eyebrow {
+    margin: 0 0 0.5rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(11, 15, 24, 0.54);
+    font-weight: 600;
+  }
+
+  .intro-name {
+    margin: 0;
+    font-size: clamp(1.9rem, 3.5vw, 2.5rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: #0b0f18;
+  }
+
+  .intro-role {
+    margin: 0.35rem 0 0;
+    font-size: 1rem;
+    color: rgba(11, 15, 24, 0.78);
+    font-weight: 560;
+  }
+
+  .intro-hook {
+    margin: 1.1rem 0 0;
+    font-size: 1.16rem;
+    line-height: 1.5;
+    color: #0b0f18;
+  }
+
+  .intro-support {
+    margin: 0.8rem 0 0;
+    color: rgba(11, 15, 24, 0.72);
+    line-height: 1.6;
+    max-width: 62ch;
+  }
+
+  .intro-actions {
+    margin-top: 1.6rem;
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .intro-btn {
+    border-radius: 12px;
+    padding: 0.7rem 1.1rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 160ms ease;
+    border: 1px solid transparent;
+  }
+
+  .intro-btn-primary {
+    background: #0b0f18;
+    color: #f8fafc;
+  }
+
+  .intro-btn-primary:hover {
+    background: #111827;
+    transform: translateY(-1px);
+  }
+
+  .intro-btn-secondary {
+    background: transparent;
+    border-color: rgba(11, 15, 24, 0.18);
+    color: #0b0f18;
+  }
+
+  .intro-btn-secondary:hover {
+    border-color: rgba(11, 15, 24, 0.36);
+  }
+
+  @media (max-width: 620px) {
+    .intro-panel {
+      padding: 1.3rem;
+      border-radius: 18px;
+    }
+  }
+</style>

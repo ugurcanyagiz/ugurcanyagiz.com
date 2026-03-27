@@ -6,7 +6,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "build:cf": "astro build",
+    "deploy:cf": "npm run build:cf && npx wrangler versions upload"
   },
   "dependencies": {
     "astro": "^5.16.11"
