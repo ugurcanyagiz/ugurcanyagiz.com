@@ -1,0 +1,214 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Resume | Ugurcan Yagiz">
+  <section class="resume">
+    <header class="hero card">
+      <h1>Ugurcan Yagiz</h1>
+      <p class="role">Senior Accountant / Financial Analyst</p>
+      <p class="contact">
+        Hackensack, NJ • (201) 856-4985 •
+        <a href="mailto:ugurcanyagiz@gmail.com">ugurcanyagiz@gmail.com</a>
+      </p>
+      <p class="contact">
+        <a href="https://www.linkedin.com/in/ugurcanyagiz" target="_blank" rel="noreferrer">linkedin.com/in/ugurcanyagiz</a>
+      </p>
+    </header>
+
+    <article class="card">
+      <h2>Summary</h2>
+      <p>
+        Senior Accountant / Financial Analyst with 10+ years of experience across banking,
+        internal audit, and corporate accounting environments. Strong background in financial
+        reporting, account management, and multi-state tax compliance, with hands-on expertise in
+        SAP Business One and advanced Excel automation.
+      </p>
+    </article>
+
+    <article class="card">
+      <h2>Areas of Expertise</h2>
+      <p>
+        Financial Accounting • Reporting • Forecasting & Analysis • GAAP • Account & Bank
+        Reconciliation • SQL Reporting • Cost Allocation & Budgeting • Cash Flow Analysis • Payroll
+        • CRM Accounting Policies • Budgeting • Master Excel (VBA/Macros) • QuickBooks • SAP B1 •
+        P&L Management • Variance Reports • Process Improvements • Fraud Controls
+      </p>
+    </article>
+
+    <article class="card">
+      <h2>Career Highlights</h2>
+      <ul>
+        <li>
+          Identified and resolved incorrect payments by reviewing transaction details and supporting
+          documentation.
+        </li>
+        <li>
+          Achieved a 20%+ increase in order processing and reduced order pick mistakes from 12% to
+          0.3%.
+        </li>
+        <li>
+          Reduced inaccuracies in order management and increased weekly sales order processing from
+          $450K to $700K.
+        </li>
+        <li>
+          Designed a customer maintenance report to improve sales team monitoring and execution.
+        </li>
+        <li>
+          Created an inventory movement report to monitor stock turnover and optimize procurement
+          forecasting.
+        </li>
+        <li>
+          Realized a 25%+ collection improvement by designing and implementing a stronger collection
+          system.
+        </li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>Professional Experience</h2>
+
+      <h3>Turkana Food Inc., Kenilworth, NJ</h3>
+      <p class="date">October 2022 – Present</p>
+      <h4>Sr. Accountant Manager (October 2024 – Present)</h4>
+      <ul>
+        <li>Leading financial reporting operations across multiple business units.</li>
+        <li>
+          Managing team performance and implementing automation initiatives across warehouse
+          operations supporting $60M revenue.
+        </li>
+        <li>
+          Generating monthly/quarterly/annual P&L and cost reports, plus supporting compliance
+          reviews and internal audits.
+        </li>
+      </ul>
+
+      <h4>Senior Accountant (October 2022 – October 2024)</h4>
+      <ul>
+        <li>Reconciled balance sheet accounts and analyzed monthly variances.</li>
+        <li>Managed month-end and year-end closings and annual return files.</li>
+        <li>Maintained the general ledger and prepared trial balances/journal entries.</li>
+        <li>
+          Oversaw receivables/payables to eliminate arrears and supported commission/gross profit
+          reporting.
+        </li>
+        <li>
+          Administered weekly payroll and HR system updates for new hires and terminations.
+        </li>
+      </ul>
+
+      <h3>Türkiye İş Bankası, Istanbul, Türkiye</h3>
+      <h4>Internal Audit Specialist (November 2015 – December 2019)</h4>
+      <ul>
+        <li>
+          Passed internal inspectorate exams and transitioned into internal audit with focus on
+          financial statements, operational processes, and transaction records.
+        </li>
+        <li>
+          Developed cross-functional expertise in treasury, accounting, operations, and risk
+          management.
+        </li>
+      </ul>
+
+      <h4>Financial Reporting & Accounting Analyst (August 2013 – November 2015)</h4>
+      <ul>
+        <li>
+          Prepared and analyzed management-level reports for treasury and internal accounting
+          activities.
+        </li>
+        <li>
+          Monitored derivative transactions (forward, swap, option) for policy-aligned accounting
+          treatment.
+        </li>
+        <li>Managed foreign bank reimbursements and reconciliations.</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>Additional Experience</h2>
+      <p>Grill House LLC, Paramus, NJ • Accountant • January 2020 – October 2022</p>
+      <p>Demir CPA Office • Accountant • June 2011 – July 2013</p>
+    </article>
+
+    <article class="card">
+      <h2>Education</h2>
+      <ul>
+        <li>Master of Business Administration (MBA), Anadolu University (English)</li>
+        <li>Bachelor of Science (BS), Public Finance, Anadolu University</li>
+        <li>Associate Degree, Accounting & Tax Applications, Süleyman Demirel University</li>
+        <li>Associate Degree, Culinary Arts, Anadolu University</li>
+      </ul>
+    </article>
+
+    <article class="card">
+      <h2>Certificates</h2>
+      <ul>
+        <li>AI for Finance Professionals — University of Pennsylvania (Wharton)</li>
+        <li>Data Analysis with Python — IBM (Coursera)</li>
+        <li>Accounting Analytics — University of Illinois Chicago</li>
+      </ul>
+    </article>
+  </section>
+</Layout>
+
+<style>
+  .resume {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 18px;
+    display: grid;
+    gap: 16px;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  .hero {
+    text-align: center;
+    background: linear-gradient(180deg, #fdfdff 0%, #f6f8ff 100%);
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(32px, 4.8vw, 44px);
+    letter-spacing: -0.02em;
+  }
+
+  .role {
+    margin: 8px 0;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  .contact {
+    margin: 0;
+    color: rgba(11, 11, 15, 0.75);
+  }
+
+  h2 {
+    margin: 0 0 10px;
+  }
+
+  h3,
+  h4 {
+    margin: 14px 0 6px;
+  }
+
+  .date {
+    margin: 0;
+    color: rgba(11, 11, 15, 0.65);
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 22px;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+</style>
