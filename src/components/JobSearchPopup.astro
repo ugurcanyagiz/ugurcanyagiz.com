@@ -1,4 +1,4 @@
-<section class="job-popup" id="jobPopup" aria-live="polite" aria-label="Job search notice" hidden>
+<section class="job-popup" id="jobPopup" aria-live="polite" aria-label="Open to work notice" hidden>
   <div class="job-popup__backdrop" data-close-popup></div>
 
   <div class="job-popup__card" role="dialog" aria-modal="true" aria-labelledby="jobPopupTitle">
@@ -12,15 +12,15 @@
     </button>
 
     <p class="job-popup__badge">OPEN TO WORK</p>
-    <h2 id="jobPopupTitle">Yeni fırsatlara açığım.</h2>
+    <h2 id="jobPopupTitle">I'm actively looking for new opportunities.</h2>
     <p class="job-popup__text">
-      Senior Accountant / Financial Analyst rollerinde aktif olarak iş arıyorum.
-      Deneyimlerimi görmek için Resume sayfama geçebilirsiniz.
+      I'm available for Senior Accountant / Financial Analyst roles.
+      You can review my background from the Resume page.
     </p>
 
     <div class="job-popup__actions">
       <a class="job-popup__btn job-popup__btn--primary" href="/resume" data-resume-link>
-        Resume Görüntüle
+        View Resume
       </a>
       <a
         class="job-popup__btn job-popup__btn--ghost"
@@ -135,24 +135,19 @@
   const popup = document.getElementById('jobPopup');
   const closeElements = popup ? popup.querySelectorAll('[data-close-popup]') : [];
   const resumeLink = popup ? popup.querySelector('[data-resume-link]') : null;
-  const storageKey = 'job-popup-seen-v1';
-
   if (popup) {
-    const alreadySeen = window.localStorage.getItem(storageKey) === '1';
-
-    if (!alreadySeen) {
-      popup.hidden = false;
-      document.body.style.overflow = 'hidden';
-    }
+    popup.hidden = false;
+    document.body.style.overflow = 'hidden';
 
     const closePopup = () => {
       popup.hidden = true;
-      window.localStorage.setItem(storageKey, '1');
       document.body.style.overflow = '';
     };
 
     closeElements.forEach((el) => el.addEventListener('click', closePopup));
-    resumeLink?.addEventListener('click', () => window.localStorage.setItem(storageKey, '1'));
+    resumeLink?.addEventListener('click', () => {
+      document.body.style.overflow = '';
+    });
     window.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !popup.hidden) closePopup();
     });
