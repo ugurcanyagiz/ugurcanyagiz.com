@@ -40,55 +40,24 @@ import Layout from "../layouts/Layout.astro";
 
     <article class="card excel-showcase">
       <h2>Advanced Excel Skills</h2>
-      <p>VBA automation, Power Query pipelines, dynamic dashboards ve ileri düzey finansal modelleme.</p>
+      <p>Excel ve SAP odaklı dashboard / otomasyon örnekleri:</p>
 
-      <div class="excel-grid">
-        <div class="excel-skill" style="--pct: 96%; --delay: 0s;">
-          <div class="excel-skill__head">
-            <span>Advanced Formulas (XLOOKUP, INDEX-MATCH, LET)</span>
-            <strong>96%</strong>
-          </div>
-          <div class="excel-skill__bar"><span></span></div>
-        </div>
-
-        <div class="excel-skill" style="--pct: 93%; --delay: .12s;">
-          <div class="excel-skill__head">
-            <span>VBA / Macro Automation</span>
-            <strong>93%</strong>
-          </div>
-          <div class="excel-skill__bar"><span></span></div>
-        </div>
-
-        <div class="excel-skill" style="--pct: 91%; --delay: .24s;">
-          <div class="excel-skill__head">
-            <span>Power Query & Data Cleaning</span>
-            <strong>91%</strong>
-          </div>
-          <div class="excel-skill__bar"><span></span></div>
-        </div>
-
-        <div class="excel-skill" style="--pct: 89%; --delay: .36s;">
-          <div class="excel-skill__head">
-            <span>Financial Dashboards & KPI Reporting</span>
-            <strong>89%</strong>
-          </div>
-          <div class="excel-skill__bar"><span></span></div>
-        </div>
-      </div>
-
-      <div class="excel-cards">
-        <div class="excel-card">
-          <h3>Auto-Reconciliation</h3>
-          <p>Binlerce satırlık bank/account mutabakatını tek akışta eşleştirir, exception listeleri üretirim.</p>
-        </div>
-        <div class="excel-card">
-          <h3>Month-End Pack</h3>
-          <p>Pivot, Power Query ve VBA ile kapanış rapor paketini otomatik üretip teslim süresini kısaltırım.</p>
-        </div>
-        <div class="excel-card">
-          <h3>Variance Engine</h3>
-          <p>Bütçe-gerçekleşen kıyasını otomatik senaryolarla izleyip yönetim için aksiyon odaklı özetler sunarım.</p>
-        </div>
+      <div class="excel-gif-grid">
+        <a class="excel-gif-card" href="https://editor.analyticsvidhya.com/uploads/81456q6nEcGjZ0A.gif" target="_blank" rel="noreferrer">
+          <img src="https://editor.analyticsvidhya.com/uploads/81456q6nEcGjZ0A.gif" alt="Excel dashboard animation example" loading="lazy" />
+        </a>
+        <a class="excel-gif-card" href="https://d13ot9o61jdzpp.cloudfront.net/images/hr_dashboard_webinar.gif" target="_blank" rel="noreferrer">
+          <img src="https://d13ot9o61jdzpp.cloudfront.net/images/hr_dashboard_webinar.gif" alt="HR dashboard gif example" loading="lazy" />
+        </a>
+        <a class="excel-gif-card" href="https://cdn-5a6cb102f911c811e474f1cd.closte.com/wp-content/uploads/2025/06/NYCPropertySalesDEMO-EZGv1.gif" target="_blank" rel="noreferrer">
+          <img src="https://cdn-5a6cb102f911c811e474f1cd.closte.com/wp-content/uploads/2025/06/NYCPropertySalesDEMO-EZGv1.gif" alt="Property sales dashboard gif example" loading="lazy" />
+        </a>
+        <a class="excel-gif-card" href="https://www.projectcontrolacademy.com/wp-content/uploads/2021/07/Power-Bi-Dashboard-optimized.gif" target="_blank" rel="noreferrer">
+          <img src="https://www.projectcontrolacademy.com/wp-content/uploads/2021/07/Power-Bi-Dashboard-optimized.gif" alt="Power BI dashboard gif example" loading="lazy" />
+        </a>
+        <a class="excel-gif-card" href="https://firebearstudio.com/blog/wp-content/uploads/2021/02/change-row-position-1.gif" target="_blank" rel="noreferrer">
+          <img src="https://firebearstudio.com/blog/wp-content/uploads/2021/02/change-row-position-1.gif" alt="Excel row ordering gif example" loading="lazy" />
+        </a>
       </div>
     </article>
 
@@ -273,101 +242,43 @@ import Layout from "../layouts/Layout.astro";
     color: rgba(11, 11, 15, 0.78);
   }
 
-  .excel-grid {
+  .excel-gif-grid {
     display: grid;
-    gap: 10px;
-  }
-
-  .excel-skill {
-    background: linear-gradient(180deg, #f9fbff, #f4f7ff);
-    border: 1px solid rgba(67, 108, 255, 0.12);
-    padding: 10px 12px;
-    border-radius: 12px;
-  }
-
-  .excel-skill__head {
-    display: flex;
-    justify-content: space-between;
     gap: 12px;
-    font-size: 14px;
-    margin-bottom: 8px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .excel-skill__head strong {
-    color: #2f46e5;
-  }
-
-  .excel-skill__bar {
-    height: 8px;
-    border-radius: 999px;
-    background: rgba(64, 102, 255, 0.14);
-    overflow: hidden;
-  }
-
-  .excel-skill__bar span {
-    display: block;
-    height: 100%;
-    width: 0;
-    background: linear-gradient(90deg, #3656ff, #54d3ff);
-    border-radius: inherit;
-    animation: excelGrow 1.25s ease forwards;
-    animation-delay: var(--delay);
-  }
-
-  .excel-cards {
-    margin-top: 14px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-  }
-
-  .excel-card {
+  .excel-gif-card {
+    border: 1px solid rgba(67, 108, 255, 0.2);
     border-radius: 12px;
-    padding: 12px;
-    border: 1px solid rgba(0, 0, 0, 0.07);
-    background: #fff;
-    animation: floatCard 3.2s ease-in-out infinite;
+    overflow: hidden;
+    display: block;
+    transition: transform .25s ease, box-shadow .25s ease;
   }
 
-  .excel-card:nth-child(2) {
-    animation-delay: .5s;
+  .excel-gif-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(38, 67, 182, 0.16);
   }
 
-  .excel-card:nth-child(3) {
-    animation-delay: 1s;
-  }
-
-  .excel-card h3 {
-    margin: 0 0 6px;
-    font-size: 16px;
-  }
-
-  .excel-card p {
-    margin: 0;
-    font-size: 14px;
-  }
-
-  @keyframes excelGrow {
-    from { width: 0; }
-    to { width: var(--pct); }
-  }
-
-  @keyframes floatCard {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-4px); }
+  .excel-gif-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    background: #f6f8ff;
   }
 
   @media (max-width: 860px) {
-    .excel-cards {
+    .excel-gif-grid {
       grid-template-columns: 1fr;
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .excel-skill__bar span,
-    .excel-card {
+    .excel-gif-card {
       animation: none;
-      width: var(--pct);
+      transition: none;
     }
   }
 
