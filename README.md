@@ -44,3 +44,21 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+
+## Cloudflare Pages Deployment
+
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Root directory: repository root (`/`)
+
+A `wrangler.jsonc` file is included with `pages_build_output_dir: "./dist"` to avoid Worker entrypoint detection issues.
+
+
+## GitHub Pages (Actions) Deployment
+
+This repository includes a workflow at `.github/workflows/deploy.yml` that builds Astro with `npm run build` and deploys the `dist/` directory to GitHub Pages.
+
+For this to work in GitHub settings:
+- Go to **Settings → Pages**
+- Set **Source** to **GitHub Actions**
