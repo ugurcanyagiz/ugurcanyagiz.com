@@ -1,0 +1,160 @@
+<section class="job-popup" id="jobPopup" aria-live="polite" aria-label="Job search notice" hidden>
+  <div class="job-popup__backdrop" data-close-popup></div>
+
+  <div class="job-popup__card" role="dialog" aria-modal="true" aria-labelledby="jobPopupTitle">
+    <button
+      class="job-popup__close"
+      type="button"
+      aria-label="Close popup"
+      data-close-popup
+    >
+      ✕
+    </button>
+
+    <p class="job-popup__badge">OPEN TO WORK</p>
+    <h2 id="jobPopupTitle">Yeni fırsatlara açığım.</h2>
+    <p class="job-popup__text">
+      Senior Accountant / Financial Analyst rollerinde aktif olarak iş arıyorum.
+      Deneyimlerimi görmek için Resume sayfama geçebilirsiniz.
+    </p>
+
+    <div class="job-popup__actions">
+      <a class="job-popup__btn job-popup__btn--primary" href="/resume" data-resume-link>
+        Resume Görüntüle
+      </a>
+      <a
+        class="job-popup__btn job-popup__btn--ghost"
+        href="https://www.linkedin.com/in/ugurcanyagiz"
+        target="_blank"
+        rel="noreferrer"
+      >
+        LinkedIn
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .job-popup[hidden] {
+    display: none;
+  }
+
+  .job-popup {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+  }
+
+  .job-popup__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 9, 16, 0.58);
+    backdrop-filter: blur(4px);
+  }
+
+  .job-popup__card {
+    position: relative;
+    width: min(520px, 100%);
+    border-radius: 22px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(155deg, #15172a 0%, #0f1120 60%, #0a0c16 100%);
+    color: #f8f9ff;
+    padding: 30px 24px 24px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  .job-popup__close {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .job-popup__badge {
+    display: inline-flex;
+    margin: 0;
+    padding: 7px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    font-weight: 800;
+    background: rgba(107, 255, 193, 0.15);
+    color: #97ffcf;
+    border: 1px solid rgba(151, 255, 207, 0.35);
+  }
+
+  .job-popup h2 {
+    margin: 12px 0 10px;
+    font-size: clamp(24px, 4vw, 34px);
+    line-height: 1.08;
+  }
+
+  .job-popup__text {
+    margin: 0;
+    color: rgba(248, 249, 255, 0.9);
+    line-height: 1.55;
+  }
+
+  .job-popup__actions {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .job-popup__btn {
+    text-decoration: none;
+    border-radius: 999px;
+    padding: 11px 16px;
+    font-weight: 700;
+    border: 1px solid transparent;
+  }
+
+  .job-popup__btn--primary {
+    background: #fff;
+    color: #101226;
+  }
+
+  .job-popup__btn--ghost {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+</style>
+
+<script is:inline>
+  const popup = document.getElementById('jobPopup');
+  const closeElements = popup ? popup.querySelectorAll('[data-close-popup]') : [];
+  const resumeLink = popup ? popup.querySelector('[data-resume-link]') : null;
+  const storageKey = 'job-popup-seen-v1';
+
+  if (popup) {
+    const alreadySeen = window.localStorage.getItem(storageKey) === '1';
+
+    if (!alreadySeen) {
+      popup.hidden = false;
+      document.body.style.overflow = 'hidden';
+    }
+
+    const closePopup = () => {
+      popup.hidden = true;
+      window.localStorage.setItem(storageKey, '1');
+      document.body.style.overflow = '';
+    };
+
+    closeElements.forEach((el) => el.addEventListener('click', closePopup));
+    resumeLink?.addEventListener('click', () => window.localStorage.setItem(storageKey, '1'));
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !popup.hidden) closePopup();
+    });
+  }
+</script>
