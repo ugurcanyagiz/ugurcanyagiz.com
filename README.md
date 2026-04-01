@@ -44,3 +44,12 @@ All commands are run from the root of the project, from a terminal:
 ## 👀 Want to learn more?
 
 Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+
+
+## Cloudflare Pages Deployment
+
+- Build command: `npm run build`
+- Build output directory: `dist`
+- Root directory: repository root (`/`)
+
+A `wrangler.jsonc` file is included with `pages_build_output_dir: "./dist"` to avoid Worker entrypoint detection issues.
