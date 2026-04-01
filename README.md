@@ -53,3 +53,12 @@ Feel free to check [our documentation](https://docs.astro.build) or jump into ou
 - Root directory: repository root (`/`)
 
 A `wrangler.jsonc` file is included with `pages_build_output_dir: "./dist"` to avoid Worker entrypoint detection issues.
+
+
+## GitHub Pages (Actions) Deployment
+
+This repository includes a workflow at `.github/workflows/deploy.yml` that builds Astro with `npm run build` and deploys the `dist/` directory to GitHub Pages.
+
+For this to work in GitHub settings:
+- Go to **Settings → Pages**
+- Set **Source** to **GitHub Actions**
