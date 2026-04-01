@@ -258,7 +258,8 @@ import Layout from "../layouts/Layout.astro";
   }
 
   .excel-gif-frame {
-    --slide-duration: 25s;
+    --slide-duration: 7s;
+    --slide-count: 5;
     position: relative;
     overflow: hidden;
     border-radius: 12px;
@@ -275,8 +276,8 @@ import Layout from "../layouts/Layout.astro";
     object-fit: cover;
     opacity: 0;
     transform: scale(1.03);
-    animation: gifCarousel var(--slide-duration) ease-in-out infinite;
-    animation-delay: calc(var(--index) * (var(--slide-duration) / 5));
+    animation: gifCarousel calc(var(--slide-duration) * var(--slide-count)) ease-in-out infinite;
+    animation-delay: calc(var(--index) * var(--slide-duration));
   }
 
   .excel-gif-frame img:first-child {
