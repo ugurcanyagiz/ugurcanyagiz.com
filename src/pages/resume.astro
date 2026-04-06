@@ -190,27 +190,28 @@ import Layout from "../layouts/Layout.astro";
     </article>
   </section>
 
-  <div class="floating-contact-links" aria-label="Quick contact links">
-    <a
-      class="quick-link-bubble linkedin"
-      href="https://www.linkedin.com/in/ugurcanyagiz/"
-      target="_blank"
-      rel="noreferrer"
-      aria-label="Open LinkedIn profile"
-    >
-      <svg viewBox="0 0 448 512" aria-hidden="true">
-        <path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.31 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
-      </svg>
-    </a>
-    <a class="quick-link-bubble phone" href="tel:+12018564985" aria-label="Call +1 201 856 49 85">
-      <svg viewBox="0 0 512 512" aria-hidden="true">
-        <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6l-40.7 49.8c-69-32.6-125.3-88.9-157.9-157.9l49.8-40.7c13.7-11.2 18.4-30 11.6-46.3l-40-96z" />
-      </svg>
-    </a>
-  </div>
+  <div class="floating-faq-shell">
+    <div class="floating-contact-links" aria-label="Quick contact links">
+      <a
+        class="quick-link-bubble linkedin"
+        href="https://www.linkedin.com/in/ugurcanyagiz/"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Open LinkedIn profile"
+      >
+        <svg viewBox="0 0 448 512" aria-hidden="true">
+          <path d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.31 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
+        </svg>
+      </a>
+      <a class="quick-link-bubble phone" href="tel:+12018564985" aria-label="Call +1 201 856 49 85">
+        <svg viewBox="0 0 512 512" aria-hidden="true">
+          <path d="M164.9 24.6c-7.7-18.6-28-28.5-47.4-23.2l-88 24C12.1 30.2 0 46 0 64C0 311.4 200.6 512 448 512c18 0 33.8-12.1 38.6-29.5l24-88c5.3-19.4-4.6-39.7-23.2-47.4l-96-40c-16.3-6.8-35.2-2.1-46.3 11.6l-40.7 49.8c-69-32.6-125.3-88.9-157.9-157.9l49.8-40.7c13.7-11.2 18.4-30 11.6-46.3l-40-96z" />
+        </svg>
+      </a>
+    </div>
 
-  <section class="resume-faq" aria-label="Resume frequently asked questions">
-    <div class="faq-bubbles">
+    <section class="resume-faq" aria-label="Resume frequently asked questions">
+      <div class="faq-bubbles">
       <button
         type="button"
         class="faq-bubble"
@@ -235,8 +236,9 @@ import Layout from "../layouts/Layout.astro";
       >
         What is my working style and execution approach?
       </button>
-    </div>
-  </section>
+      </div>
+    </section>
+  </div>
 
   <dialog class="faq-dialog" id="faqDialog">
     <form method="dialog" class="faq-dialog-close-wrap">
@@ -386,12 +388,16 @@ import Layout from "../layouts/Layout.astro";
     }
   }
 
-  .resume-faq {
+  .floating-faq-shell {
     position: fixed;
     right: 20px;
     bottom: 20px;
-    z-index: 40;
+    z-index: 45;
     width: min(360px, calc(100vw - 24px));
+  }
+
+  .resume-faq {
+    position: relative;
     background: rgba(13, 17, 38, 0.92);
     color: #fff;
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -402,12 +408,10 @@ import Layout from "../layouts/Layout.astro";
   }
 
   .floating-contact-links {
-    position: fixed;
-    right: 24px;
-    bottom: 236px;
-    z-index: 45;
     display: flex;
+    justify-content: flex-end;
     gap: 10px;
+    margin: 0 6px 10px 0;
   }
 
   .quick-link-bubble {
@@ -526,12 +530,7 @@ import Layout from "../layouts/Layout.astro";
   }
 
   @media (max-width: 760px) {
-    .floating-contact-links {
-      right: 14px;
-      bottom: 224px;
-    }
-
-    .resume-faq {
+    .floating-faq-shell {
       right: 12px;
       bottom: 12px;
       width: calc(100vw - 24px);
