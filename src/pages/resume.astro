@@ -189,6 +189,43 @@ import Layout from "../layouts/Layout.astro";
       </ul>
     </article>
   </section>
+
+  <section class="resume-faq" aria-label="Resume frequently asked questions">
+    <div class="faq-bubbles">
+      <button
+        type="button"
+        class="faq-bubble"
+        data-faq-question="Why am I looking for a new role?"
+        data-faq-answer="I value my current organization and team, and I am grateful for the opportunities I have had there. Over time, I integrated automation into operational and reporting workflows, improved efficiency, and made the most of the learning opportunities available in my role. At this stage, I am motivated to take the next step in my career by applying this experience in a broader environment with greater responsibility, continued learning, and stronger long-term impact."
+      >
+        Why am I looking for a new role?
+      </button>
+      <button
+        type="button"
+        class="faq-bubble"
+        data-faq-question="Which locations am I open to working in?"
+        data-faq-answer="I am based in North New Jersey and can comfortably commute to locations within approximately one hour by car across New Jersey. In addition, my area provides convenient access to New York, so I am fully open to roles in New York as well. Transportation and commute flexibility are not constraints for me."
+      >
+        Which locations am I open to working in?
+      </button>
+      <button
+        type="button"
+        class="faq-bubble"
+        data-faq-question="What is my working style and execution approach?"
+        data-faq-answer="My working style is adaptive, analytical, and improvement-focused. I actively align with evolving technologies and use them to make workflows more structured, trackable, and efficient. Depending on the need, I support operations through Python-based automation, SAP queries and reporting, and advanced Excel modeling and formula design. I enjoy tackling operational challenges, and I see process gaps as opportunities to learn, optimize, and deliver sustainable solutions. With a background in financial reporting, internal controls, audit discipline, and automation, I consistently focus on measurable results."
+      >
+        What is my working style and execution approach?
+      </button>
+    </div>
+  </section>
+
+  <dialog class="faq-dialog" id="faqDialog">
+    <form method="dialog" class="faq-dialog-close-wrap">
+      <button class="faq-dialog-close" aria-label="Close popup">✕</button>
+    </form>
+    <h3 id="faqDialogQuestion"></h3>
+    <p id="faqDialogAnswer"></p>
+  </dialog>
 </Layout>
 
 <style>
@@ -330,4 +367,125 @@ import Layout from "../layouts/Layout.astro";
     }
   }
 
+  .resume-faq {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 40;
+    width: min(360px, calc(100vw - 24px));
+    background: rgba(13, 17, 38, 0.92);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(11, 11, 15, 0.28);
+    padding: 14px;
+  }
+
+  .faq-bubbles {
+    display: grid;
+    gap: 8px;
+  }
+
+  .faq-bubble {
+    width: 100%;
+    border: 1px solid rgba(158, 180, 255, 0.55);
+    background: linear-gradient(135deg, #304ac6 0%, #5a78ff 100%);
+    color: #fff;
+    border-radius: 999px;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.35;
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+  }
+
+  .faq-bubble:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 8px 18px rgba(35, 54, 150, 0.45);
+    filter: brightness(1.05);
+  }
+
+  .faq-bubble:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .faq-dialog {
+    border: 0;
+    border-radius: 18px;
+    width: min(640px, calc(100vw - 20px));
+    padding: 24px;
+    background: #ffffff;
+    color: #0b0b0f;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.28);
+  }
+
+  .faq-dialog::backdrop {
+    background: rgba(6, 9, 24, 0.6);
+    backdrop-filter: blur(2px);
+  }
+
+  .faq-dialog h3 {
+    margin: 0 0 10px;
+    font-size: 26px;
+  }
+
+  .faq-dialog p {
+    margin: 0;
+    line-height: 1.65;
+    color: rgba(11, 11, 15, 0.86);
+  }
+
+  .faq-dialog-close-wrap {
+    margin: 0;
+    text-align: right;
+  }
+
+  .faq-dialog-close {
+    border: 0;
+    background: rgba(11, 11, 15, 0.08);
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 160ms ease;
+  }
+
+  .faq-dialog-close:hover {
+    background: rgba(11, 11, 15, 0.16);
+  }
+
+  @media (max-width: 760px) {
+    .resume-faq {
+      right: 12px;
+      bottom: 12px;
+      width: calc(100vw - 24px);
+    }
+
+    .faq-bubble {
+      font-size: 13px;
+    }
+  }
 </style>
+
+<script>
+  const dialog = document.getElementById("faqDialog");
+  const questionNode = document.getElementById("faqDialogQuestion");
+  const answerNode = document.getElementById("faqDialogAnswer");
+  const bubbles = document.querySelectorAll(".faq-bubble");
+
+  bubbles.forEach((bubble) => {
+    bubble.addEventListener("click", () => {
+      if (!dialog || !questionNode || !answerNode) return;
+      questionNode.textContent = bubble.getAttribute("data-faq-question") ?? "";
+      answerNode.textContent = bubble.getAttribute("data-faq-answer") ?? "";
+      if (typeof dialog.showModal === "function") {
+        dialog.showModal();
+      }
+    });
+  });
+</script>
