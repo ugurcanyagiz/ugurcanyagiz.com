@@ -276,7 +276,8 @@ import Layout from "../layouts/Layout.astro";
     object-fit: cover;
     opacity: 0;
     transform: scale(1.03);
-    animation: gifCarousel calc(var(--slide-duration) * var(--slide-count)) ease-in-out infinite;
+    filter: blur(1px);
+    animation: gifCarousel calc(var(--slide-duration) * var(--slide-count)) cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
     animation-delay: calc(var(--index) * var(--slide-duration));
   }
 
@@ -286,33 +287,41 @@ import Layout from "../layouts/Layout.astro";
 
   @keyframes gifCarousel {
     0%,
-    16% {
+    2% {
       opacity: 0;
       transform: scale(1.03);
+      filter: blur(2px);
     }
-    20%,
-    36% {
+    6%,
+    16% {
       opacity: 1;
       transform: scale(1);
+      filter: blur(0);
     }
-    40%,
+    20%,
     100% {
       opacity: 0;
-      transform: scale(1.03);
+      transform: scale(0.99);
+      filter: blur(1px);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .excel-gif-frame img {
-      animation: gifCarouselReduced calc(var(--slide-duration) * var(--slide-count)) step-end infinite;
+      animation: gifCarouselReduced calc(var(--slide-duration) * var(--slide-count)) ease-in-out infinite;
       animation-delay: calc(var(--index) * var(--slide-duration));
       transform: none;
+      filter: none;
     }
   }
 
   @keyframes gifCarouselReduced {
     0%,
-    19.99% {
+    4% {
+      opacity: 0;
+    }
+    8%,
+    18% {
       opacity: 1;
     }
     20%,
