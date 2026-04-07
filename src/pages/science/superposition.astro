@@ -1,0 +1,80 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "Superposition (Like a Coin Mid-Flip) — Science";
+const updated = "Updated: 2026";
+---
+
+<Layout title={title}>
+  <article class="page">
+    <header>
+      <div class="hero-top">
+        <a class="back" href="/science">← Back to Science</a>
+        <span class="chip">PHYSICS</span>
+      </div>
+      <h1>Superposition (Like a Coin Mid-Flip)</h1>
+      <p class="subtitle">A quantum object can be in multiple valid states until interaction forces one observed outcome.</p>
+      <p class="subtitle">{updated}</p>
+    </header>
+
+    <section class="section">
+      <h2>Key ideas</h2>
+      <div class="grid">
+        <div class="card"><h3>It is a state, not ignorance</h3><p>Superposition means the system is genuinely described by multiple amplitudes, not that we simply do not know.</p></div>
+        <div class="card"><h3>Measurement changes the setup</h3><p>Observation couples the system to an environment, selecting one outcome and suppressing alternatives.</p></div>
+        <div class="card"><h3>Interference is the signature</h3><p>When alternatives combine and cancel like waves, we see direct evidence of superposition.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Mental model</h2>
+      <div class="card">
+        <ul>
+        <li>Prepare a state with two possible outcomes.</li>
+        <li>Let amplitudes evolve and interfere.</li>
+        <li>Measure once and get a single result, but repeated trials reveal probability weights.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details><summary>Is superposition the same as “both things are true forever”?</summary><p>No. It persists only while coherence is protected. Interaction with the environment rapidly decoheres it.</p></details>
+        <details><summary>Does consciousness collapse the wave function?</summary><p>Mainstream physics does not require consciousness; physical interaction is sufficient.</p></details>
+        <details><summary>Why should non-physicists care?</summary><p>Because superposition powers technologies like quantum sensing and potentially quantum computing.</p></details>
+      </div>
+    </section>
+
+    <nav class="footnav">
+      <a class="btn" href="/science">← Science index</a>
+      <a class="btn" href="/future">Explore Future →</a>
+    </nav>
+  </article>
+
+
+<style>
+  .page{ max-width: 920px; margin: 0 auto; padding: 28px 18px 88px; }
+  .hero-top{ display:flex; align-items:center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .back{ color: rgba(11,11,15,0.60); font-size: 13px; font-weight: 650; text-decoration: none; }
+  .back:hover{ color: rgba(11,11,15,0.92); }
+  h1{ margin: 0 0 10px; font-size: 40px; font-weight: 850; letter-spacing: -0.03em; line-height: 1.08; }
+  .subtitle{ margin: 0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,0.62); max-width: 78ch; }
+  .chip{ font-size: 11px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; border: 1px solid rgba(0,122,255,.2); background: rgba(0,122,255,.12); color: rgba(0,122,255,.9); }
+  .section{ margin-top: 24px; }
+  .section h2{ margin:0 0 12px; font-size: 20px; font-weight: 840; letter-spacing: -0.02em; }
+  .grid{ display:grid; gap: 10px; }
+  .card{ background: rgba(255,255,255,.9); border: 1px solid rgba(0,0,0,.06); border-radius: 16px; padding: 14px 16px; box-shadow: 0 8px 24px rgba(0,0,0,.05); }
+  .card h3{ margin:0 0 6px; font-size: 15px; }
+  .card p{ margin:0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,.66); }
+  ul{ margin:0; padding-left: 18px; color: rgba(11,11,15,.7); font-size: 14px; line-height: 1.7; }
+  .faq{ display:grid; gap: 10px; }
+  details{ background: rgba(255,255,255,.9); border: 1px solid rgba(0,0,0,.06); border-radius: 14px; padding: 12px 14px; }
+  summary{ cursor:pointer; font-weight: 800; }
+  details p{ margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,.65); }
+  .footnav{ margin-top: 26px; display:flex; justify-content: space-between; gap: 12px; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 12px; border-radius: 999px; border:1px solid rgba(0,0,0,.1); background: rgba(255,255,255,.92); font-size:13px; font-weight:800; text-decoration:none; color: rgba(11,11,15,.85); }
+  @media (max-width: 640px){ h1{ font-size: 34px; } .footnav{ flex-direction: column; } }
+</style>
+
+</Layout>

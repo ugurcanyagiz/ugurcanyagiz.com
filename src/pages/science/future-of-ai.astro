@@ -1,0 +1,80 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+const title = "AI & the Future of Science — Science";
+const updated = "Updated: 2026";
+---
+
+<Layout title={title}>
+  <article class="page">
+    <header>
+      <div class="hero-top">
+        <a class="back" href="/science">← Back to Science</a>
+        <span class="chip">TECHNOLOGY</span>
+      </div>
+      <h1>AI & the Future of Science</h1>
+      <p class="subtitle">AI can accelerate discovery, but reliability comes from experiments, replication, and transparent methods.</p>
+      <p class="subtitle">{updated}</p>
+    </header>
+
+    <section class="section">
+      <h2>Key ideas</h2>
+      <div class="grid">
+        <div class="card"><h3>Speed with supervision</h3><p>Models can generate hypotheses and analyze data rapidly, but experts must validate outputs.</p></div>
+        <div class="card"><h3>Tooling over hype</h3><p>Great gains come from workflow integration: literature search, simulation, lab automation.</p></div>
+        <div class="card"><h3>Reproducibility is non-negotiable</h3><p>Scientific progress still depends on open methods and independent confirmation.</p></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Mental model</h2>
+      <div class="card">
+        <ul>
+        <li>Use AI for candidate generation and prioritization.</li>
+        <li>Test with controlled experiments and statistical rigor.</li>
+        <li>Publish methods/data so others can reproduce findings.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>FAQ</h2>
+      <div class="faq">
+        <details><summary>Will AI replace scientists?</summary><p>More likely it will reshape roles toward problem framing and validation.</p></details>
+        <details><summary>Where are near-term wins?</summary><p>Drug discovery, materials science, and climate modeling workflows.</p></details>
+        <details><summary>Biggest risk?</summary><p>Plausible but wrong outputs entering papers without proper verification.</p></details>
+      </div>
+    </section>
+
+    <nav class="footnav">
+      <a class="btn" href="/science">← Science index</a>
+      <a class="btn" href="/future">Explore Future →</a>
+    </nav>
+  </article>
+
+
+<style>
+  .page{ max-width: 920px; margin: 0 auto; padding: 28px 18px 88px; }
+  .hero-top{ display:flex; align-items:center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .back{ color: rgba(11,11,15,0.60); font-size: 13px; font-weight: 650; text-decoration: none; }
+  .back:hover{ color: rgba(11,11,15,0.92); }
+  h1{ margin: 0 0 10px; font-size: 40px; font-weight: 850; letter-spacing: -0.03em; line-height: 1.08; }
+  .subtitle{ margin: 0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,0.62); max-width: 78ch; }
+  .chip{ font-size: 11px; font-weight: 900; letter-spacing: .14em; text-transform: uppercase; padding: 7px 10px; border-radius: 999px; border: 1px solid rgba(0,122,255,.2); background: rgba(0,122,255,.12); color: rgba(0,122,255,.9); }
+  .section{ margin-top: 24px; }
+  .section h2{ margin:0 0 12px; font-size: 20px; font-weight: 840; letter-spacing: -0.02em; }
+  .grid{ display:grid; gap: 10px; }
+  .card{ background: rgba(255,255,255,.9); border: 1px solid rgba(0,0,0,.06); border-radius: 16px; padding: 14px 16px; box-shadow: 0 8px 24px rgba(0,0,0,.05); }
+  .card h3{ margin:0 0 6px; font-size: 15px; }
+  .card p{ margin:0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,.66); }
+  ul{ margin:0; padding-left: 18px; color: rgba(11,11,15,.7); font-size: 14px; line-height: 1.7; }
+  .faq{ display:grid; gap: 10px; }
+  details{ background: rgba(255,255,255,.9); border: 1px solid rgba(0,0,0,.06); border-radius: 14px; padding: 12px 14px; }
+  summary{ cursor:pointer; font-weight: 800; }
+  details p{ margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: rgba(11,11,15,.65); }
+  .footnav{ margin-top: 26px; display:flex; justify-content: space-between; gap: 12px; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; padding:10px 12px; border-radius: 999px; border:1px solid rgba(0,0,0,.1); background: rgba(255,255,255,.92); font-size:13px; font-weight:800; text-decoration:none; color: rgba(11,11,15,.85); }
+  @media (max-width: 640px){ h1{ font-size: 34px; } .footnav{ flex-direction: column; } }
+</style>
+
+</Layout>
