@@ -218,7 +218,8 @@ import Layout from "../layouts/Layout.astro";
         data-faq-question="Why am I looking for a new role?"
         data-faq-answer="I value my current organization and team, and I am grateful for the opportunities I have had there. Over time, I integrated automation into operational and reporting workflows, improved efficiency, and made the most of the learning opportunities available in my role. At this stage, I am motivated to take the next step in my career by applying this experience in a broader environment with greater responsibility, continued learning, and stronger long-term impact."
       >
-        Why am I looking for a new role?
+        <span class="faq-label-desktop">Why am I looking for a new role?</span>
+        <span class="faq-label-mobile">Why?</span>
       </button>
       <button
         type="button"
@@ -226,7 +227,8 @@ import Layout from "../layouts/Layout.astro";
         data-faq-question="Which locations am I open to working in?"
         data-faq-answer="I am based in North New Jersey and can comfortably commute to locations within approximately one hour by car across New Jersey. In addition, my area provides convenient access to New York, so I am fully open to roles in New York as well. Transportation and commute flexibility are not constraints for me."
       >
-        Which locations am I open to working in?
+        <span class="faq-label-desktop">Which locations am I open to working in?</span>
+        <span class="faq-label-mobile">Where?</span>
       </button>
       <button
         type="button"
@@ -234,7 +236,8 @@ import Layout from "../layouts/Layout.astro";
         data-faq-question="What is my working style and execution approach?"
         data-faq-answer="My working style is adaptive, analytical, and improvement-focused. I actively align with evolving technologies and use them to make workflows more structured, trackable, and efficient. Depending on the need, I support operations through Python-based automation, SAP queries and reporting, and advanced Excel modeling and formula design. I enjoy tackling operational challenges, and I see process gaps as opportunities to learn, optimize, and deliver sustainable solutions. With a background in financial reporting, internal controls, audit discipline, and automation, I consistently focus on measurable results."
       >
-        What is my working style and execution approach?
+        <span class="faq-label-desktop">What is my working style and execution approach?</span>
+        <span class="faq-label-mobile">How?</span>
       </button>
       </div>
     </section>
@@ -483,6 +486,10 @@ import Layout from "../layouts/Layout.astro";
     outline-offset: 2px;
   }
 
+  .faq-label-mobile {
+    display: none;
+  }
+
   .faq-dialog {
     border: 0;
     border-radius: 18px;
@@ -533,11 +540,36 @@ import Layout from "../layouts/Layout.astro";
     .floating-faq-shell {
       right: 12px;
       bottom: 12px;
-      width: calc(100vw - 24px);
+      width: auto;
+    }
+
+    .resume-faq {
+      background: transparent;
+      border: 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      padding: 0;
+    }
+
+    .faq-bubbles {
+      justify-items: end;
     }
 
     .faq-bubble {
+      width: auto;
+      min-width: 86px;
       font-size: 13px;
+      text-align: center;
+      padding: 8px 14px;
+      box-shadow: 0 8px 18px rgba(35, 54, 150, 0.32);
+    }
+
+    .faq-label-desktop {
+      display: none;
+    }
+
+    .faq-label-mobile {
+      display: inline;
     }
   }
 </style>
