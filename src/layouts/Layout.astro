@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
 
-const { title = "UGURCAN" } = Astro.props;
+const { title = "UGURCAN", description = "" } = Astro.props;
 
 const year = new Date().getFullYear();
 const instagramUrl = "https://instagram.com/john.yagiz";
@@ -15,6 +15,7 @@ const mailtoUrl = `mailto:${email}`;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    {description && <meta name="description" content={description} />}
   </head>
 
   <body>
