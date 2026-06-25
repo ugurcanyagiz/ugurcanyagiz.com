@@ -1,0 +1,19 @@
+<script>
+  import gsap from "https://esm.sh/gsap@3.13.0";
+  import { ScrollTrigger } from "https://esm.sh/gsap@3.13.0/ScrollTrigger";
+  gsap.registerPlugin(ScrollTrigger);
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduce) {
+    gsap.utils.toArray("[data-reveal]").forEach((element, index) => {
+      gsap.fromTo(element, { autoAlpha: 0, y: 34, rotateX: 4 }, {
+        autoAlpha: 1,
+        y: 0,
+        rotateX: 0,
+        duration: 0.9,
+        delay: (index % 6) * 0.035,
+        ease: "power3.out",
+        scrollTrigger: { trigger: element, start: "top 88%" },
+      });
+    });
+  }
+</script>

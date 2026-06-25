@@ -1,0 +1,8 @@
+---
+const { eyebrow, title, text } = Astro.props;
+---
+<header class="atlas-section-head" data-reveal>
+  {eyebrow && <p class="atlas-eyebrow">{eyebrow}</p>}
+  <h2>{title}</h2>
+  {text && <p>{text}</p>}
+</header>

@@ -186,177 +186,45 @@ const cards = [
 ];
 
 const filters = ["ALL", "CIVILIZATIONS", "WARS", "POWER", "ECONOMY", "CULTURE", "IDEAS", "SOCIAL", "TECH", "PATTERNS"];
+
+import AtlasBackground from "../components/AtlasBackground.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import ScrollReveal from "../components/ScrollReveal.astro";
 ---
+<Layout title="History — Ugurcan" description="A surreal timeline of civilization, power, memory, institutions, and patterns that keep returning.">
+  <FilterBar slot="subnav" filters={filters} cardSelector=".history-card" queryKey="topic" defaultFilter="ALL" />
+  <main class="atlas-page history-atlas">
+    <AtlasBackground variant="history" id="history-scene" />
+    <div class="atlas-content">
+      <section class="atlas-hero">
+        <div class="atlas-hero__panel" data-reveal>
+          <p class="atlas-eyebrow">Personal atlas / History</p>
+          <h1>History</h1>
+          <p class="atlas-hero__subtitle">A surreal timeline of civilization, power, memory, institutions, and patterns that keep returning.</p>
+        </div>
+      </section>
 
-<Layout title="History — Ugurcan">
-  <FilterBar
-    slot="subnav"
-    filters={filters}
-    cardSelector=".history-card"
-    queryKey="topic"
-    defaultFilter="ALL"
-  />
+      <section class="atlas-section">
+        <SectionHeader eyebrow="Scroll system" title="Empires → Trade → Ideas → War → Institutions" text="Move through this room like an exhibition: each card is a fragment, a question, and a doorway into a longer note." />
+        <div class="atlas-grid atlas-grid--four">
+          <article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Empires</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Trade</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Ideas</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>War</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Institutions</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article>
+        </div>
+      </section>
 
-  <section class="history-wrap">
-    <div class="hero">
-      <h1 class="page-title">History</h1>
-      <p class="page-subtitle">
-        Civilizations, power, incentives, and patterns — explained clearly, without romanticizing.
-      </p>
+      <section class="atlas-section">
+        <SectionHeader eyebrow="Archive" title="Existing notes, redesigned as exhibition cards" text="All routes and articles are preserved; the visual system now matches the surreal premium direction of /me." />
+        <div class="atlas-grid">
+          {cards.map((c) => (
+            <a class="atlas-card history-card" href={c.href} data-category={c.category} data-reveal>
+              <span class="atlas-glyph" aria-hidden="true">◈</span>
+              <p class="atlas-eyebrow">{c.category} · {c.subtitle}</p>
+              <h3>{c.title}</h3>
+              <p>{c.excerpt}</p>
+            </a>
+          ))}
+        </div>
+      </section>
     </div>
-
-    <div class="card-list">
-      {cards.map((c) => (
-        <a class="history-card" href={c.href} data-category={c.category}>
-          <div class="card-icon">
-            <img src={c.img} alt={c.title} loading="lazy" />
-          </div>
-
-          <div class="card-text">
-            <div class="subtitle-row">
-              <span class="subtitle">{c.subtitle}</span>
-            </div>
-            <h2>{c.title}</h2>
-            <p>{c.excerpt}</p>
-          </div>
-
-          <span class={`badge badge--${c.category}`} aria-label={`Category ${c.category}`}>
-            {c.category}
-          </span>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <style>
-    .history-wrap{
-      max-width: 880px;
-      margin: 0 auto;
-      padding: 28px 18px 80px;
-    }
-
-    .page-title{
-      font-size: 42px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      margin: 0 0 10px;
-    }
-
-    .page-subtitle{
-      margin: 0 0 18px;
-      font-size: 14px;
-      line-height: 1.55;
-      color: rgba(11,11,15,0.62);
-      max-width: 62ch;
-    }
-
-    .card-list{
-      display:flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-top: 10px;
-    }
-
-    .history-card{
-      position: relative;
-      display:flex;
-      align-items:flex-start;
-      gap: 14px;
-      padding: 16px 18px;
-      background: rgba(255,255,255,0.9);
-      border-radius: 18px;
-      border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 8px 28px rgba(0,0,0,0.06);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      text-decoration:none;
-      overflow:hidden;
-    }
-
-    .history-card:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 12px 36px rgba(0,0,0,0.08);
-    }
-
-    .card-icon{
-      width: 46px;
-      height: 46px;
-      flex-shrink:0;
-      border-radius: 12px;
-      overflow:hidden;
-      background:#eaeaec;
-    }
-
-    .card-icon img{
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-    }
-
-    .card-text{
-      min-width: 0;
-      padding-right: 108px;
-    }
-
-    .subtitle-row{ margin-bottom: 6px; }
-
-    .subtitle{
-      font-size: 12px;
-      font-weight: 700;
-      color: rgba(11,11,15,0.55);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 100%;
-    }
-
-    .card-text h2{
-      margin:0;
-      font-size: 16px;
-      font-weight: 800;
-      color:#0b0b0f;
-    }
-
-    .card-text p{
-      margin: 6px 0 0;
-      font-size: 14px;
-      line-height: 1.55;
-      color: rgba(11,11,15,0.62);
-    }
-
-    .badge{
-      position:absolute;
-      top: 14px;
-      right: 14px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      border: 1px solid rgba(0,0,0,0.08);
-      backdrop-filter: blur(10px);
-      user-select:none;
-    }
-
-    /* Category colors (muted Apple-like) */
-    .badge--CIVILIZATIONS{ background: rgba(0,122,255,.14); color: rgba(0,122,255,.95); border-color: rgba(0,122,255,.20); }
-    .badge--WARS{          background: rgba(255,59,48,.14); color: rgba(255,59,48,.92); border-color: rgba(255,59,48,.22); }
-    .badge--POWER{         background: rgba(175,82,222,.14); color: rgba(175,82,222,.95); border-color: rgba(175,82,222,.22); }
-    .badge--ECONOMY{       background: rgba(255,149,0,.14); color: rgba(255,149,0,.95); border-color: rgba(255,149,0,.22); }
-    .badge--CULTURE{       background: rgba(255,45,85,.14); color: rgba(255,45,85,.92); border-color: rgba(255,45,85,.22); }
-    .badge--IDEAS{         background: rgba(88,86,214,.14); color: rgba(88,86,214,.95); border-color: rgba(88,86,214,.20); }
-    .badge--SOCIAL{        background: rgba(52,199,89,.14); color: rgba(30,150,70,.95); border-color: rgba(52,199,89,.22); }
-    .badge--TECH{          background: rgba(90,200,250,.18); color: rgba(0,122,255,.90); border-color: rgba(90,200,250,.25); }
-    .badge--PATTERNS{      background: rgba(142,142,147,.16); color: rgba(60,60,67,.80); border-color: rgba(142,142,147,.22); }
-
-    /* FilterBar toggles this */
-    .history-card.is-hidden{ display:none; }
-
-    @media (max-width: 480px){
-      .page-title{ font-size: 34px; }
-      .card-text{ padding-right: 0; }
-      .badge{ position: static; margin-left:auto; align-self:flex-start; }
-    }
-  </style>
+    <ScrollReveal />
+  </main>
 </Layout>

@@ -1,10 +1,15 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import AtlasBackground from "../components/AtlasBackground.astro";
+import ScrollReveal from "../components/ScrollReveal.astro";
 ---
 
 <Layout title="Resume | Ugurcan Yagiz">
+  <main class="atlas-page resume-atlas">
+    <AtlasBackground variant="resume" id="resume-atlas-scene" />
+    <div class="atlas-content">
   <section class="resume">
-    <header class="hero card">
+    <header class="hero card atlas-panel">
       <h1>Ugurcan Yagiz</h1>
       <p class="role">Senior Accountant / Financial Analyst</p>
       <p class="contact">
@@ -16,7 +21,7 @@ import Layout from "../layouts/Layout.astro";
       </p>
     </header>
 
-    <article class="card">
+    <article class="card atlas-panel">
       <h2>Summary</h2>
       <p>
         Senior Accountant / Financial Analyst with 10+ years of experience across banking,
@@ -26,7 +31,7 @@ import Layout from "../layouts/Layout.astro";
       </p>
     </article>
 
-    <article class="card">
+    <article class="card atlas-panel">
       <h2>Areas of Expertise</h2>
       <p>
         Financial Accounting • Reporting • Forecasting & Analysis • GAAP • Account & Bank
@@ -76,7 +81,7 @@ import Layout from "../layouts/Layout.astro";
       </div>
     </article>
 
-    <article class="card">
+    <article class="card atlas-panel">
       <h2>Career Highlights</h2>
       <ul>
         <li>
@@ -105,7 +110,7 @@ import Layout from "../layouts/Layout.astro";
       </ul>
     </article>
 
-    <article class="card">
+    <article class="card atlas-panel">
       <h2>Professional Experience</h2>
 
       <h3>Turkana Food Inc., Kenilworth, NJ</h3>
@@ -164,13 +169,13 @@ import Layout from "../layouts/Layout.astro";
       </ul>
     </article>
 
-    <article class="card">
+    <article class="card atlas-panel">
       <h2>Additional Experience</h2>
       <p>Grill House LLC, Paramus, NJ • Accountant • January 2020 – October 2022</p>
       <p>Demir CPA Office • Accountant • June 2011 – July 2013</p>
     </article>
 
-    <article class="card">
+    <article class="card atlas-panel">
       <h2>Education</h2>
       <ul>
         <li>Master of Business Administration (MBA), Anadolu University (English)</li>
@@ -180,7 +185,7 @@ import Layout from "../layouts/Layout.astro";
       </ul>
     </article>
 
-    <article class="card">
+    <article class="card atlas-panel">
       <h2>Certificates</h2>
       <ul>
         <li>AI for Finance Professionals — University of Pennsylvania (Wharton)</li>
@@ -250,6 +255,9 @@ import Layout from "../layouts/Layout.astro";
     <h3 id="faqDialogQuestion"></h3>
     <p id="faqDialogAnswer"></p>
   </dialog>
+    </div>
+    <ScrollReveal />
+  </main>
 </Layout>
 
 <style>
