@@ -1,10 +1,75 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import HomeCarousel from "../components/HomeCarousel.astro";
+import AtlasBackground from "../components/AtlasBackground.astro";
+import SectionHeader from "../components/SectionHeader.astro";
+import CTABlock from "../components/CTABlock.astro";
+import ScrollReveal from "../components/ScrollReveal.astro";
 import JobSearchPopup from "../components/JobSearchPopup.astro";
+
+const universe = [
+  ["/resume", "Work", "Systems in Practice", "Financial reporting, SAP Business One, Excel automation, SQL reporting, dashboards, reconciliation, and process improvement."],
+  ["/science", "Science", "Reality as a layered language", "Cosmos, matter, life, mind, and technology mapped with disciplined awe."],
+  ["/history", "History", "Civilization patterns", "Power, institutions, trade, crisis, memory, and what repeats across time."],
+  ["/art", "Art", "Perception and craft", "Music, painting, architecture, film, design, and photography as ways of seeing."],
+  ["/future", "Future", "Signals without hype", "AI, biotech, space, energy, computing, society, and robotics considered carefully."],
+  ["/blog", "JLOG", "Archive of becoming", "Personal notes, belief, memory, uncertainty, and quiet reflections."],
+  ["/me", "Me", "The Memory of Earth", "A surreal journey through science, civilization, time, and future imagination."],
+];
 ---
 
-<Layout title="UGURCAN" minimal={true}>
-  <HomeCarousel />
-  <JobSearchPopup />
+<Layout title="Ugurcan Yagiz — Personal Atlas" description="A personal atlas of systems, science, history, art, and future thinking.">
+  <main class="atlas-page home-atlas">
+    <AtlasBackground variant="atlas" id="home-atlas-scene" />
+    <div class="atlas-content">
+      <section class="atlas-hero">
+        <div class="atlas-hero__panel" data-reveal>
+          <p class="atlas-eyebrow">Enter the knowledge universe</p>
+          <h1>Ugurcan Yagiz</h1>
+          <p class="atlas-hero__subtitle">A personal atlas of systems, science, history, art, and future thinking.</p>
+        </div>
+      </section>
+
+      <section class="atlas-section">
+        <div class="atlas-panel" data-reveal>
+          <p class="atlas-eyebrow">Manifesto</p>
+          <p style="font-size:clamp(1.25rem,2.5vw,2rem);color:#f6efe4;font-family:Georgia,'Times New Roman',serif;line-height:1.35">
+            I study systems — financial, historical, scientific, artistic, and technological. This website is a living map of work, curiosity, and future thinking.
+          </p>
+        </div>
+      </section>
+
+      <section class="atlas-section">
+        <SectionHeader eyebrow="Systems in Practice" title="Professional finance work as an operating system" text="Senior Accountant / Financial Analyst experience translated into clean reporting, better controls, and automation." />
+        <div class="atlas-grid atlas-grid--two">
+          {["Financial reporting", "SAP Business One", "Excel automation", "SQL reporting", "Dashboards", "Reconciliation", "Process improvement"].map((item) => (
+            <article class="atlas-card" data-reveal><span class="atlas-glyph">▣</span><h3>{item}</h3><p>Practical systems work: make data clearer, processes calmer, and decisions easier to trust.</p></article>
+          ))}
+        </div>
+      </section>
+
+      <section class="atlas-section">
+        <SectionHeader eyebrow="Knowledge Universe" title="Seven rooms orbiting one atlas" text="Each section has a distinct identity, but all of them ask the same question: how do systems become meaning?" />
+        <div class="atlas-grid">
+          {universe.map(([href, label, title, text]) => (
+            <a class="atlas-card" href={href} data-reveal>
+              <span class="atlas-glyph">✦</span>
+              <p class="atlas-eyebrow">{label}</p>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section class="atlas-section">
+        <SectionHeader eyebrow="JLOG Preview" title="A quiet archive of thoughts, memory, belief, and becoming" text="The personal journal keeps the Pale Blue Dot audio area and turns notes into memory fragments." />
+        <div class="atlas-panel" data-reveal>
+          <audio controls preload="metadata" style="width:100%"><source src="/audio/pale-blue-dot.mp3" type="audio/mpeg" /></audio>
+        </div>
+      </section>
+      <CTABlock />
+    </div>
+    <JobSearchPopup />
+    <ScrollReveal />
+  </main>
 </Layout>

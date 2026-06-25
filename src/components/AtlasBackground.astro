@@ -1,0 +1,122 @@
+---
+const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
+---
+<div class={`atlas-bg atlas-bg--${variant}`} aria-hidden="true">
+  <canvas id={id} data-atlas-scene={variant}></canvas>
+</div>
+
+<script>
+  import * as THREE from "https://esm.sh/three@0.181.2";
+  import gsap from "https://esm.sh/gsap@3.13.0";
+  import { ScrollTrigger } from "https://esm.sh/gsap@3.13.0/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  document.querySelectorAll("canvas[data-atlas-scene]").forEach((canvas) => {
+    const variant = canvas.dataset.atlasScene || "atlas";
+    const isMobile = window.matchMedia("(max-width: 720px)").matches;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const scene = new THREE.Scene();
+    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !isMobile });
+    const camera = new THREE.PerspectiveCamera(44, window.innerWidth / window.innerHeight, 0.1, 100);
+    const pointer = new THREE.Vector2();
+    const clock = new THREE.Clock();
+
+    const palette = {
+      atlas: [0x8ddfff, 0xd8b06a, 0x5b7cff],
+      science: [0x8ddfff, 0x88ffaa, 0x7b61ff],
+      history: [0xd8b06a, 0xff8f70, 0x9a7a4f],
+      art: [0xffd1ec, 0xd8b06a, 0x8ddfff],
+      future: [0x6cffd7, 0x9d7bff, 0x8ddfff],
+      jlog: [0xf6efe4, 0xd8b06a, 0x8ddfff],
+      resume: [0x8ddfff, 0xd8b06a, 0xffffff],
+    }[variant] || [0x8ddfff, 0xd8b06a, 0x5b7cff];
+
+    camera.position.set(0, 0.35, isMobile ? 8 : 6.2);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.75));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    scene.add(new THREE.AmbientLight(palette[0], 0.62));
+    const key = new THREE.PointLight(palette[0], 18, 22);
+    key.position.set(3, 4, 5);
+    scene.add(key);
+    const warm = new THREE.PointLight(palette[1], 12, 18);
+    warm.position.set(-4, -2, 4);
+    scene.add(warm);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const geometry = variant === "science"
+      ? new THREE.TorusKnotGeometry(isMobile ? 1.05 : 1.35, 0.18, 160, 16)
+      : variant === "future"
+        ? new THREE.OctahedronGeometry(isMobile ? 1.45 : 1.85, 3)
+        : new THREE.IcosahedronGeometry(isMobile ? 1.45 : 1.85, 6);
+
+    const core = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({
+      color: 0x121a32,
+      roughness: 0.44,
+      metalness: 0.28,
+      emissive: palette[2],
+      emissiveIntensity: 0.28,
+    }));
+    group.add(core);
+
+    for (let i = 0; i < (isMobile ? 2 : 4); i++) {
+      const ring = new THREE.Mesh(
+        new THREE.TorusGeometry(2.18 + i * 0.26, 0.006, 8, 180),
+        new THREE.MeshBasicMaterial({ color: i % 2 ? palette[0] : palette[1], transparent: true, opacity: 0.34, side: THREE.DoubleSide })
+      );
+      ring.rotation.set(Math.PI / (2.4 + i), i * 0.66, i * 0.42);
+      group.add(ring);
+    }
+
+    const count = isMobile ? 220 : 720;
+    const positions = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const radius = 3.2 + Math.random() * (isMobile ? 4.6 : 8.2);
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta) * 0.68;
+      positions[i * 3 + 2] = radius * Math.cos(phi);
+    }
+    const particlesGeometry = new THREE.BufferGeometry();
+    particlesGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    const particles = new THREE.Points(particlesGeometry, new THREE.PointsMaterial({ color: palette[0], size: isMobile ? 0.018 : 0.024, transparent: true, opacity: 0.54 }));
+    scene.add(particles);
+
+    document.addEventListener("pointermove", (event) => {
+      pointer.x = (event.clientX / window.innerWidth - 0.5) * 2;
+      pointer.y = (event.clientY / window.innerHeight - 0.5) * 2;
+    }, { passive: true });
+
+    gsap.to(group.rotation, {
+      y: Math.PI * 1.25,
+      x: 0.42,
+      scrollTrigger: { trigger: canvas.closest(".atlas-page") || document.body, start: "top top", end: "bottom bottom", scrub: 1.2 },
+    });
+
+    function animate() {
+      const elapsed = clock.getElapsedTime();
+      if (!reduce) {
+        group.rotation.y += 0.0014;
+        core.rotation.x = elapsed * 0.035;
+        particles.rotation.y = elapsed * 0.012;
+        camera.position.x += (pointer.x * (isMobile ? 0.06 : 0.18) - camera.position.x) * 0.025;
+        camera.position.y += (-pointer.y * (isMobile ? 0.04 : 0.1) + 0.35 - camera.position.y) * 0.018;
+      }
+      camera.lookAt(0, 0, 0);
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, window.innerWidth < 720 ? 1.25 : 1.75));
+    });
+  });
+</script>

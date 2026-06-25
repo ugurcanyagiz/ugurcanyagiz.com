@@ -1,5 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import AtlasBackground from "../components/AtlasBackground.astro";
+import ScrollReveal from "../components/ScrollReveal.astro";
 
 const audioSrc = "/audio/pale-blue-dot.mp3";
 
@@ -50,7 +52,10 @@ const filters = ["ALL", "LIFE", "THOUGHT", "BELIEF" ];
 ---
 
 <Layout title="JLOG! — Ugurcan">
-  <main class="jlog">
+  <main class="atlas-page jlog-atlas">
+    <AtlasBackground variant="jlog" id="jlog-atlas-scene" />
+    <div class="atlas-content jlog-content">
+    <section class="jlog">
     <!-- HEADER (sadece JLOG!) -->
     <header class="head" aria-label="JLOG header">
       <p class="kicker">JLOG!</p>
@@ -134,6 +139,9 @@ const filters = ["ALL", "LIFE", "THOUGHT", "BELIEF" ];
         </a>
       ))}
     </section>
+  </section>
+    </div>
+    <ScrollReveal />
   </main>
 
   <style>
