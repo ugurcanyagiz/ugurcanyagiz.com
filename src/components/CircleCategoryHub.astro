@@ -10,7 +10,7 @@ const categories = [
 
 <section class="circle-hub" data-circle-hub aria-label="Primary orbit navigation">
   <div class="circle-hub__atmosphere" aria-hidden="true"></div>
-  <div class="circle-hub__scene">
+  <div class="circle-hub__scene" data-orbit-scene>
     <div class="circle-hub__orbit" data-orbit>
       <div class="circle-hub__guide circle-hub__guide--outer" aria-hidden="true"></div>
       {categories.map((category, index) => (
@@ -18,6 +18,7 @@ const categories = [
           class="orbit-item orbit-item--main"
           href={category.href}
           data-category={category.key}
+          data-index={index}
           style={`--i:${index};--count:${categories.length};`}
           aria-label={`Open ${category.title}`}
         >
@@ -33,72 +34,138 @@ const categories = [
 
   if (hub) {
     const orbit = hub.querySelector('[data-orbit]');
+    const scene = hub.querySelector('[data-orbit-scene]');
+    const items = Array.from(hub.querySelectorAll('[data-category]'));
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const mobile = window.matchMedia('(max-width: 640px)').matches;
-    let targetRot = 0;
-    let currentRot = 0;
+    const mobileQuery = window.matchMedia('(max-width: 640px)');
+    let targetRotation = 0;
+    let currentRotation = 0;
     let velocity = 0;
-    let mx = 0;
-    let my = 0;
-    let tx = 0;
-    let ty = 0;
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetMouseX = 0;
+    let targetMouseY = 0;
+    let touchY = null;
 
-    const applyWheelRotation = (event) => {
-      if (reduce) return;
-      event.preventDefault();
-      const delta = Math.max(-80, Math.min(80, event.deltaY));
-      velocity += delta * (mobile ? 0.055 : 0.07);
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+    const getRadii = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      const isMobile = mobileQuery.matches;
+      const isTablet = width <= 900;
+      const titleGuard = isMobile ? 92 : isTablet ? 150 : 250;
+      const topGuard = isMobile ? 154 : 128;
+      const bottomGuard = isMobile ? 112 : 96;
+      const safeRadiusX = Math.max(112, (width - titleGuard) / 2);
+      const safeRadiusY = Math.max(96, (height - topGuard - bottomGuard) / 2);
+
+      return {
+        x: Math.min(width * (isMobile ? 0.31 : isTablet ? 0.32 : 0.34), isMobile ? 156 : isTablet ? 320 : 455, safeRadiusX),
+        y: Math.min(height * (isMobile ? 0.225 : isTablet ? 0.23 : 0.245), isMobile ? 132 : isTablet ? 190 : 228, safeRadiusY),
+        centerY: isMobile ? 0.55 : isTablet ? 0.525 : 0.515,
+      };
     };
 
-    window.addEventListener('wheel', applyWheelRotation, { passive: false });
+    const rotateByDelta = (deltaY) => {
+      if (reduce) return;
+      const normalized = clamp(deltaY, -120, 120);
+      targetRotation += normalized * (mobileQuery.matches ? 0.0048 : 0.0042);
+      velocity += normalized * (mobileQuery.matches ? 0.0009 : 0.00075);
+    };
 
-    let touchY = null;
+    const onWheel = (event) => {
+      event.preventDefault();
+      rotateByDelta(event.deltaY);
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+
     window.addEventListener('touchstart', (event) => {
       touchY = event.touches[0]?.clientY ?? null;
     }, { passive: true });
 
     window.addEventListener('touchmove', (event) => {
-      if (reduce || touchY === null) return;
+      if (touchY === null) return;
       event.preventDefault();
       const nextY = event.touches[0]?.clientY ?? touchY;
-      velocity += (touchY - nextY) * (mobile ? 0.05 : 0.06);
+      rotateByDelta((touchY - nextY) * 1.65);
       touchY = nextY;
     }, { passive: false });
+
+    window.addEventListener('touchend', () => {
+      touchY = null;
+    }, { passive: true });
 
     hub.addEventListener('pointermove', (event) => {
       if (reduce) return;
       const rect = hub.getBoundingClientRect();
-      tx = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
-      ty = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+      targetMouseX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+      targetMouseY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
     }, { passive: true });
 
     hub.addEventListener('pointerleave', () => {
-      tx = 0;
-      ty = 0;
+      targetMouseX = 0;
+      targetMouseY = 0;
     });
 
-    hub.querySelectorAll('[data-category]').forEach((link) => {
+    items.forEach((link) => {
       link.addEventListener('click', () => {
         link.classList.add('is-departing');
       });
     });
 
+    const positionItems = () => {
+      const { x: radiusX, y: radiusY, centerY } = getRadii();
+      const centerX = window.innerWidth / 2;
+      const center = window.innerHeight * centerY;
+      const count = items.length;
+
+      items.forEach((item, index) => {
+        const baseAngle = (Math.PI * 2 * index) / count - Math.PI / 2;
+        const angle = baseAngle + currentRotation;
+        const x = Math.cos(angle) * radiusX;
+        const y = Math.sin(angle) * radiusY;
+        const depth = (Math.sin(angle) + 1) / 2;
+        const front = 1 - depth;
+        const isMobile = mobileQuery.matches;
+        const scale = (isMobile ? 0.88 : 0.82) + front * (isMobile ? 0.18 : 0.28);
+        const opacity = (isMobile ? 0.58 : 0.46) + front * (isMobile ? 0.36 : 0.48);
+        const blur = depth * (isMobile ? 0.45 : 0.95);
+        const brightness = 0.78 + front * 0.4;
+
+        item.style.setProperty('--orbit-x', `${centerX + x}px`);
+        item.style.setProperty('--orbit-y', `${center + y}px`);
+        item.style.setProperty('--orbit-scale', `${scale}`);
+        item.style.setProperty('--orbit-opacity', `${opacity}`);
+        item.style.setProperty('--orbit-blur', `${blur}px`);
+        item.style.setProperty('--orbit-brightness', `${brightness}`);
+        item.style.setProperty('--orbit-z', `${Math.round(20 + front * 80)}`);
+      });
+    };
+
     const tick = () => {
       if (!reduce) {
-        targetRot += velocity;
-        velocity *= 0.91;
-        currentRot += (targetRot - currentRot) * 0.085;
-        mx += (tx - mx) * 0.07;
-        my += (ty - my) * 0.07;
-        orbit.style.setProperty('--scroll-rotation', `${currentRot}deg`);
-        orbit.style.setProperty('--tilt-x', `${my * -3}deg`);
-        orbit.style.setProperty('--tilt-y', `${mx * 4}deg`);
-        orbit.style.setProperty('--mouse-x', `${mx * (mobile ? 3 : 8)}px`);
-        orbit.style.setProperty('--mouse-y', `${my * (mobile ? 2 : 6)}px`);
+        targetRotation += velocity;
+        velocity *= 0.935;
+        currentRotation += (targetRotation - currentRotation) * 0.075;
+        mouseX += (targetMouseX - mouseX) * 0.065;
+        mouseY += (targetMouseY - mouseY) * 0.065;
+
+        orbit.style.setProperty('--tilt-x', `${mouseY * -2.4}deg`);
+        orbit.style.setProperty('--tilt-y', `${mouseX * 3.2}deg`);
+        orbit.style.setProperty('--mouse-x', `${mouseX * (mobileQuery.matches ? 4 : 12)}px`);
+        orbit.style.setProperty('--mouse-y', `${mouseY * (mobileQuery.matches ? 3 : 8)}px`);
+        scene?.style.setProperty('--scene-parallax-x', `${mouseX * (mobileQuery.matches ? -5 : -14)}px`);
+        scene?.style.setProperty('--scene-parallax-y', `${mouseY * (mobileQuery.matches ? -4 : -10)}px`);
+        positionItems();
       }
       requestAnimationFrame(tick);
     };
 
+    positionItems();
+    mobileQuery.addEventListener?.('change', positionItems);
+    window.addEventListener('resize', positionItems, { passive: true });
     requestAnimationFrame(tick);
   }
 </script>
