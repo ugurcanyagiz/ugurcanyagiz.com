@@ -758,3 +758,115 @@ body:has(.thought-home) .main{ min-height:100vh; }
     transition:none !important;
   }
 }
+
+/* TheSkyLive-inspired 3D solar system homepage */
+.solar-hub{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  color:var(--atlas-ink);
+  background:
+    radial-gradient(circle at 50% 52%, rgba(255,181,69,.13), transparent 18rem),
+    radial-gradient(circle at 74% 28%, rgba(94,75,166,.18), transparent 28rem),
+    linear-gradient(180deg, #02030a 0%, #050711 48%, #02030a 100%);
+  cursor:grab;
+}
+.solar-hub:active{ cursor:grabbing; }
+.solar-hub::before,
+.solar-hub::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:1;
+}
+.solar-hub::before{
+  background:
+    linear-gradient(90deg, rgba(0,0,0,.76), transparent 25%, transparent 72%, rgba(0,0,0,.54)),
+    radial-gradient(ellipse at 50% 50%, transparent 42%, rgba(0,0,0,.48) 100%);
+}
+.solar-hub::after{
+  opacity:.18;
+  background-image:linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.026) 1px, transparent 1px);
+  background-size:86px 86px;
+  mask-image:radial-gradient(circle at center, black, transparent 76%);
+  animation:home-grid-drift 24s linear infinite;
+}
+.solar-hub__canvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:0;
+  display:block;
+}
+.solar-hub__labels{
+  position:absolute;
+  inset:0;
+  z-index:4;
+  pointer-events:none;
+}
+.solar-label{
+  position:absolute;
+  left:0;
+  top:0;
+  width:min(250px, 42vw);
+  opacity:0;
+  pointer-events:auto;
+  color:rgba(246,239,228,.78);
+  text-shadow:0 0 18px rgba(0,0,0,.75);
+  transition:opacity .16s ease, color .16s ease, filter .16s ease;
+  will-change:transform, opacity;
+}
+.solar-label::before{
+  content:"";
+  position:absolute;
+  left:-14px;
+  top:50%;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--planet);
+  box-shadow:0 0 18px var(--planet);
+  transform:translateY(-50%);
+}
+.solar-label span{
+  display:block;
+  color:var(--planet);
+  font-size:clamp(.9rem,1.18vw,1.1rem);
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.solar-label small{
+  display:block;
+  max-width:28ch;
+  margin-top:.18rem;
+  color:rgba(246,239,228,.56);
+  line-height:1.35;
+}
+.solar-label:hover,
+.solar-label.is-active{
+  color:#fff;
+  filter:brightness(1.25);
+}
+.solar-hub__controls{
+  position:absolute;
+  z-index:3;
+  left:50%;
+  bottom:28px;
+  transform:translateX(-50%);
+  display:flex;
+  gap:.85rem;
+  color:var(--atlas-gold);
+  font-size:1.22rem;
+  text-shadow:0 0 18px rgba(216,176,106,.25);
+}
+.solar-hub__controls span{ opacity:.92; }
+@media (max-width:720px){
+  .solar-label{ width:40vw; }
+  .solar-label small{ display:none; }
+  .solar-hub__controls{ bottom:18px; gap:.62rem; }
+}
+@media (prefers-reduced-motion:reduce){
+  .solar-hub::after{ animation:none; }
+}
