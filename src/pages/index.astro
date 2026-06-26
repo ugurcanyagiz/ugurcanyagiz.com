@@ -2,49 +2,13 @@
 import Layout from "../layouts/Layout.astro";
 import AtlasBackground from "../components/AtlasBackground.astro";
 import CircleCategoryHub from "../components/CircleCategoryHub.astro";
-import ScrollReveal from "../components/ScrollReveal.astro";
-
-const recentNotes = [
-  ["/blog/we-must-believe", "JLOG", "we must believe (?)", "Why humans feel compelled to believe in something."],
-  ["/science/black-holes", "Science", "Black Holes", "Gravity, light, and nature’s ultimate threshold."],
-  ["/history/what-repeats", "History", "What Repeats", "Patterns that echo across civilizations and time."],
-  ["/art/architecture-as-a-language", "Art", "Architecture as a Language", "Space, rhythm, proportion, and perception."],
-];
 ---
 
-<Layout title="Ugurcan Yagiz — Personal Knowledge Atlas" description="A personal space for notes on science, history, art, future thinking, and life.">
-  <Fragment slot="subnav">
-    <nav class="home-subnav" aria-label="Main sections">
-      <a href="/blog">JLOG</a>
-      <a href="/science">Science</a>
-      <a href="/history">History</a>
-      <a href="/art">Art</a>
-      <a href="/future">Future</a>
-      <a href="/me">Me</a>
-    </nav>
-  </Fragment>
-  <main class="atlas-page home-atlas thought-home">
+<Layout title="UGURCAN" description="A minimal orbit navigation for Ugurcan Yagiz.">
+  <main class="atlas-page home-atlas thought-home" aria-label="Orbit navigation homepage">
     <AtlasBackground variant="atlas" id="home-atlas-scene" />
     <div class="atlas-content atlas-content--wide">
       <CircleCategoryHub />
-
-      <section class="recent-notes atlas-section" aria-labelledby="recent-notes-title">
-        <div class="atlas-section-head" data-reveal>
-          <p class="atlas-eyebrow">Recent Notes</p>
-          <h2 id="recent-notes-title">Fragments from the atlas</h2>
-          <p>Fragments from JLOG, science, history, art, and future thinking.</p>
-        </div>
-        <div class="atlas-grid atlas-grid--four">
-          {recentNotes.map(([href, category, title, excerpt]) => (
-            <a class="atlas-card recent-note-card" href={href} data-reveal>
-              <p class="atlas-eyebrow">{category}</p>
-              <h3>{title}</h3>
-              <p>{excerpt}</p>
-            </a>
-          ))}
-        </div>
-      </section>
     </div>
-    <ScrollReveal />
   </main>
 </Layout>
