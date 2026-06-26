@@ -1,14 +1,74 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import AtlasBackground from "../components/AtlasBackground.astro";
-import SolarSystemHub from "../components/SolarSystemHub.astro";
+import OrbitCinematicBackground from "../components/OrbitCinematicBackground.astro";
+
+const categories = [
+  { label: "Science", href: "/science", kicker: "Reality systems", copy: "Physics, mind, life, and the mechanisms behind what we call real." },
+  { label: "History", href: "/history", kicker: "Human patterns", copy: "Civilizations, institutions, collapses, inventions, and repeated choices." },
+  { label: "Art", href: "/art", kicker: "Perception craft", copy: "Film, sound, color, architecture, and the visual grammar of feeling." },
+  { label: "Future", href: "/future", kicker: "Coming worlds", copy: "AI, robotics, space, longevity, energy, and tomorrow’s operating systems." },
+  { label: "JLOG", href: "/blog", kicker: "Personal field notes", copy: "Short essays, private observations, and fragments from the inner orbit." },
+];
+
+const editorialSections = [
+  { label: "Science", href: "/science", eyebrow: "SECTION 01 · SCIENCE", title: "Reality has a hidden architecture.", copy: "From atoms and waves to memory and consciousness, these essays look for the rules beneath the surface — the quiet systems that make experience possible.", meta: "Physics · Biology · Mind" },
+  { label: "History", href: "/history", eyebrow: "SECTION 02 · HISTORY", title: "Civilizations move in echoes.", copy: "History is treated here as pattern recognition: institutions rise, incentives harden, technologies reorder power, and societies rediscover old questions in new costumes.", meta: "Empires · Revolutions · Institutions" },
+  { label: "Art", href: "/art", eyebrow: "SECTION 03 · ART", title: "Beauty is a technology of attention.", copy: "A slower look at music, cinema, painting, color, sound, and architecture — not as decoration, but as tools that shape perception and memory.", meta: "Sound · Image · Composition" },
+  { label: "Future", href: "/future", eyebrow: "SECTION 04 · FUTURE", title: "Tomorrow arrives as infrastructure first.", copy: "The future is less a single event than a stack of systems: AI agents, robotics, biotech, space economics, fusion grids, and new forms of trust.", meta: "AI · Space · Biotech" },
+  { label: "JLOG", href: "/blog", eyebrow: "FINAL ORBIT · JLOG", title: "Personal notes from between the categories.", copy: "A field journal for the unresolved: belief, doubt, taste, discipline, fragments, and the private weather behind public ideas.", meta: "Essays · Notes · Fragments" },
+];
 ---
 
-<Layout title="UGURCAN" description="A minimal orbit navigation for Ugurcan Yagiz.">
-  <main class="atlas-page home-atlas thought-home" aria-label="Orbit navigation homepage">
-    <AtlasBackground variant="atlas" id="home-atlas-scene" />
-    <div class="atlas-content atlas-content--wide">
-      <SolarSystemHub />
+<Layout title="UGURCAN" description="A cinematic editorial orbit for essays on science, history, art, future, and personal notes." orbitPreload>
+  <main class="orbit-home" aria-label="Homepage">
+    <OrbitCinematicBackground />
+
+    <section class="orbit-home__hero" data-orbit-section="hero" aria-labelledby="orbit-home-title">
+      <div class="orbit-home__intro" data-reveal>
+        <p class="orbit-home__eyebrow">UGURCAN YAGIZ · EDITORIAL ORBIT</p>
+        <h1 id="orbit-home-title">A quiet atlas for ideas in motion.</h1>
+        <p class="orbit-home__lede">
+          A premium, slow-moving index for science, history, art, future systems, and personal notes —
+          arranged around a cinematic orbit rather than a conventional homepage.
+        </p>
+      </div>
+
+      <nav class="orbit-home__nav" aria-label="Primary categories">
+        {categories.map((category) => (
+          <a class="orbit-home-card" href={category.href} data-reveal>
+            <span>{category.kicker}</span>
+            <strong>{category.label}</strong>
+            <small>{category.copy}</small>
+          </a>
+        ))}
+      </nav>
+    </section>
+
+    <div class="orbit-home__editorial" aria-label="Editorial sections">
+      {editorialSections.map((section, index) => (
+        <section class="orbit-editorial-section" data-orbit-section={`section-${index + 1}`} aria-labelledby={`orbit-section-${index + 1}`}>
+          <div class="orbit-editorial-section__index" aria-hidden="true">0{index + 1}</div>
+          <div class="orbit-editorial-section__copy" data-reveal>
+            <p class="orbit-home__eyebrow">{section.eyebrow}</p>
+            <h2 id={`orbit-section-${index + 1}`}>{section.title}</h2>
+            <p>{section.copy}</p>
+            <a class="orbit-editorial-link" href={section.href}>
+              <span>{section.meta}</span>
+              <strong>Enter {section.label}</strong>
+            </a>
+          </div>
+        </section>
+      ))}
     </div>
+
+    <section class="orbit-home__final" data-orbit-section="final" aria-labelledby="orbit-final-title">
+      <div class="orbit-home__final-panel" data-reveal>
+        <p class="orbit-home__eyebrow">CHOOSE AN ORBIT</p>
+        <h2 id="orbit-final-title">Start with a field of attention.</h2>
+        <nav class="orbit-home__final-nav" aria-label="Final category navigation">
+          {categories.map((category) => <a href={category.href}>{category.label}</a>)}
+        </nav>
+      </div>
+    </section>
   </main>
 </Layout>

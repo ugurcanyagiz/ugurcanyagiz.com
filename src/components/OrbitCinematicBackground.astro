@@ -1,0 +1,188 @@
+<div class="orbit-cinematic-bg" data-orbit-cinematic aria-hidden="true">
+  <picture class="orbit-cinematic-bg__picture">
+    <source srcset="/images/orbit-bg-mobile.webp" media="(orientation: portrait), (max-width: 640px)" />
+    <source srcset="/images/orbit-bg-tablet.webp" media="(max-width: 1180px)" />
+    <img
+      class="orbit-cinematic-bg__image"
+      src="/images/orbit-bg-desktop.webp"
+      alt=""
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+      draggable="false"
+    />
+  </picture>
+  <canvas class="orbit-cinematic-bg__dust" data-orbit-dust></canvas>
+  <div class="orbit-cinematic-bg__gold-glow"></div>
+  <div class="orbit-cinematic-bg__shade"></div>
+  <div class="orbit-cinematic-bg__grain"></div>
+  <div class="orbit-cinematic-bg__vignette"></div>
+</div>
+
+<script>
+  const roots = document.querySelectorAll('[data-orbit-cinematic]');
+
+  roots.forEach((root) => {
+    const canvas = root.querySelector('[data-orbit-dust]');
+    const ctx = canvas?.getContext('2d', { alpha: true });
+    const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reduce = reduceQuery.matches;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let particles = [];
+    let pointerX = 0;
+    let pointerY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let scrollProgress = 0;
+    let sectionProgress = 0;
+    let activeSection = 'hero';
+    let raf = 0;
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, width < 720 ? 1.35 : 1.75);
+
+      if (canvas && ctx) {
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      const count = width < 720 ? 42 : width < 1180 ? 58 : 78;
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 1.35 + 0.25,
+        a: Math.random() * 0.34 + 0.08,
+        vx: (Math.random() - 0.5) * 0.06,
+        vy: Math.random() * 0.08 + 0.018,
+        phase: Math.random() * Math.PI * 2,
+      }));
+    }
+
+    function updateScroll() {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      scrollProgress = clamp(window.scrollY / max, 0, 1);
+
+      let bestDistance = Number.POSITIVE_INFINITY;
+      let bestProgress = 0;
+      let bestSection = 'hero';
+      document.querySelectorAll('[data-orbit-section]').forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const sectionCenter = rect.top + rect.height * 0.5;
+        const distance = Math.abs(sectionCenter - window.innerHeight * 0.5);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestSection = section.dataset.orbitSection || 'hero';
+          bestProgress = clamp((window.innerHeight * 0.72 - rect.top) / (rect.height + window.innerHeight * 0.42), 0, 1);
+        }
+      });
+      activeSection = bestSection;
+      sectionProgress = bestProgress;
+      document.documentElement.dataset.orbitActiveSection = activeSection;
+    }
+
+    function drawDust(time) {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'lighter';
+      particles.forEach((p) => {
+        if (!reduce) {
+          p.x += p.vx + currentX * 0.012;
+          p.y += p.vy + scrollProgress * 0.035;
+          if (p.y > height + 12) p.y = -12;
+          if (p.x < -12) p.x = width + 12;
+          if (p.x > width + 12) p.x = -12;
+        }
+        const pulse = reduce ? 1 : 0.72 + Math.sin(time * 0.001 + p.phase) * 0.28;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(244, 220, 174, ${p.a * pulse})`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function animate(time = 0) {
+      updateScroll();
+      if (!reduce) {
+        currentX += (pointerX - currentX) * 0.055;
+        currentY += (pointerY - currentY) * 0.055;
+      } else {
+        currentX = 0;
+        currentY = 0;
+      }
+
+      const sectionMap = {
+        hero: { scale: 1.04, x: 0, y: 0, blur: 0, brightness: 0.94, contrast: 1.06, rotate: 0, glow: 0.58, darkness: 0.22, cardOpacity: 1 },
+        'section-1': { scale: 1.085, x: -8, y: -22, blur: 0.35, brightness: 0.91, contrast: 1.09, rotate: 0.08, glow: 0.62, darkness: 0.30, cardOpacity: 0.96 },
+        'section-2': { scale: 1.115, x: 28, y: -34, blur: 0.55, brightness: 0.88, contrast: 1.12, rotate: -0.10, glow: 0.58, darkness: 0.36, cardOpacity: 0.92 },
+        'section-3': { scale: 1.135, x: -26, y: -48, blur: 0.75, brightness: 0.88, contrast: 1.14, rotate: 0.16, glow: 0.82, darkness: 0.38, cardOpacity: 0.9 },
+        'section-4': { scale: 1.155, x: 12, y: -58, blur: 1.05, brightness: 0.80, contrast: 1.18, rotate: -0.06, glow: 0.55, darkness: 0.56, cardOpacity: 0.64 },
+        'section-5': { scale: 1.16, x: -12, y: -64, blur: 1.15, brightness: 0.78, contrast: 1.18, rotate: 0.06, glow: 0.50, darkness: 0.62, cardOpacity: 0.58 },
+        final: { scale: 1.13, x: 0, y: -38, blur: 0.65, brightness: 0.84, contrast: 1.12, rotate: 0, glow: 0.68, darkness: 0.48, cardOpacity: 1 },
+      };
+      const target = sectionMap[activeSection] || sectionMap.hero;
+      const scale = reduce ? 1.04 : target.scale + sectionProgress * 0.012;
+      const x = reduce ? 0 : target.x + currentX * 14;
+      const y = reduce ? 0 : target.y + currentY * 10;
+      const blur = reduce ? 0 : target.blur;
+      const brightness = target.brightness;
+      const contrast = target.contrast;
+      const rotate = reduce ? 0 : target.rotate + currentX * 0.16;
+
+      root.style.setProperty('--orbit-bg-scale', scale.toFixed(4));
+      root.style.setProperty('--orbit-bg-x', `${x.toFixed(2)}px`);
+      root.style.setProperty('--orbit-bg-y', `${y.toFixed(2)}px`);
+      root.style.setProperty('--orbit-bg-blur', `${blur.toFixed(2)}px`);
+      root.style.setProperty('--orbit-bg-brightness', brightness.toFixed(3));
+      root.style.setProperty('--orbit-bg-contrast', contrast.toFixed(3));
+      root.style.setProperty('--orbit-bg-rotate', `${rotate.toFixed(3)}deg`);
+      root.style.setProperty('--orbit-scroll-progress', scrollProgress.toFixed(3));
+      root.style.setProperty('--orbit-section-progress', sectionProgress.toFixed(3));
+      root.style.setProperty('--orbit-gold-opacity', target.glow.toFixed(3));
+      root.style.setProperty('--orbit-darkness-opacity', target.darkness.toFixed(3));
+      root.style.setProperty('--orbit-card-opacity', target.cardOpacity.toFixed(3));
+
+      drawDust(time);
+      raf = requestAnimationFrame(animate);
+    }
+
+    function onPointer(event) {
+      if (reduce) return;
+      pointerX = (event.clientX / window.innerWidth - 0.5) * 2;
+      pointerY = (event.clientY / window.innerHeight - 0.5) * 2;
+    }
+
+    const revealItems = document.querySelectorAll('[data-reveal]');
+    if ('IntersectionObserver' in window && !reduce) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.24, rootMargin: '0px 0px -8% 0px' });
+      revealItems.forEach((item) => observer.observe(item));
+    } else {
+      revealItems.forEach((item) => item.classList.add('is-visible'));
+    }
+
+    resize();
+    updateScroll();
+    animate();
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('scroll', updateScroll, { passive: true });
+    window.addEventListener('pointermove', onPointer, { passive: true });
+    reduceQuery.addEventListener?.('change', (event) => { reduce = event.matches; });
+    document.addEventListener('astro:before-swap', () => cancelAnimationFrame(raf), { once: true });
+  });
+</script>
