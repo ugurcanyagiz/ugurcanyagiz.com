@@ -1,57 +1,47 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import AtlasBackground from "../components/AtlasBackground.astro";
-import SectionHeader from "../components/SectionHeader.astro";
+import CircleCategoryHub from "../components/CircleCategoryHub.astro";
 import ScrollReveal from "../components/ScrollReveal.astro";
 
-const universe = [
-  ["/science", "Science", "Reality as a layered language", "Cosmos, matter, life, mind, and technology mapped with disciplined awe."],
-  ["/history", "History", "Civilization patterns", "Power, institutions, trade, crisis, memory, and what repeats across time."],
-  ["/art", "Art", "Perception and craft", "Music, painting, architecture, film, design, and photography as ways of seeing."],
-  ["/future", "Future", "Signals without hype", "AI, biotech, space, energy, computing, society, and robotics considered carefully."],
-  ["/blog", "JLOG", "Archive of becoming", "Personal notes, belief, memory, uncertainty, and quiet reflections."],
+const recentNotes = [
+  ["/blog/we-must-believe", "JLOG", "we must believe (?)", "Why humans feel compelled to believe in something."],
+  ["/science/black-holes", "Science", "Black Holes", "Gravity, light, and nature’s ultimate threshold."],
+  ["/history/what-repeats", "History", "What Repeats", "Patterns that echo across civilizations and time."],
+  ["/art/architecture-as-a-language", "Art", "Architecture as a Language", "Space, rhythm, proportion, and perception."],
 ];
 ---
 
-<Layout title="Ugurcan Yagiz — Personal Atlas" description="A personal atlas of science, history, art, future thinking, and JLOG reflections.">
-  <main class="atlas-page home-atlas">
+<Layout title="Ugurcan Yagiz — Personal Knowledge Atlas" description="A personal space for notes on science, history, art, future thinking, and life.">
+  <Fragment slot="subnav">
+    <nav class="home-subnav" aria-label="Main sections">
+      <a href="/blog">JLOG</a>
+      <a href="/science">Science</a>
+      <a href="/history">History</a>
+      <a href="/art">Art</a>
+      <a href="/future">Future</a>
+      <a href="/me">Me</a>
+    </nav>
+  </Fragment>
+  <main class="atlas-page home-atlas thought-home">
     <AtlasBackground variant="atlas" id="home-atlas-scene" />
-    <div class="atlas-content">
-      <section class="atlas-hero">
-        <div class="atlas-hero__panel" data-reveal>
-          <p class="atlas-eyebrow">Enter the knowledge universe</p>
-          <h1>Ugurcan Yagiz</h1>
-          <p class="atlas-hero__subtitle">A personal atlas of science, history, art, future thinking, and JLOG reflections.</p>
-        </div>
-      </section>
+    <div class="atlas-content atlas-content--wide">
+      <CircleCategoryHub />
 
-      <section class="atlas-section">
-        <div class="atlas-panel" data-reveal>
-          <p class="atlas-eyebrow">Manifesto</p>
-          <p style="font-size:clamp(1.25rem,2.5vw,2rem);color:#f6efe4;font-family:Georgia,'Times New Roman',serif;line-height:1.35">
-            I study patterns across science, history, art, technology, and personal reflection. This website is a living map of curiosity, memory, and future thinking.
-          </p>
+      <section class="recent-notes atlas-section" aria-labelledby="recent-notes-title">
+        <div class="atlas-section-head" data-reveal>
+          <p class="atlas-eyebrow">Recent Notes</p>
+          <h2 id="recent-notes-title">Fragments from the atlas</h2>
+          <p>Fragments from JLOG, science, history, art, and future thinking.</p>
         </div>
-      </section>
-
-      <section class="atlas-section">
-        <SectionHeader eyebrow="Knowledge Universe" title="Five rooms orbiting one atlas" text="Each section has a distinct identity, but all of them ask the same question: how do systems become meaning?" />
-        <div class="atlas-grid">
-          {universe.map(([href, label, title, text]) => (
-            <a class="atlas-card" href={href} data-reveal>
-              <span class="atlas-glyph">✦</span>
-              <p class="atlas-eyebrow">{label}</p>
+        <div class="atlas-grid atlas-grid--four">
+          {recentNotes.map(([href, category, title, excerpt]) => (
+            <a class="atlas-card recent-note-card" href={href} data-reveal>
+              <p class="atlas-eyebrow">{category}</p>
               <h3>{title}</h3>
-              <p>{text}</p>
+              <p>{excerpt}</p>
             </a>
           ))}
-        </div>
-      </section>
-
-      <section class="atlas-section">
-        <SectionHeader eyebrow="JLOG Preview" title="A quiet archive of thoughts, memory, belief, and becoming" text="The personal journal keeps the Pale Blue Dot audio area and turns notes into memory fragments." />
-        <div class="atlas-panel" data-reveal>
-          <audio controls preload="metadata" style="width:100%"><source src="/audio/pale-blue-dot.mp3" type="audio/mpeg" /></audio>
         </div>
       </section>
     </div>
