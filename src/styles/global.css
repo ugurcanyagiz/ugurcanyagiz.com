@@ -800,27 +800,6 @@ body:has(.thought-home) .main{ min-height:100vh; }
   z-index:0;
   display:block;
 }
-.solar-hub__hud{
-  position:absolute;
-  z-index:3;
-  color:rgba(246,239,228,.78);
-  text-shadow:0 0 24px rgba(0,0,0,.7);
-  user-select:none;
-}
-.solar-hub__hud--top{
-  top:82px;
-  left:clamp(16px, 3vw, 42px);
-  display:grid;
-  gap:.35rem;
-}
-.solar-hub__hud p{ margin:0; font-size:clamp(.88rem,1.2vw,1.05rem); }
-.solar-hub__brand{
-  color:var(--atlas-gold);
-  font-size:.72rem !important;
-  font-weight:900;
-  letter-spacing:.25em;
-}
-.solar-hub__muted{ color:rgba(246,239,228,.5); }
 .solar-hub__labels{
   position:absolute;
   inset:0;
@@ -884,7 +863,6 @@ body:has(.thought-home) .main{ min-height:100vh; }
 }
 .solar-hub__controls span{ opacity:.92; }
 @media (max-width:720px){
-  .solar-hub__hud--top{ top:72px; }
   .solar-label{ width:40vw; }
   .solar-label small{ display:none; }
   .solar-hub__controls{ bottom:18px; gap:.62rem; }
