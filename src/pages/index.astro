@@ -1,14 +1,48 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import AtlasBackground from "../components/AtlasBackground.astro";
-import SolarSystemHub from "../components/SolarSystemHub.astro";
+import OrbitCinematicBackground from "../components/OrbitCinematicBackground.astro";
+
+const categories = [
+  { label: "JLOG", href: "/blog", kicker: "Personal field notes", copy: "Essays, observations, and small signals from the inner orbit." },
+  { label: "Science", href: "/science", kicker: "Reality systems", copy: "Physics, biology, mind, and the structures underneath experience." },
+  { label: "History", href: "/history", kicker: "Human patterns", copy: "Civilizations, institutions, conflict, progress, and repetition." },
+  { label: "Art", href: "/art", kicker: "Perception craft", copy: "Film, sound, color, composition, architecture, and visual language." },
+  { label: "Future", href: "/future", kicker: "Coming worlds", copy: "AI, space, biotech, robotics, energy, and tomorrow’s systems." },
+];
 ---
 
-<Layout title="UGURCAN" description="A minimal orbit navigation for Ugurcan Yagiz.">
-  <main class="atlas-page home-atlas thought-home" aria-label="Orbit navigation homepage">
-    <AtlasBackground variant="atlas" id="home-atlas-scene" />
-    <div class="atlas-content atlas-content--wide">
-      <SolarSystemHub />
-    </div>
+<Layout title="UGURCAN" description="A cinematic editorial orbit for essays on science, history, art, future, and personal notes." orbitPreload>
+  <main class="orbit-home" aria-label="Homepage">
+    <OrbitCinematicBackground />
+
+    <section class="orbit-home__hero" aria-labelledby="orbit-home-title">
+      <div class="orbit-home__intro">
+        <p class="orbit-home__eyebrow">UGURCAN YAGIZ · EDITORIAL ORBIT</p>
+        <h1 id="orbit-home-title">A quiet atlas for ideas in motion.</h1>
+        <p class="orbit-home__lede">
+          Essays and visual notes arranged like a cinematic navigation system — science, history,
+          art, future, and the personal log orbiting between them.
+        </p>
+      </div>
+
+      <nav class="orbit-home__nav" aria-label="Primary categories">
+        {categories.map((category) => (
+          <a class="orbit-home-card" href={category.href}>
+            <span>{category.kicker}</span>
+            <strong>{category.label}</strong>
+            <small>{category.copy}</small>
+          </a>
+        ))}
+      </nav>
+    </section>
+
+    <section class="orbit-home__scroll-panel" aria-labelledby="orbit-scroll-title">
+      <p class="orbit-home__eyebrow">SCROLL TO DRIFT</p>
+      <h2 id="orbit-scroll-title">The background breathes slowly with the page.</h2>
+      <p>
+        Navigation stays simple and keyboard-accessible while the image layer, dust, glow, and vignette
+        create a lightweight depth illusion around the committed orbit artwork.
+      </p>
+    </section>
   </main>
 </Layout>

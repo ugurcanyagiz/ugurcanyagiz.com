@@ -1,0 +1,139 @@
+<div class="orbit-cinematic-bg" data-orbit-cinematic aria-hidden="true">
+  <picture class="orbit-cinematic-bg__picture">
+    <source srcset="/images/orbit-bg-mobile.webp" media="(orientation: portrait), (max-width: 640px)" />
+    <source srcset="/images/orbit-bg-tablet.webp" media="(max-width: 1180px)" />
+    <img
+      class="orbit-cinematic-bg__image"
+      src="/images/orbit-bg-desktop.webp"
+      alt=""
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+      draggable="false"
+    />
+  </picture>
+  <canvas class="orbit-cinematic-bg__dust" data-orbit-dust></canvas>
+  <div class="orbit-cinematic-bg__gold-glow"></div>
+  <div class="orbit-cinematic-bg__shade"></div>
+  <div class="orbit-cinematic-bg__grain"></div>
+  <div class="orbit-cinematic-bg__vignette"></div>
+</div>
+
+<script>
+  const roots = document.querySelectorAll('[data-orbit-cinematic]');
+
+  roots.forEach((root) => {
+    const canvas = root.querySelector('[data-orbit-dust]');
+    const ctx = canvas?.getContext('2d', { alpha: true });
+    const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reduce = reduceQuery.matches;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+    let particles = [];
+    let pointerX = 0;
+    let pointerY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let scrollProgress = 0;
+    let raf = 0;
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, width < 720 ? 1.35 : 1.75);
+
+      if (canvas && ctx) {
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      const count = width < 720 ? 42 : width < 1180 ? 58 : 78;
+      particles = Array.from({ length: count }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        r: Math.random() * 1.35 + 0.25,
+        a: Math.random() * 0.34 + 0.08,
+        vx: (Math.random() - 0.5) * 0.06,
+        vy: Math.random() * 0.08 + 0.018,
+        phase: Math.random() * Math.PI * 2,
+      }));
+    }
+
+    function updateScroll() {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      scrollProgress = clamp(window.scrollY / max, 0, 1);
+    }
+
+    function drawDust(time) {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'lighter';
+      particles.forEach((p) => {
+        if (!reduce) {
+          p.x += p.vx + currentX * 0.012;
+          p.y += p.vy + scrollProgress * 0.035;
+          if (p.y > height + 12) p.y = -12;
+          if (p.x < -12) p.x = width + 12;
+          if (p.x > width + 12) p.x = -12;
+        }
+        const pulse = reduce ? 1 : 0.72 + Math.sin(time * 0.001 + p.phase) * 0.28;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(244, 220, 174, ${p.a * pulse})`;
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function animate(time = 0) {
+      updateScroll();
+      if (!reduce) {
+        currentX += (pointerX - currentX) * 0.055;
+        currentY += (pointerY - currentY) * 0.055;
+      } else {
+        currentX = 0;
+        currentY = 0;
+      }
+
+      const scale = reduce ? 1.04 : 1.04 + scrollProgress * 0.12;
+      const x = reduce ? 0 : currentX * 14 - scrollProgress * 18;
+      const y = reduce ? 0 : currentY * 10 - scrollProgress * 42;
+      const blur = reduce ? 0 : scrollProgress * 1.4;
+      const brightness = 0.92 - scrollProgress * 0.08;
+      const contrast = 1.08 + scrollProgress * 0.08;
+      const rotate = reduce ? 0 : currentX * 0.16 + scrollProgress * 0.35;
+
+      root.style.setProperty('--orbit-bg-scale', scale.toFixed(4));
+      root.style.setProperty('--orbit-bg-x', `${x.toFixed(2)}px`);
+      root.style.setProperty('--orbit-bg-y', `${y.toFixed(2)}px`);
+      root.style.setProperty('--orbit-bg-blur', `${blur.toFixed(2)}px`);
+      root.style.setProperty('--orbit-bg-brightness', brightness.toFixed(3));
+      root.style.setProperty('--orbit-bg-contrast', contrast.toFixed(3));
+      root.style.setProperty('--orbit-bg-rotate', `${rotate.toFixed(3)}deg`);
+      root.style.setProperty('--orbit-scroll-progress', scrollProgress.toFixed(3));
+
+      drawDust(time);
+      raf = requestAnimationFrame(animate);
+    }
+
+    function onPointer(event) {
+      if (reduce) return;
+      pointerX = (event.clientX / window.innerWidth - 0.5) * 2;
+      pointerY = (event.clientY / window.innerHeight - 0.5) * 2;
+    }
+
+    resize();
+    animate();
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('scroll', updateScroll, { passive: true });
+    window.addEventListener('pointermove', onPointer, { passive: true });
+    reduceQuery.addEventListener?.('change', (event) => { reduce = event.matches; });
+    document.addEventListener('astro:before-swap', () => cancelAnimationFrame(raf), { once: true });
+  });
+</script>
