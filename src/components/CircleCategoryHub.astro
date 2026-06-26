@@ -53,10 +53,17 @@ const categories = [
       const width = window.innerWidth;
       const height = window.innerHeight;
       const isMobile = mobileQuery.matches;
+      const isTablet = width <= 900;
+      const titleGuard = isMobile ? 92 : isTablet ? 150 : 250;
+      const topGuard = isMobile ? 154 : 128;
+      const bottomGuard = isMobile ? 112 : 96;
+      const safeRadiusX = Math.max(112, (width - titleGuard) / 2);
+      const safeRadiusY = Math.max(96, (height - topGuard - bottomGuard) / 2);
+
       return {
-        x: Math.min(width * (isMobile ? 0.32 : 0.34), isMobile ? 168 : 455),
-        y: Math.min(height * (isMobile ? 0.24 : 0.245), isMobile ? 142 : 228),
-        centerY: isMobile ? 0.54 : 0.515,
+        x: Math.min(width * (isMobile ? 0.31 : isTablet ? 0.32 : 0.34), isMobile ? 156 : isTablet ? 320 : 455, safeRadiusX),
+        y: Math.min(height * (isMobile ? 0.225 : isTablet ? 0.23 : 0.245), isMobile ? 132 : isTablet ? 190 : 228, safeRadiusY),
+        centerY: isMobile ? 0.55 : isTablet ? 0.525 : 0.515,
       };
     };
 
@@ -121,10 +128,11 @@ const categories = [
         const y = Math.sin(angle) * radiusY;
         const depth = (Math.sin(angle) + 1) / 2;
         const front = 1 - depth;
-        const scale = 0.82 + front * 0.28;
-        const opacity = 0.46 + front * 0.48;
-        const blur = depth * 1.15;
-        const brightness = 0.74 + front * 0.42;
+        const isMobile = mobileQuery.matches;
+        const scale = (isMobile ? 0.88 : 0.82) + front * (isMobile ? 0.18 : 0.28);
+        const opacity = (isMobile ? 0.58 : 0.46) + front * (isMobile ? 0.36 : 0.48);
+        const blur = depth * (isMobile ? 0.45 : 0.95);
+        const brightness = 0.78 + front * 0.4;
 
         item.style.setProperty('--orbit-x', `${centerX + x}px`);
         item.style.setProperty('--orbit-y', `${center + y}px`);
@@ -156,6 +164,7 @@ const categories = [
     };
 
     positionItems();
+    mobileQuery.addEventListener?.('change', positionItems);
     window.addEventListener('resize', positionItems, { passive: true });
     requestAnimationFrame(tick);
   }
