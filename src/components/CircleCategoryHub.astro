@@ -36,11 +36,13 @@ const categories = [
     const orbit = hub.querySelector('[data-orbit]');
     const scene = hub.querySelector('[data-orbit-scene]');
     const items = Array.from(hub.querySelectorAll('[data-category]'));
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const mobileQuery = window.matchMedia('(max-width: 640px)');
+    let reduce = reduceQuery.matches;
     let targetRotation = 0;
     let currentRotation = 0;
     let velocity = 0;
+    let lastFrame = performance.now();
     let mouseX = 0;
     let mouseY = 0;
     let targetMouseX = 0;
@@ -75,6 +77,7 @@ const categories = [
     };
 
     const onWheel = (event) => {
+      if (!hub.contains(event.target)) return;
       event.preventDefault();
       rotateByDelta(event.deltaY);
     };
@@ -145,12 +148,20 @@ const categories = [
     };
 
     const tick = () => {
+      const now = performance.now();
+      const deltaSeconds = Math.min(0.05, (now - lastFrame) / 1000);
+      lastFrame = now;
+
       if (!reduce) {
+        const idleSpeed = mobileQuery.matches ? 0.105 : 0.075;
+        targetRotation += idleSpeed * deltaSeconds;
         targetRotation += velocity;
         velocity *= 0.935;
-        currentRotation += (targetRotation - currentRotation) * 0.075;
-        mouseX += (targetMouseX - mouseX) * 0.065;
-        mouseY += (targetMouseY - mouseY) * 0.065;
+        const rotationEase = 1 - Math.pow(0.925, deltaSeconds * 60);
+        const pointerEase = 1 - Math.pow(0.935, deltaSeconds * 60);
+        currentRotation += (targetRotation - currentRotation) * rotationEase;
+        mouseX += (targetMouseX - mouseX) * pointerEase;
+        mouseY += (targetMouseY - mouseY) * pointerEase;
 
         orbit.style.setProperty('--tilt-x', `${mouseY * -2.4}deg`);
         orbit.style.setProperty('--tilt-y', `${mouseX * 3.2}deg`);
@@ -164,6 +175,20 @@ const categories = [
     };
 
     positionItems();
+    reduceQuery.addEventListener?.('change', (event) => {
+      reduce = event.matches;
+      targetMouseX = 0;
+      targetMouseY = 0;
+      mouseX = 0;
+      mouseY = 0;
+      orbit.style.setProperty('--tilt-x', '0deg');
+      orbit.style.setProperty('--tilt-y', '0deg');
+      orbit.style.setProperty('--mouse-x', '0px');
+      orbit.style.setProperty('--mouse-y', '0px');
+      scene?.style.setProperty('--scene-parallax-x', '0px');
+      scene?.style.setProperty('--scene-parallax-y', '0px');
+      positionItems();
+    });
     mobileQuery.addEventListener?.('change', positionItems);
     window.addEventListener('resize', positionItems, { passive: true });
     requestAnimationFrame(tick);
