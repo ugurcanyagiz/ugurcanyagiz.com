@@ -36,6 +36,8 @@
     let currentX = 0;
     let currentY = 0;
     let scrollProgress = 0;
+    let sectionProgress = 0;
+    let activeSection = 'hero';
     let raf = 0;
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
@@ -68,6 +70,23 @@
     function updateScroll() {
       const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       scrollProgress = clamp(window.scrollY / max, 0, 1);
+
+      let bestDistance = Number.POSITIVE_INFINITY;
+      let bestProgress = 0;
+      let bestSection = 'hero';
+      document.querySelectorAll('[data-orbit-section]').forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const sectionCenter = rect.top + rect.height * 0.5;
+        const distance = Math.abs(sectionCenter - window.innerHeight * 0.5);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          bestSection = section.dataset.orbitSection || 'hero';
+          bestProgress = clamp((window.innerHeight * 0.72 - rect.top) / (rect.height + window.innerHeight * 0.42), 0, 1);
+        }
+      });
+      activeSection = bestSection;
+      sectionProgress = bestProgress;
+      document.documentElement.dataset.orbitActiveSection = activeSection;
     }
 
     function drawDust(time) {
@@ -101,13 +120,23 @@
         currentY = 0;
       }
 
-      const scale = reduce ? 1.04 : 1.04 + scrollProgress * 0.12;
-      const x = reduce ? 0 : currentX * 14 - scrollProgress * 18;
-      const y = reduce ? 0 : currentY * 10 - scrollProgress * 42;
-      const blur = reduce ? 0 : scrollProgress * 1.4;
-      const brightness = 0.92 - scrollProgress * 0.08;
-      const contrast = 1.08 + scrollProgress * 0.08;
-      const rotate = reduce ? 0 : currentX * 0.16 + scrollProgress * 0.35;
+      const sectionMap = {
+        hero: { scale: 1.04, x: 0, y: 0, blur: 0, brightness: 0.94, contrast: 1.06, rotate: 0, glow: 0.58, darkness: 0.22, cardOpacity: 1 },
+        'section-1': { scale: 1.085, x: -8, y: -22, blur: 0.35, brightness: 0.91, contrast: 1.09, rotate: 0.08, glow: 0.62, darkness: 0.30, cardOpacity: 0.96 },
+        'section-2': { scale: 1.115, x: 28, y: -34, blur: 0.55, brightness: 0.88, contrast: 1.12, rotate: -0.10, glow: 0.58, darkness: 0.36, cardOpacity: 0.92 },
+        'section-3': { scale: 1.135, x: -26, y: -48, blur: 0.75, brightness: 0.88, contrast: 1.14, rotate: 0.16, glow: 0.82, darkness: 0.38, cardOpacity: 0.9 },
+        'section-4': { scale: 1.155, x: 12, y: -58, blur: 1.05, brightness: 0.80, contrast: 1.18, rotate: -0.06, glow: 0.55, darkness: 0.56, cardOpacity: 0.64 },
+        'section-5': { scale: 1.16, x: -12, y: -64, blur: 1.15, brightness: 0.78, contrast: 1.18, rotate: 0.06, glow: 0.50, darkness: 0.62, cardOpacity: 0.58 },
+        final: { scale: 1.13, x: 0, y: -38, blur: 0.65, brightness: 0.84, contrast: 1.12, rotate: 0, glow: 0.68, darkness: 0.48, cardOpacity: 1 },
+      };
+      const target = sectionMap[activeSection] || sectionMap.hero;
+      const scale = reduce ? 1.04 : target.scale + sectionProgress * 0.012;
+      const x = reduce ? 0 : target.x + currentX * 14;
+      const y = reduce ? 0 : target.y + currentY * 10;
+      const blur = reduce ? 0 : target.blur;
+      const brightness = target.brightness;
+      const contrast = target.contrast;
+      const rotate = reduce ? 0 : target.rotate + currentX * 0.16;
 
       root.style.setProperty('--orbit-bg-scale', scale.toFixed(4));
       root.style.setProperty('--orbit-bg-x', `${x.toFixed(2)}px`);
@@ -117,6 +146,10 @@
       root.style.setProperty('--orbit-bg-contrast', contrast.toFixed(3));
       root.style.setProperty('--orbit-bg-rotate', `${rotate.toFixed(3)}deg`);
       root.style.setProperty('--orbit-scroll-progress', scrollProgress.toFixed(3));
+      root.style.setProperty('--orbit-section-progress', sectionProgress.toFixed(3));
+      root.style.setProperty('--orbit-gold-opacity', target.glow.toFixed(3));
+      root.style.setProperty('--orbit-darkness-opacity', target.darkness.toFixed(3));
+      root.style.setProperty('--orbit-card-opacity', target.cardOpacity.toFixed(3));
 
       drawDust(time);
       raf = requestAnimationFrame(animate);
@@ -128,7 +161,23 @@
       pointerY = (event.clientY / window.innerHeight - 0.5) * 2;
     }
 
+    const revealItems = document.querySelectorAll('[data-reveal]');
+    if ('IntersectionObserver' in window && !reduce) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.24, rootMargin: '0px 0px -8% 0px' });
+      revealItems.forEach((item) => observer.observe(item));
+    } else {
+      revealItems.forEach((item) => item.classList.add('is-visible'));
+    }
+
     resize();
+    updateScroll();
     animate();
     window.addEventListener('resize', resize, { passive: true });
     window.addEventListener('scroll', updateScroll, { passive: true });
