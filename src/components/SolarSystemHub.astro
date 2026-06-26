@@ -16,12 +16,6 @@ const worlds = [
     <p><span data-solar-time>Live orbit</span> <span class="solar-hub__muted">/ drag to rotate, scroll to zoom</span></p>
   </div>
 
-  <div class="solar-hub__intro">
-    <p class="atlas-eyebrow">Interactive thought system</p>
-    <h1>Ideas orbit like planets.</h1>
-    <p>Explore the site through a cinematic 3D solar map inspired by observatory interfaces: smooth camera motion, glowing orbital paths, star depth, and clickable worlds.</p>
-  </div>
-
   <nav class="solar-hub__labels" aria-label="Category links">
     {worlds.map((world) => (
       <a
@@ -61,7 +55,8 @@ const worlds = [
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
     renderer.setSize(innerWidth, innerHeight);
 
-    camera.position.set(0, 3.4, 7.2);
+    camera.position.set(0, 2.35, 7.2);
+    camera.lookAt(0, 0, 0);
     scene.add(new THREE.AmbientLight(0x5b78a8, 0.8));
     const sunLight = new THREE.PointLight(0xffd28a, 42, 28);
     scene.add(sunLight);
@@ -171,6 +166,7 @@ const worlds = [
         glow.scale.setScalar(1 + Math.sin(elapsed * 1.6) * 0.08);
       }
       camera.position.z += (zoom - camera.position.z) * 0.06;
+      camera.lookAt(0, 0, 0);
       planetMeshes.forEach((entry) => {
         if (!reduce) entry.angle += entry.world.speed * 0.01;
         const { radius, tilt } = entry.world;
