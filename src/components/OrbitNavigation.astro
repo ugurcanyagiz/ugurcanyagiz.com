@@ -1,0 +1,152 @@
+---
+const items = [
+  { label: "JLOG", href: "/blog" },
+  { label: "Science", href: "/science" },
+  { label: "History", href: "/history" },
+  { label: "Art", href: "/art" },
+  { label: "Future", href: "/future" },
+];
+---
+
+<nav class="orbit-navigation" data-orbit-navigation aria-label="Primary categories">
+  <div class="orbit-navigation__plane" data-orbit-plane>
+    <div class="orbit-navigation__guide" aria-hidden="true"></div>
+    {items.map((item, index) => (
+      <a
+        class="orbit-navigation__item"
+        href={item.href}
+        data-orbit-item
+        data-index={index}
+        aria-label={`Open ${item.label}`}
+      >
+        <span>{item.label}</span>
+      </a>
+    ))}
+  </div>
+</nav>
+
+<script>
+  const roots = document.querySelectorAll('[data-orbit-navigation]');
+
+  roots.forEach((root) => {
+    const plane = root.querySelector('[data-orbit-plane]');
+    const items = Array.from(root.querySelectorAll('[data-orbit-item]'));
+    const bg = document.querySelector('[data-orbit-cinematic]');
+    const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reduce = reduceQuery.matches;
+    let targetRotation = 0;
+    let currentRotation = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let tiltX = 0;
+    let tiltY = 0;
+    let touchStartY = null;
+    let raf = 0;
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+    const lerp = (start, end, amount) => start + (end - start) * amount;
+
+    function metrics() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      return {
+        centerX: width * (width < 720 ? 0.50 : 0.51),
+        centerY: height * (width < 720 ? 0.50 : 0.51),
+        radiusX: clamp(width * (width < 720 ? 0.34 : width < 1100 ? 0.35 : 0.365), 132, 560),
+        radiusY: clamp(height * (width < 720 ? 0.155 : width < 1100 ? 0.18 : 0.205), 78, 230),
+      };
+    }
+
+    function render() {
+      const { centerX, centerY, radiusX, radiusY } = metrics();
+      const step = (Math.PI * 2) / items.length;
+      const baseOffset = -Math.PI / 2.45;
+
+      items.forEach((item, index) => {
+        const angle = baseOffset + index * step + currentRotation;
+        const sin = Math.sin(angle);
+        const cos = Math.cos(angle);
+        const depth = (sin + 1) / 2;
+        const scale = lerp(0.74, 1.18, depth);
+        const opacity = lerp(0.38, 1, depth);
+        const blur = lerp(1.7, 0, depth);
+        const x = centerX + cos * radiusX;
+        const y = centerY + sin * radiusY;
+        const z = Math.round(depth * 120);
+
+        item.style.setProperty('--orbit-item-x', `${x.toFixed(2)}px`);
+        item.style.setProperty('--orbit-item-y', `${y.toFixed(2)}px`);
+        item.style.setProperty('--orbit-item-scale', scale.toFixed(3));
+        item.style.setProperty('--orbit-item-opacity', opacity.toFixed(3));
+        item.style.setProperty('--orbit-item-blur', `${blur.toFixed(2)}px`);
+        item.style.setProperty('--orbit-item-depth', depth.toFixed(3));
+        item.style.zIndex = String(10 + z);
+      });
+
+      root.style.setProperty('--orbit-guide-x', `${centerX}px`);
+      root.style.setProperty('--orbit-guide-y', `${centerY}px`);
+      root.style.setProperty('--orbit-guide-w', `${radiusX * 2}px`);
+      root.style.setProperty('--orbit-guide-h', `${radiusY * 2}px`);
+    }
+
+    function animate() {
+      if (!reduce) {
+        currentRotation += (targetRotation - currentRotation) * 0.075;
+        tiltX += (pointerY * -5 - tiltX) * 0.065;
+        tiltY += (pointerX * 7 - tiltY) * 0.065;
+      } else {
+        currentRotation = 0;
+        targetRotation = 0;
+        tiltX = 0;
+        tiltY = 0;
+      }
+
+      if (plane) {
+        plane.style.setProperty('--orbit-tilt-x', `${tiltX.toFixed(2)}deg`);
+        plane.style.setProperty('--orbit-tilt-y', `${tiltY.toFixed(2)}deg`);
+      }
+      if (bg && !reduce) {
+        bg.style.setProperty('--orbit-pointer-x', `${(pointerX * 12).toFixed(2)}px`);
+        bg.style.setProperty('--orbit-pointer-y', `${(pointerY * 9).toFixed(2)}px`);
+      }
+
+      render();
+      raf = requestAnimationFrame(animate);
+    }
+
+    function onWheel(event) {
+      if (reduce) return;
+      event.preventDefault();
+      targetRotation += event.deltaY * 0.0017;
+    }
+
+    function onTouchStart(event) {
+      touchStartY = event.touches[0]?.clientY ?? null;
+    }
+
+    function onTouchMove(event) {
+      if (reduce || touchStartY === null) return;
+      const y = event.touches[0]?.clientY ?? touchStartY;
+      const delta = touchStartY - y;
+      targetRotation += delta * 0.0042;
+      touchStartY = y;
+      event.preventDefault();
+    }
+
+    function onPointer(event) {
+      if (reduce) return;
+      pointerX = (event.clientX / window.innerWidth - 0.5) * 2;
+      pointerY = (event.clientY / window.innerHeight - 0.5) * 2;
+    }
+
+    render();
+    animate();
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('pointermove', onPointer, { passive: true });
+    window.addEventListener('resize', render, { passive: true });
+    reduceQuery.addEventListener?.('change', (event) => { reduce = event.matches; render(); });
+    document.addEventListener('astro:before-swap', () => cancelAnimationFrame(raf), { once: true });
+  });
+</script>
