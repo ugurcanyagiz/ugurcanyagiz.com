@@ -65,7 +65,12 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
     for (let i = 0; i < (isMobile ? 2 : (isHomeAtlas ? 2 : 4)); i++) {
       const ring = new THREE.Mesh(
         new THREE.TorusGeometry((isHomeAtlas ? 1.38 : 2.18) + i * 0.26, 0.006, 8, 180),
-        new THREE.MeshBasicMaterial({ color: i % 2 ? palette[0] : palette[1], transparent: true, opacity: isHomeAtlas ? 0.12 : 0.34, side: THREE.DoubleSide })
+        new THREE.MeshBasicMaterial({
+          color: i % 2 ? palette[0] : palette[1],
+          transparent: true,
+          opacity: isHomeAtlas ? 0.12 : 0.34,
+          side: THREE.DoubleSide,
+        })
       );
       ring.rotation.set(Math.PI / (2.4 + i), i * 0.66, i * 0.42);
       group.add(ring);
@@ -83,7 +88,15 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
     }
     const particlesGeometry = new THREE.BufferGeometry();
     particlesGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const particles = new THREE.Points(particlesGeometry, new THREE.PointsMaterial({ color: palette[0], size: isMobile ? 0.016 : (isHomeAtlas ? 0.014 : 0.024), transparent: true, opacity: isHomeAtlas ? 0.22 : 0.54 }));
+    const particles = new THREE.Points(
+      particlesGeometry,
+      new THREE.PointsMaterial({
+        color: palette[0],
+        size: isMobile ? 0.016 : (isHomeAtlas ? 0.014 : 0.024),
+        transparent: true,
+        opacity: isHomeAtlas ? 0.22 : 0.54,
+      })
+    );
     scene.add(particles);
 
     document.addEventListener("pointermove", (event) => {
