@@ -14,6 +14,7 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
 
   document.querySelectorAll("canvas[data-atlas-scene]").forEach((canvas) => {
     const variant = canvas.dataset.atlasScene || "atlas";
+    const isHomeAtlas = canvas.id === "home-atlas-scene";
     const isMobile = window.matchMedia("(max-width: 720px)").matches;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const scene = new THREE.Scene();
@@ -31,7 +32,7 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
       jlog: [0xf6efe4, 0xd8b06a, 0x8ddfff],
     }[variant] || [0x8ddfff, 0xd8b06a, 0x5b7cff];
 
-    camera.position.set(0, 0.35, isMobile ? 8 : 6.2);
+    camera.position.set(0, 0.35, isMobile ? 8.4 : (isHomeAtlas ? 8.6 : 6.2));
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.75));
     renderer.setSize(window.innerWidth, window.innerHeight);
 
@@ -47,30 +48,30 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
     scene.add(group);
 
     const geometry = variant === "science"
-      ? new THREE.TorusKnotGeometry(isMobile ? 1.05 : 1.35, 0.18, 160, 16)
+      ? new THREE.TorusKnotGeometry(isMobile ? 1.05 : (isHomeAtlas ? 0.72 : 1.35), 0.18, 160, 16)
       : variant === "future"
-        ? new THREE.OctahedronGeometry(isMobile ? 1.45 : 1.85, 3)
-        : new THREE.IcosahedronGeometry(isMobile ? 1.45 : 1.85, 6);
+        ? new THREE.OctahedronGeometry(isMobile ? 1.45 : (isHomeAtlas ? 0.92 : 1.85), 3)
+        : new THREE.IcosahedronGeometry(isMobile ? 1.45 : (isHomeAtlas ? 0.92 : 1.85), 6);
 
     const core = new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({
       color: 0x121a32,
       roughness: 0.44,
       metalness: 0.28,
       emissive: palette[2],
-      emissiveIntensity: 0.28,
+      emissiveIntensity: isHomeAtlas ? 0.12 : 0.28,
     }));
     group.add(core);
 
-    for (let i = 0; i < (isMobile ? 2 : 4); i++) {
+    for (let i = 0; i < (isMobile ? 2 : (isHomeAtlas ? 2 : 4)); i++) {
       const ring = new THREE.Mesh(
-        new THREE.TorusGeometry(2.18 + i * 0.26, 0.006, 8, 180),
-        new THREE.MeshBasicMaterial({ color: i % 2 ? palette[0] : palette[1], transparent: true, opacity: 0.34, side: THREE.DoubleSide })
+        new THREE.TorusGeometry((isHomeAtlas ? 1.38 : 2.18) + i * 0.26, 0.006, 8, 180),
+        new THREE.MeshBasicMaterial({ color: i % 2 ? palette[0] : palette[1], transparent: true, opacity: isHomeAtlas ? 0.12 : 0.34, side: THREE.DoubleSide })
       );
       ring.rotation.set(Math.PI / (2.4 + i), i * 0.66, i * 0.42);
       group.add(ring);
     }
 
-    const count = isMobile ? 220 : 720;
+    const count = isMobile ? 180 : (isHomeAtlas ? 260 : 720);
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
       const radius = 3.2 + Math.random() * (isMobile ? 4.6 : 8.2);
@@ -82,7 +83,7 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
     }
     const particlesGeometry = new THREE.BufferGeometry();
     particlesGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    const particles = new THREE.Points(particlesGeometry, new THREE.PointsMaterial({ color: palette[0], size: isMobile ? 0.018 : 0.024, transparent: true, opacity: 0.54 }));
+    const particles = new THREE.Points(particlesGeometry, new THREE.PointsMaterial({ color: palette[0], size: isMobile ? 0.016 : (isHomeAtlas ? 0.014 : 0.024), transparent: true, opacity: isHomeAtlas ? 0.22 : 0.54 }));
     scene.add(particles);
 
     document.addEventListener("pointermove", (event) => {
@@ -102,8 +103,8 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
         group.rotation.y += 0.0014;
         core.rotation.x = elapsed * 0.035;
         particles.rotation.y = elapsed * 0.012;
-        camera.position.x += (pointer.x * (isMobile ? 0.06 : 0.18) - camera.position.x) * 0.025;
-        camera.position.y += (-pointer.y * (isMobile ? 0.04 : 0.1) + 0.35 - camera.position.y) * 0.018;
+        camera.position.x += (pointer.x * (isMobile ? 0.04 : (isHomeAtlas ? 0.07 : 0.18)) - camera.position.x) * 0.025;
+        camera.position.y += (-pointer.y * (isMobile ? 0.03 : (isHomeAtlas ? 0.04 : 0.1)) + 0.35 - camera.position.y) * 0.018;
       }
       camera.lookAt(0, 0, 0);
       renderer.render(scene, camera);
