@@ -16,7 +16,8 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
     const variant = canvas.dataset.atlasScene || "atlas";
     const isHomeAtlas = canvas.id === "home-atlas-scene";
     const isMobile = window.matchMedia("(max-width: 720px)").matches;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let reduce = reduceQuery.matches;
     const scene = new THREE.Scene();
     const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: !isMobile });
     const camera = new THREE.PerspectiveCamera(44, window.innerWidth / window.innerHeight, 0.1, 100);
@@ -104,11 +105,12 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
       pointer.y = (event.clientY / window.innerHeight - 0.5) * 2;
     }, { passive: true });
 
-    gsap.to(group.rotation, {
+    const scrollTween = gsap.to(group.rotation, {
       y: Math.PI * 1.25,
       x: 0.42,
       scrollTrigger: { trigger: canvas.closest(".atlas-page") || document.body, start: "top top", end: "bottom bottom", scrub: 1.2 },
     });
+    if (reduce) scrollTween.scrollTrigger?.disable(false);
 
     function animate() {
       const elapsed = clock.getElapsedTime();
@@ -124,6 +126,15 @@ const { variant = "atlas", id = `atlas-${variant}` } = Astro.props;
       requestAnimationFrame(animate);
     }
     animate();
+
+    reduceQuery.addEventListener?.("change", (event) => {
+      reduce = event.matches;
+      if (reduce) {
+        scrollTween.scrollTrigger?.disable(false);
+      } else {
+        scrollTween.scrollTrigger?.enable();
+      }
+    });
 
     window.addEventListener("resize", () => {
       camera.aspect = window.innerWidth / window.innerHeight;
