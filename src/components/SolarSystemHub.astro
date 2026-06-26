@@ -1,0 +1,197 @@
+---
+const worlds = [
+  { key: 'jlog', label: 'JLOG', href: '/blog', color: '#f6efe4', radius: 1.45, speed: 0.38, size: 0.105, tilt: 0.12, copy: 'Personal essays and notes from the inner orbit.' },
+  { key: 'science', label: 'Science', href: '/science', color: '#47bfff', radius: 2.05, speed: 0.28, size: 0.13, tilt: -0.08, copy: 'Physics, mind, life, and the mechanics of reality.' },
+  { key: 'history', label: 'History', href: '/history', color: '#d8b06a', radius: 2.75, speed: 0.21, size: 0.15, tilt: 0.18, copy: 'Civilizations, patterns, institutions, and repeated human choices.' },
+  { key: 'art', label: 'Art', href: '/art', color: '#b66bff', radius: 3.55, speed: 0.16, size: 0.125, tilt: -0.26, copy: 'Music, images, buildings, films, and visual language.' },
+  { key: 'future', label: 'Future', href: '/future', color: '#ff8a1f', radius: 4.42, speed: 0.115, size: 0.18, tilt: 0.08, copy: 'AI, space economy, robots, biotech, and tomorrow’s systems.' },
+];
+---
+
+<section class="solar-hub" data-solar-hub aria-label="3D solar navigation">
+  <canvas class="solar-hub__canvas" data-solar-canvas></canvas>
+
+  <div class="solar-hub__hud solar-hub__hud--top">
+    <p class="solar-hub__brand">UGURCAN SKY ATLAS</p>
+    <p><span data-solar-time>Live orbit</span> <span class="solar-hub__muted">/ drag to rotate, scroll to zoom</span></p>
+  </div>
+
+  <nav class="solar-hub__labels" aria-label="Category links">
+    {worlds.map((world) => (
+      <a
+        class="solar-label"
+        href={world.href}
+        data-solar-label={world.key}
+        style={`--planet:${world.color}`}
+      >
+        <span>{world.label}</span>
+        <small>{world.copy}</small>
+      </a>
+    ))}
+  </nav>
+
+  <div class="solar-hub__controls" aria-hidden="true">
+    <span>⌂</span><span>▶</span><span>☰</span><span>⌕</span><span>◷</span><span>☾</span>
+  </div>
+
+  <script type="application/json" data-solar-worlds set:html={JSON.stringify(worlds)} />
+</section>
+
+<script>
+  import * as THREE from 'https://esm.sh/three@0.181.2';
+
+  const hub = document.querySelector('[data-solar-hub]');
+  if (hub) {
+    const canvas = hub.querySelector('[data-solar-canvas]');
+    const labels = Array.from(hub.querySelectorAll('[data-solar-label]'));
+    const time = hub.querySelector('[data-solar-time]');
+    const worlds = JSON.parse(hub.querySelector('[data-solar-worlds]')?.textContent || '[]');
+    const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reduce = reduceQuery.matches;
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(46, innerWidth / innerHeight, 0.1, 80);
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+    renderer.setSize(innerWidth, innerHeight);
+
+    camera.position.set(0, 2.35, 7.2);
+    camera.lookAt(0, 0, 0);
+    scene.add(new THREE.AmbientLight(0x5b78a8, 0.8));
+    const sunLight = new THREE.PointLight(0xffd28a, 42, 28);
+    scene.add(sunLight);
+
+    const root = new THREE.Group();
+    scene.add(root);
+
+    const sun = new THREE.Mesh(
+      new THREE.SphereGeometry(0.42, 48, 48),
+      new THREE.MeshBasicMaterial({ color: 0xfff1c7 })
+    );
+    sun.add(new THREE.PointLight(0xffb24a, 10, 10));
+    root.add(sun);
+
+    const glow = new THREE.Mesh(
+      new THREE.SphereGeometry(0.72, 48, 48),
+      new THREE.MeshBasicMaterial({ color: 0xffa629, transparent: true, opacity: 0.16, blending: THREE.AdditiveBlending })
+    );
+    root.add(glow);
+
+    const planetMeshes = worlds.map((world, index) => {
+      const orbit = new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(Array.from({ length: 241 }, (_, i) => {
+          const a = (i / 240) * Math.PI * 2;
+          return new THREE.Vector3(Math.cos(a) * world.radius, 0, Math.sin(a) * world.radius);
+        })),
+        new THREE.LineBasicMaterial({ color: new THREE.Color(world.color), transparent: true, opacity: index === worlds.length - 1 ? 0.34 : 0.22 })
+      );
+      orbit.rotation.x = Math.PI / 2 + world.tilt;
+      root.add(orbit);
+
+      const mesh = new THREE.Mesh(
+        new THREE.SphereGeometry(world.size, 32, 32),
+        new THREE.MeshStandardMaterial({ color: new THREE.Color(world.color), roughness: 0.34, metalness: 0.18, emissive: new THREE.Color(world.color), emissiveIntensity: 0.2 })
+      );
+      mesh.userData = world;
+      root.add(mesh);
+      return { mesh, orbit, world, angle: index * 1.22 + 0.4 };
+    });
+
+    const starCount = innerWidth < 720 ? 750 : 1500;
+    const positions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      const r = 8 + Math.random() * 28;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = r * Math.cos(phi);
+    }
+    const stars = new THREE.Points(
+      new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(positions, 3)),
+      new THREE.PointsMaterial({ color: 0xffffff, size: 0.018, transparent: true, opacity: 0.72 })
+    );
+    scene.add(stars);
+
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2(-10, -10);
+    const targetRotation = { x: -0.7, y: -0.35 };
+    const currentRotation = { x: -0.7, y: -0.35 };
+    let zoom = 7.2;
+    let dragging = false;
+    let last = { x: 0, y: 0 };
+
+    const updatePointer = (event) => {
+      pointer.x = (event.clientX / innerWidth) * 2 - 1;
+      pointer.y = -(event.clientY / innerHeight) * 2 + 1;
+    };
+    window.addEventListener('pointerdown', (event) => { dragging = true; last = { x: event.clientX, y: event.clientY }; updatePointer(event); });
+    window.addEventListener('pointerup', () => { dragging = false; });
+    window.addEventListener('pointermove', (event) => {
+      updatePointer(event);
+      if (!dragging || reduce) return;
+      targetRotation.y += (event.clientX - last.x) * 0.004;
+      targetRotation.x += (event.clientY - last.y) * 0.003;
+      targetRotation.x = Math.max(-1.25, Math.min(0.05, targetRotation.x));
+      last = { x: event.clientX, y: event.clientY };
+    }, { passive: true });
+    window.addEventListener('wheel', (event) => {
+      if (!hub.contains(event.target)) return;
+      zoom = Math.max(4.7, Math.min(10.5, zoom + event.deltaY * 0.002));
+    }, { passive: true });
+
+    function projectLabels() {
+      planetMeshes.forEach(({ mesh, world }) => {
+        const label = labels.find((item) => item.dataset.solarLabel === world.key);
+        if (!label) return;
+        const position = mesh.position.clone().project(camera);
+        const x = (position.x * 0.5 + 0.5) * innerWidth;
+        const y = (-position.y * 0.5 + 0.5) * innerHeight;
+        const visible = position.z < 1;
+        label.style.transform = `translate3d(${x}px, ${y}px, 0) translate(14px, -50%)`;
+        label.style.opacity = visible ? '1' : '0';
+      });
+    }
+
+    const clock = new THREE.Clock();
+    function animate() {
+      const elapsed = clock.getElapsedTime();
+      if (!reduce) {
+        currentRotation.x += (targetRotation.x - currentRotation.x) * 0.055;
+        currentRotation.y += (targetRotation.y - currentRotation.y) * 0.055;
+        root.rotation.x = currentRotation.x;
+        root.rotation.y = currentRotation.y;
+        stars.rotation.y = elapsed * 0.004;
+        sun.scale.setScalar(1 + Math.sin(elapsed * 2.4) * 0.025);
+        glow.scale.setScalar(1 + Math.sin(elapsed * 1.6) * 0.08);
+      }
+      camera.position.z += (zoom - camera.position.z) * 0.06;
+      camera.lookAt(0, 0, 0);
+      planetMeshes.forEach((entry) => {
+        if (!reduce) entry.angle += entry.world.speed * 0.01;
+        const { radius, tilt } = entry.world;
+        entry.mesh.position.set(Math.cos(entry.angle) * radius, Math.sin(tilt) * Math.sin(entry.angle) * radius, Math.sin(entry.angle) * radius);
+        entry.mesh.rotation.y = elapsed * 0.6;
+      });
+      raycaster.setFromCamera(pointer, camera);
+      const hit = raycaster.intersectObjects(planetMeshes.map((p) => p.mesh))[0]?.object?.userData?.key;
+      labels.forEach((label) => label.classList.toggle('is-active', label.dataset.solarLabel === hit));
+      projectLabels();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    setInterval(() => {
+      if (time) time.textContent = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/London' }).format(new Date());
+    }, 1000);
+
+    reduceQuery.addEventListener?.('change', (event) => { reduce = event.matches; });
+    window.addEventListener('resize', () => {
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+      renderer.setPixelRatio(Math.min(devicePixelRatio, innerWidth < 720 ? 1.25 : 1.75));
+    });
+  }
+</script>
