@@ -1,0 +1,149 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Admin | Duplicate Remove" description="Admin tools for credit row maintenance.">
+  <section class="admin-shell" aria-labelledby="admin-title">
+    <div class="admin-card">
+      <p class="eyebrow">Admin Tools</p>
+      <h1 id="admin-title">Credit Rows Duplicate Remove</h1>
+      <p class="admin-copy">
+        CSV bekleme alanı yerine bu buton, Supabase üzerinde aynı müşteri, fatura,
+        ürün, adet ve birim fiyat bilgilerine sahip tekrar eden kayıtları temizler.
+      </p>
+
+      <div class="duplicate-action" data-duplicate-remove>
+        <button class="duplicate-button" type="button" data-duplicate-button>
+          Duplicate Remove
+        </button>
+        <p class="duplicate-status" data-duplicate-status role="status" aria-live="polite">
+          Duplicate Remove işlemini başlatmak için butona tıklayın.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  const duplicateArea = document.querySelector("[data-duplicate-remove]");
+  const duplicateButton = duplicateArea?.querySelector("[data-duplicate-button]");
+  const duplicateStatus = duplicateArea?.querySelector("[data-duplicate-status]");
+
+  duplicateButton?.addEventListener("click", async () => {
+    if (!(duplicateButton instanceof HTMLButtonElement) || !(duplicateStatus instanceof HTMLElement)) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "credit_rows tablosundaki duplicate kayıtlar silinecek. Devam etmek istiyor musunuz?",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    duplicateButton.disabled = true;
+    duplicateStatus.textContent = "Duplicate Remove işlemi çalışıyor...";
+
+    try {
+      const response = await fetch("/api/remove-duplicate-credit-rows", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result?.error || "Duplicate Remove işlemi tamamlanamadı.");
+      }
+
+      duplicateStatus.textContent = `${result.deletedCount ?? 0} duplicate kayıt silindi.`;
+    } catch (error) {
+      duplicateStatus.textContent = error instanceof Error ? error.message : "Beklenmeyen bir hata oluştu.";
+    } finally {
+      duplicateButton.disabled = false;
+    }
+  });
+</script>
+
+<style>
+  .admin-shell {
+    min-height: 72vh;
+    display: grid;
+    place-items: center;
+    padding: 48px 18px;
+    background: radial-gradient(circle at top, rgba(97, 116, 255, 0.16), transparent 34%), #f6f6f8;
+  }
+
+  .admin-card {
+    width: min(100%, 720px);
+    padding: clamp(28px, 5vw, 48px);
+    border: 1px solid rgba(11, 11, 15, 0.08);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: 0 24px 80px rgba(11, 11, 15, 0.12);
+  }
+
+  .eyebrow {
+    margin: 0 0 10px;
+    color: rgba(11, 11, 15, 0.52);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  h1 {
+    margin: 0;
+    color: #0b0b0f;
+    font-size: clamp(34px, 6vw, 62px);
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+  }
+
+  .admin-copy {
+    max-width: 58ch;
+    margin: 20px 0 0;
+    color: rgba(11, 11, 15, 0.62);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .duplicate-action {
+    display: grid;
+    gap: 14px;
+    margin-top: 30px;
+    padding: 18px;
+    border-radius: 22px;
+    background: rgba(11, 11, 15, 0.04);
+  }
+
+  .duplicate-button {
+    width: fit-content;
+    border: 0;
+    border-radius: 999px;
+    padding: 14px 22px;
+    color: white;
+    background: #0b0b0f;
+    font: inherit;
+    font-weight: 800;
+    cursor: pointer;
+    transition: transform 0.16s ease, opacity 0.16s ease;
+  }
+
+  .duplicate-button:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+
+  .duplicate-button:disabled {
+    cursor: wait;
+    opacity: 0.58;
+  }
+
+  .duplicate-status {
+    margin: 0;
+    color: rgba(11, 11, 15, 0.62);
+    font-size: 14px;
+  }
+</style>
