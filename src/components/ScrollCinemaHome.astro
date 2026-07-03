@@ -26,17 +26,11 @@ const nodes = [
     <div class="scroll-cinema__vignette" aria-hidden="true"></div>
     <div class="scroll-cinema__grain" aria-hidden="true"></div>
 
-    <div class="scroll-cinema__copy">
-      <p class="scroll-cinema__eyebrow">Cosmic editorial atlas</p>
-      <h1>Knowledge, arranged like a night sky.</h1>
-      <p class="scroll-cinema__lede">
-        A quiet map for science, history, art, future signals, and field notes — built for slow attention and sharp curiosity.
-      </p>
-    </div>
+    <a class="scroll-cinema__brand" href="/" aria-label="UGURCAN home">UGURCAN</a>
 
-    <nav class="scroll-cinema__nodes" aria-label="Primary sections">
+    <nav class="scroll-cinema__nodes" aria-label="Primary sections" data-orbit-nav>
       {nodes.map((node) => (
-        <a class:list={["scroll-cinema__node", `scroll-cinema__node--${node.className}`]} href={node.href} aria-label={`Open ${node.title}`}>
+        <a class:list={["scroll-cinema__node", `scroll-cinema__node--${node.className}`]} href={node.href} aria-label={`Open ${node.title}`} data-orbit-node>
           <span class="scroll-cinema__node-index">{node.index}</span>
           <span class="scroll-cinema__node-text">
             <span class="scroll-cinema__node-title">{node.title}</span>
@@ -62,6 +56,7 @@ const nodes = [
     const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const finePointerQuery = window.matchMedia('(pointer: fine) and (min-width: 900px)');
+    const orbitNodes = Array.from(scene.querySelectorAll('[data-orbit-node]'));
     const frameSets = {
       desktop: { dir: '/frames/desktop', count: 160, warm: 10 },
       tablet: { dir: '/frames/tablet', count: 110, warm: 7 },
@@ -157,11 +152,36 @@ const nodes = [
       scene.style.setProperty('--progress', progress.toFixed(4));
       scene.style.setProperty('--scene-scale', lerp(1, 1.08, progress).toFixed(4));
       scene.style.setProperty('--scene-tilt', `${lerp(-.4, .7, progress).toFixed(3)}deg`);
-      scene.style.setProperty('--node-rise', `${lerp(22, -18, progress).toFixed(2)}px`);
       scene.style.setProperty('--gold-opacity', lerp(.42, .76, progress).toFixed(4));
       scene.style.setProperty('--depth-opacity', lerp(.25, .56, progress).toFixed(4));
       scene.style.setProperty('--mx', mouseX.toFixed(4));
       scene.style.setProperty('--my', mouseY.toFixed(4));
+    }
+
+    function updateOrbitNodes(progress) {
+      const nodeCount = orbitNodes.length;
+      if (!nodeCount) return;
+
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const radiusX = Math.min(viewportWidth * (mode === 'mobile' ? .38 : .34), 520);
+      const radiusY = Math.min(viewportHeight * (mode === 'mobile' ? .28 : .31), 290);
+      const rotation = progress * Math.PI * 2;
+
+      orbitNodes.forEach((node, index) => {
+        const baseAngle = (index / nodeCount) * Math.PI * 2;
+        const angle = baseAngle + rotation;
+        const x = Math.cos(angle) * radiusX;
+        const y = Math.sin(angle) * radiusY;
+        const depth = (Math.sin(angle) + 1) / 2;
+
+        node.style.setProperty('--orbit-x', `${x.toFixed(2)}px`);
+        node.style.setProperty('--orbit-y', `${y.toFixed(2)}px`);
+        node.style.setProperty('--orbit-scale', lerp(.72, 1.18, depth).toFixed(4));
+        node.style.setProperty('--orbit-opacity', lerp(.44, 1, depth).toFixed(4));
+        node.style.setProperty('--orbit-blur', `${lerp(1.6, 0, depth).toFixed(2)}px`);
+        node.style.setProperty('--orbit-z', String(Math.round(20 + depth * 80)));
+      });
     }
 
     function measure() {
@@ -175,6 +195,7 @@ const nodes = [
     function tick() {
       raf = 0;
       current = reduce ? target : lerp(current, target, mode === 'mobile' ? .18 : .1);
+      updateOrbitNodes(current);
       paint();
       if (Math.abs(current - target) > .001) raf = requestAnimationFrame(tick);
     }
@@ -212,6 +233,7 @@ const nodes = [
       if (!raf) raf = requestAnimationFrame(tick);
     }
 
+    updateOrbitNodes(0);
     discoverAndPreload(getMode()).then(measure);
     window.addEventListener('scroll', measure, { passive: true });
     window.addEventListener('resize', () => {
@@ -230,7 +252,6 @@ const nodes = [
     --progress: 0;
     --scene-scale: 1;
     --scene-tilt: 0deg;
-    --node-rise: 22px;
     --gold-opacity: .42;
     --depth-opacity: .25;
     --mx: 0;
@@ -358,66 +379,77 @@ const nodes = [
     mix-blend-mode: overlay;
   }
 
-  .scroll-cinema__copy {
-    position: relative;
-    z-index: 10;
-    max-width: 760px;
-    text-align: center;
-    transform: translate3d(calc(var(--mx) * -8px), calc(var(--my) * -6px - var(--progress) * 34px), 0);
+  .scroll-cinema__brand {
+    position: absolute;
+    z-index: 12;
+    left: 50%;
+    top: 50%;
+    color: rgba(255, 247, 223, .9);
+    font-size: clamp(13px, 1.5vw, 18px);
+    font-weight: 850;
+    letter-spacing: .42em;
+    text-decoration: none;
+    text-shadow: 0 0 30px rgba(232, 190, 103, .55), 0 18px 60px rgba(0,0,0,.8);
+    transform: translate3d(calc(-50% + var(--mx) * -5px), calc(-50% + var(--my) * -4px), 0);
   }
 
-  .scroll-cinema__eyebrow {
-    margin: 0 0 18px;
-    color: #e9c77f;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .28em;
-    text-transform: uppercase;
-  }
-
-  .scroll-cinema h1 {
-    margin: 0;
-    font-size: clamp(46px, 8.4vw, 128px);
-    line-height: .88;
-    letter-spacing: -.075em;
-    text-wrap: balance;
-    text-shadow: 0 24px 90px rgba(0,0,0,.7);
-  }
-
-  .scroll-cinema__lede {
-    max-width: 590px;
-    margin: 24px auto 0;
-    color: rgba(255, 247, 223, .72);
-    font-size: clamp(15px, 1.6vw, 19px);
-    line-height: 1.7;
+  .scroll-cinema__brand::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: clamp(140px, 19vw, 240px);
+    aspect-ratio: 1;
+    border: 1px solid rgba(232, 191, 111, .22);
+    border-radius: 999px;
+    pointer-events: none;
+    transform: translate(-50%, -50%) rotateX(66deg);
+    box-shadow: inset 0 0 34px rgba(232, 191, 111, .08), 0 0 70px rgba(232, 191, 111, .08);
   }
 
   .scroll-cinema__nodes {
     position: absolute;
     z-index: 20;
-    inset-inline: clamp(16px, 4vw, 54px);
-    bottom: clamp(22px, 5vh, 58px);
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 12px;
-    transform: translateY(var(--node-rise));
+    inset: 0;
+    pointer-events: none;
+    perspective: 1100px;
+    transform-style: preserve-3d;
   }
 
   .scroll-cinema__node {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
+    --orbit-x: 0px;
+    --orbit-y: 0px;
+    --orbit-scale: 1;
+    --orbit-opacity: 1;
+    --orbit-blur: 0px;
+    --orbit-z: 20;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: var(--orbit-z);
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
-    min-height: 78px;
-    padding: 16px;
+    gap: 11px;
+    min-width: clamp(132px, 15vw, 184px);
+    min-height: 56px;
+    padding: 12px 15px;
     color: #fff7df;
     text-decoration: none;
     border: 1px solid rgba(255,255,255,.14);
-    border-radius: 22px;
+    border-radius: 999px;
     background: linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.045));
     box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 20px 70px rgba(0,0,0,.24);
+    opacity: var(--orbit-opacity);
+    filter: blur(var(--orbit-blur)) brightness(calc(.72 + var(--orbit-opacity) * .38));
     backdrop-filter: blur(22px) saturate(130%);
-    transition: transform .22s ease, border-color .22s ease, background .22s ease, box-shadow .22s ease;
+    pointer-events: auto;
+    transform:
+      translate(-50%, -50%)
+      translate3d(var(--orbit-x), var(--orbit-y), 0)
+      scale(var(--orbit-scale));
+    transform-origin: center;
+    transition: border-color .22s ease, background .22s ease, box-shadow .22s ease, filter .22s ease;
+    will-change: transform, opacity, filter;
   }
 
   .scroll-cinema__node::before {
@@ -433,10 +465,10 @@ const nodes = [
 
   .scroll-cinema__node:hover,
   .scroll-cinema__node:focus-visible {
-    transform: translateY(-6px);
-    border-color: rgba(235, 196, 119, .46);
-    background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.07));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 28px 86px rgba(218, 169, 78, .16);
+    border-color: rgba(235, 196, 119, .52);
+    background: linear-gradient(135deg, rgba(255,255,255,.2), rgba(255,255,255,.075));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 28px 86px rgba(218, 169, 78, .2);
+    filter: blur(var(--orbit-blur)) brightness(1.14);
     outline: none;
   }
 
@@ -450,7 +482,12 @@ const nodes = [
     letter-spacing: .16em;
   }
 
-  .scroll-cinema__node-text { display: grid; gap: 4px; }
+  .scroll-cinema__node-text {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
 
   .scroll-cinema__node-title {
     font-size: 15px;
@@ -462,6 +499,7 @@ const nodes = [
     color: rgba(255, 247, 223, .52);
     font-size: 11px;
     letter-spacing: .04em;
+    white-space: nowrap;
   }
 
   .scroll-cinema__node-arrow { color: rgba(233, 199, 127, .8); }
@@ -487,16 +525,8 @@ const nodes = [
 
   @media (max-width: 900px) {
     .scroll-cinema { min-height: 250vh; }
-    .scroll-cinema__sticky { align-items: start; padding-top: 108px; }
-    .scroll-cinema h1 { font-size: clamp(42px, 14vw, 82px); }
-    .scroll-cinema__copy { text-align: left; margin-right: auto; }
-    .scroll-cinema__lede { margin-left: 0; max-width: 480px; }
-    .scroll-cinema__nodes {
-      grid-template-columns: 1fr;
-      inset-inline: 16px;
-      bottom: 18px;
-      gap: 8px;
-    }
+    .scroll-cinema__sticky { padding: 72px 16px 28px; }
+    .scroll-cinema__brand { font-size: 12px; letter-spacing: .34em; }
     .scroll-cinema__node {
       min-height: 56px;
       padding: 12px 14px;
@@ -510,10 +540,8 @@ const nodes = [
   @media (prefers-reduced-motion: reduce) {
     .scroll-cinema { min-height: 100svh; }
     .scroll-cinema__sticky,
-    .scroll-cinema__copy,
     .scroll-cinema__canvas,
     .scroll-cinema__fallback img,
-    .scroll-cinema__nodes,
     .scroll-cinema__stars { transform: none; }
     .scroll-cinema__node { transition: none; }
   }
