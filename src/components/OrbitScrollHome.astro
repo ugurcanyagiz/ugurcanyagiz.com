@@ -1,14 +1,14 @@
 ---
-const chapters = [
-  { title: "Science", href: "/science", text: "Models, evidence, and the edge of what we know." },
-  { title: "History", href: "/history", text: "Civilizations, patterns, power, memory, and change." },
-  { title: "Art", href: "/art", text: "Taste, composition, craft, and the language of feeling." },
-  { title: "Future", href: "/future", text: "AI, systems, signals, risk, and grounded optimism." },
-  { title: "JLOG", href: "/blog", text: "Personal notes, essays, observations, and clear thinking." },
+const nodes = [
+  { title: "Science", href: "/science", index: "01", className: "science" },
+  { title: "History", href: "/history", index: "02", className: "history" },
+  { title: "Art", href: "/art", index: "03", className: "art" },
+  { title: "Future", href: "/future", index: "04", className: "future" },
+  { title: "JLOG", href: "/blog", index: "05", className: "jlog" },
 ];
 ---
 
-<section class="orbit-scroll-home" data-orbit-scroll-home aria-label="Ugurcan Yagiz homepage">
+<section class="orbit-scroll-home" data-orbit-scroll-home aria-label="UGURCAN homepage orbit scene">
   <div class="orbit-scroll-home__sticky">
     <picture class="orbit-scroll-home__picture" aria-hidden="true">
       <source srcset="/images/orbit-bg-mobile.webp" media="(orientation: portrait), (max-width: 640px)" />
@@ -25,44 +25,28 @@ const chapters = [
     </picture>
 
     <div class="orbit-scroll-home__gold" aria-hidden="true"></div>
-    <div class="orbit-scroll-home__navy" aria-hidden="true"></div>
+    <div class="orbit-scroll-home__depth" aria-hidden="true"></div>
     <div class="orbit-scroll-home__vignette" aria-hidden="true"></div>
     <div class="orbit-scroll-home__grain" aria-hidden="true"></div>
-    <div class="orbit-scroll-home__particles" aria-hidden="true">
-      <span></span><span></span><span></span><span></span><span></span><span></span>
+
+    <div class="orbit-scroll-home__brand" aria-hidden="true">
+      <span>UGURCAN</span>
     </div>
 
-    <div class="orbit-scroll-home__content">
-      <div class="orbit-scroll-home__hero">
-        <p class="orbit-scroll-home__eyebrow">Knowledge Atlas · Essays & Observations</p>
-        <h1>UGURCAN YAGIZ</h1>
-        <p class="orbit-scroll-home__lede">
-          Science, history, art, and the future — told with clarity, wonder, and evidence.
-        </p>
-        <div class="orbit-scroll-home__actions" aria-label="Featured links">
-          <a class="orbit-scroll-home__button orbit-scroll-home__button--primary" href="/science">Explore Science <span aria-hidden="true">→</span></a>
-          <a class="orbit-scroll-home__button" href="/blog">Read JLOG <span aria-hidden="true">→</span></a>
-        </div>
-      </div>
+    <nav class="orbit-scroll-home__nodes" aria-label="Primary sections">
+      <div class="orbit-scroll-home__ring" aria-hidden="true"></div>
+      {nodes.map((node) => (
+        <a class:list={["orbit-scroll-home__node", `orbit-scroll-home__node--${node.className}`]} href={node.href}>
+          <span class="orbit-scroll-home__node-index">{node.index}</span>
+          <span class="orbit-scroll-home__node-title">{node.title}</span>
+          <span class="orbit-scroll-home__node-mark" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </nav>
 
-      <div class="orbit-scroll-home__chapters" aria-label="Explore chapters">
-        <p class="orbit-scroll-home__eyebrow">Chapters</p>
-        <h2>Follow the thread across disciplines.</h2>
-        <div class="orbit-scroll-home__grid">
-          {chapters.map((chapter) => (
-            <a class="orbit-scroll-home__card" href={chapter.href}>
-              <span class="orbit-scroll-home__card-kicker">Chapter</span>
-              <strong>{chapter.title}</strong>
-              <p>{chapter.text}</p>
-              <span class="orbit-scroll-home__arrow" aria-hidden="true">→</span>
-            </a>
-          ))}
-        </div>
-        <p class="orbit-scroll-home__closing">
-          A quiet atlas for curious minds — where science, memory, culture, and tomorrow meet.
-        </p>
-      </div>
-    </div>
+    <p class="orbit-scroll-home__line">
+      Science, history, art, and the future — told with clarity, wonder, and evidence.
+    </p>
   </div>
 </section>
 
@@ -77,39 +61,37 @@ const chapters = [
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
     const lerp = (start, end, amount) => start + (end - start) * amount;
 
-    function setFinalLayout() {
-      scene.style.setProperty('--progress', '1');
-      scene.style.setProperty('--orbit-scale', '1.12');
-      scene.style.setProperty('--orbit-y', '-3vh');
+    function setReducedLayout() {
+      scene.style.setProperty('--progress', '0');
+      scene.style.setProperty('--orbit-scale', '1.06');
+      scene.style.setProperty('--orbit-y', '0px');
       scene.style.setProperty('--orbit-rotate', '0deg');
-      scene.style.setProperty('--hero-opacity', '1');
-      scene.style.setProperty('--hero-y', '0px');
-      scene.style.setProperty('--chapters-opacity', '1');
-      scene.style.setProperty('--chapters-y', '0px');
+      scene.style.setProperty('--scene-brightness', '.98');
+      scene.style.setProperty('--scene-depth', '.42');
+      scene.style.setProperty('--node-shift', '0px');
+      scene.style.setProperty('--node-fade', '1');
     }
 
     function update() {
       ticking = false;
 
       if (reduce) {
-        setFinalLayout();
+        setReducedLayout();
         return;
       }
 
       const rect = scene.getBoundingClientRect();
       const scrollable = Math.max(1, rect.height - window.innerHeight);
       const progress = clamp(-rect.top / scrollable, 0, 1);
-      const heroExit = clamp(progress / 0.44, 0, 1);
-      const chaptersIn = clamp((progress - 0.30) / 0.42, 0, 1);
 
       scene.style.setProperty('--progress', progress.toFixed(4));
-      scene.style.setProperty('--orbit-scale', lerp(1.04, 1.18, progress).toFixed(4));
-      scene.style.setProperty('--orbit-y', `${lerp(0, -7, progress).toFixed(2)}vh`);
-      scene.style.setProperty('--orbit-rotate', `${lerp(-0.6, 1.35, progress).toFixed(3)}deg`);
-      scene.style.setProperty('--hero-opacity', (1 - heroExit).toFixed(4));
-      scene.style.setProperty('--hero-y', `${lerp(0, -54, heroExit).toFixed(2)}px`);
-      scene.style.setProperty('--chapters-opacity', chaptersIn.toFixed(4));
-      scene.style.setProperty('--chapters-y', `${lerp(44, 0, chaptersIn).toFixed(2)}px`);
+      scene.style.setProperty('--orbit-scale', lerp(1.02, 1.16, progress).toFixed(4));
+      scene.style.setProperty('--orbit-y', `${lerp(0, -40, progress).toFixed(2)}px`);
+      scene.style.setProperty('--orbit-rotate', `${lerp(0, 1.5, progress).toFixed(3)}deg`);
+      scene.style.setProperty('--scene-brightness', lerp(.98, 1.06, progress).toFixed(4));
+      scene.style.setProperty('--scene-depth', lerp(.34, .52, progress).toFixed(4));
+      scene.style.setProperty('--node-shift', `${lerp(0, -24, progress).toFixed(2)}px`);
+      scene.style.setProperty('--node-fade', lerp(1, .74, progress).toFixed(4));
     }
 
     function requestUpdate() {
