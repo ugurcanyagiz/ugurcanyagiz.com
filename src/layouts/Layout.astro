@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
 
-const { title = "UGURCAN", description = "", orbitPreload = false } = Astro.props;
+const { title = "UGURCAN", description = "", orbitPreload = false, theme = "light" } = Astro.props;
 
 const year = new Date().getFullYear();
 const instagramUrl = "https://instagram.com/john.yagiz";
@@ -25,7 +25,7 @@ const mailtoUrl = `mailto:${email}`;
     )}
   </head>
 
-  <body>
+  <body class:list={[theme === "dark" && "theme-dark"]}>
     <!-- TOP BRAND BAR (sticky) -->
     <header class="topbar">
       <div class="topbar-inner">

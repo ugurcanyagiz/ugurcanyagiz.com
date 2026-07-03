@@ -1,12 +1,13 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import OrbitCinematicBackground from "../components/OrbitCinematicBackground.astro";
-import OrbitNavigation from "../components/OrbitNavigation.astro";
+import OrbitScrollHome from "../components/OrbitScrollHome.astro";
 ---
 
-<Layout title="UGURCAN" description="A cinematic orbit navigation for science, history, art, future, and personal notes." orbitPreload>
-  <main class="orbit-home" aria-label="Homepage">
-    <OrbitCinematicBackground />
-    <OrbitNavigation />
-  </main>
+<Layout
+  title="UGURCAN YAGIZ"
+  description="A quiet atlas for science, history, art, future, and personal notes."
+  orbitPreload
+  theme="dark"
+>
+  <OrbitScrollHome />
 </Layout>
