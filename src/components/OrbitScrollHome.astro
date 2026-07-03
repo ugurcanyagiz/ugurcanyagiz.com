@@ -1,0 +1,130 @@
+---
+const chapters = [
+  { title: "Science", href: "/science", text: "Models, evidence, and the edge of what we know." },
+  { title: "History", href: "/history", text: "Civilizations, patterns, power, memory, and change." },
+  { title: "Art", href: "/art", text: "Taste, composition, craft, and the language of feeling." },
+  { title: "Future", href: "/future", text: "AI, systems, signals, risk, and grounded optimism." },
+  { title: "JLOG", href: "/blog", text: "Personal notes, essays, observations, and clear thinking." },
+];
+---
+
+<section class="orbit-scroll-home" data-orbit-scroll-home aria-label="Ugurcan Yagiz homepage">
+  <div class="orbit-scroll-home__sticky">
+    <picture class="orbit-scroll-home__picture" aria-hidden="true">
+      <source srcset="/images/orbit-bg-mobile.webp" media="(orientation: portrait), (max-width: 640px)" />
+      <source srcset="/images/orbit-bg-tablet.webp" media="(max-width: 1180px)" />
+      <img
+        class="orbit-scroll-home__image"
+        src="/images/orbit-bg-desktop.webp"
+        alt=""
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        draggable="false"
+      />
+    </picture>
+
+    <div class="orbit-scroll-home__gold" aria-hidden="true"></div>
+    <div class="orbit-scroll-home__navy" aria-hidden="true"></div>
+    <div class="orbit-scroll-home__vignette" aria-hidden="true"></div>
+    <div class="orbit-scroll-home__grain" aria-hidden="true"></div>
+    <div class="orbit-scroll-home__particles" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="orbit-scroll-home__content">
+      <div class="orbit-scroll-home__hero">
+        <p class="orbit-scroll-home__eyebrow">Knowledge Atlas · Essays & Observations</p>
+        <h1>UGURCAN YAGIZ</h1>
+        <p class="orbit-scroll-home__lede">
+          Science, history, art, and the future — told with clarity, wonder, and evidence.
+        </p>
+        <div class="orbit-scroll-home__actions" aria-label="Featured links">
+          <a class="orbit-scroll-home__button orbit-scroll-home__button--primary" href="/science">Explore Science <span aria-hidden="true">→</span></a>
+          <a class="orbit-scroll-home__button" href="/blog">Read JLOG <span aria-hidden="true">→</span></a>
+        </div>
+      </div>
+
+      <div class="orbit-scroll-home__chapters" aria-label="Explore chapters">
+        <p class="orbit-scroll-home__eyebrow">Chapters</p>
+        <h2>Follow the thread across disciplines.</h2>
+        <div class="orbit-scroll-home__grid">
+          {chapters.map((chapter) => (
+            <a class="orbit-scroll-home__card" href={chapter.href}>
+              <span class="orbit-scroll-home__card-kicker">Chapter</span>
+              <strong>{chapter.title}</strong>
+              <p>{chapter.text}</p>
+              <span class="orbit-scroll-home__arrow" aria-hidden="true">→</span>
+            </a>
+          ))}
+        </div>
+        <p class="orbit-scroll-home__closing">
+          A quiet atlas for curious minds — where science, memory, culture, and tomorrow meet.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const scenes = document.querySelectorAll('[data-orbit-scroll-home]');
+
+  scenes.forEach((scene) => {
+    const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reduce = reduceQuery.matches;
+    let ticking = false;
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+    const lerp = (start, end, amount) => start + (end - start) * amount;
+
+    function setFinalLayout() {
+      scene.style.setProperty('--progress', '1');
+      scene.style.setProperty('--orbit-scale', '1.12');
+      scene.style.setProperty('--orbit-y', '-3vh');
+      scene.style.setProperty('--orbit-rotate', '0deg');
+      scene.style.setProperty('--hero-opacity', '1');
+      scene.style.setProperty('--hero-y', '0px');
+      scene.style.setProperty('--chapters-opacity', '1');
+      scene.style.setProperty('--chapters-y', '0px');
+    }
+
+    function update() {
+      ticking = false;
+
+      if (reduce) {
+        setFinalLayout();
+        return;
+      }
+
+      const rect = scene.getBoundingClientRect();
+      const scrollable = Math.max(1, rect.height - window.innerHeight);
+      const progress = clamp(-rect.top / scrollable, 0, 1);
+      const heroExit = clamp(progress / 0.44, 0, 1);
+      const chaptersIn = clamp((progress - 0.30) / 0.42, 0, 1);
+
+      scene.style.setProperty('--progress', progress.toFixed(4));
+      scene.style.setProperty('--orbit-scale', lerp(1.04, 1.18, progress).toFixed(4));
+      scene.style.setProperty('--orbit-y', `${lerp(0, -7, progress).toFixed(2)}vh`);
+      scene.style.setProperty('--orbit-rotate', `${lerp(-0.6, 1.35, progress).toFixed(3)}deg`);
+      scene.style.setProperty('--hero-opacity', (1 - heroExit).toFixed(4));
+      scene.style.setProperty('--hero-y', `${lerp(0, -54, heroExit).toFixed(2)}px`);
+      scene.style.setProperty('--chapters-opacity', chaptersIn.toFixed(4));
+      scene.style.setProperty('--chapters-y', `${lerp(44, 0, chaptersIn).toFixed(2)}px`);
+    }
+
+    function requestUpdate() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }
+
+    update();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate, { passive: true });
+    reduceQuery.addEventListener?.('change', (event) => {
+      reduce = event.matches;
+      requestUpdate();
+    });
+  });
+</script>
