@@ -43,8 +43,7 @@ const nodes = [
       ))}
     </nav>
 
-    <p class="atlas__phase" data-atlas-phase aria-live="polite">Quiet cosmic core</p>
-    <div class="atlas__meter" aria-hidden="true"><span></span></div>
+    <p class="atlas__phase" data-atlas-phase>COSMIC KNOWLEDGE FIELD</p>
   </div>
 </section>
 
@@ -55,9 +54,7 @@ const nodes = [
     const canvas = atlas.querySelector('[data-atlas-canvas]');
     const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
     const nodes = Array.from(atlas.querySelectorAll('[data-atlas-node]'));
-    const phaseLabel = atlas.querySelector('[data-atlas-phase]');
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const phases = ['Quiet cosmic core', 'Science: particle field', 'History: orbital time', 'Art: organic harmonics', 'Future: unified atlas'];
 
     let width = 1;
     let height = 1;
@@ -76,11 +73,6 @@ const nodes = [
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
     const lerp = (a, b, t) => a + (b - a) * t;
-    const smooth = (edge0, edge1, x) => {
-      const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
-      return t * t * (3 - 2 * t);
-    };
-
     function wake() {
       if (!raf) raf = requestAnimationFrame(draw);
     }
@@ -132,20 +124,30 @@ const nodes = [
       inputRotationCurrent = reduce ? 0 : lerp(inputRotationCurrent, inputRotationTarget, isMobile ? .18 : .11);
       virtualPhaseCurrent = reduce ? .18 : lerp(virtualPhaseCurrent, virtualPhaseTarget, isMobile ? .12 : .08);
 
-      const progress = reduce ? .18 : ((virtualPhaseCurrent % 1) + 1) % 1;
-      const totalRotation = reduce ? 0 : autoRotation + inputRotationCurrent;
+      const backgroundRotation = reduce ? 0 : autoRotation + inputRotationCurrent;
+      const navRotation = reduce ? 0 : inputRotationCurrent;
+      const phase = reduce ? .18 : virtualPhaseCurrent + autoRotation * .08;
+      const displayPhase = reduce ? .18 : virtualPhaseCurrent;
+      const cycle = phase * Math.PI * 2;
 
-      atlas.style.setProperty('--draw-progress', progress.toFixed(4));
-      atlas.style.setProperty('--progress', progress.toFixed(4));
-      atlas.style.setProperty('--scroll-rotation', (totalRotation * 180 / Math.PI).toFixed(4));
+      const scienceGlow = clamp(.45 + .25 * Math.sin(cycle + 0), 0, 1);
+      const historyGlow = clamp(.42 + .22 * Math.sin(cycle + Math.PI * .5), 0, 1);
+      const artGlow = clamp(.46 + .24 * Math.sin(cycle + Math.PI), 0, 1);
+      const futureGlow = clamp(.44 + .23 * Math.sin(cycle + Math.PI * 1.5), 0, 1);
+
+      atlas.style.setProperty('--science-glow', scienceGlow.toFixed(4));
+      atlas.style.setProperty('--history-glow', historyGlow.toFixed(4));
+      atlas.style.setProperty('--art-glow', artGlow.toFixed(4));
+      atlas.style.setProperty('--future-glow', futureGlow.toFixed(4));
+      atlas.style.setProperty('--scroll-rotation', (backgroundRotation * 180 / Math.PI).toFixed(4));
 
       const cx = width * .5;
       const cy = height * .5;
       const min = Math.min(width, height);
-      const science = smooth(.16, .38, progress);
-      const history = smooth(.36, .58, progress);
-      const art = smooth(.56, .78, progress);
-      const future = smooth(.76, 1, progress);
+      const science = scienceGlow;
+      const history = historyGlow;
+      const art = artGlow;
+      const future = futureGlow;
 
       ctx.clearRect(0, 0, width, height);
       const bg = ctx.createRadialGradient(cx, cy, min * .04, cx, cy, min * .86);
@@ -166,8 +168,8 @@ const nodes = [
       ctx.restore();
 
       particles.forEach((p) => {
-        const layerPull = lerp(.72, 1.08, progress);
-        const a = p.angle + totalRotation * p.speed + progress * (p.tone % 2 ? 1.7 : -1.25);
+        const layerPull = lerp(.78, 1.08, science);
+        const a = p.angle + backgroundRotation * p.speed + cycle * .18 * (p.tone % 2 ? 1.7 : -1.25);
         const orbit = p.radius * min * .58 * layerPull;
         const x = cx + Math.cos(a) * orbit * (1 + history * .18);
         const y = cy + Math.sin(a) * orbit * (.48 + art * .12);
@@ -179,15 +181,15 @@ const nodes = [
       });
 
       for (let i = 0; i < 6; i += 1) {
-        drawOrbitalRing(cx, cy, min * (.19 + i * .082 + future * .018), min * (.055 + i * .024 + history * .02), totalRotation * (.18 + i * .03) + progress * i, .11 + i * .018 + history * .05, i % 2 ? 'rgba(240,198,111,.88)' : 'rgba(166,213,238,.62)');
+        drawOrbitalRing(cx, cy, min * (.19 + i * .082 + future * .018), min * (.055 + i * .024 + history * .02), backgroundRotation * (.18 + i * .03) + cycle * .08 * i, .11 + i * .018 + history * .05, i % 2 ? 'rgba(240,198,111,.88)' : 'rgba(166,213,238,.62)');
       }
 
       ctx.save();
       ctx.translate(cx, cy);
-      ctx.rotate(totalRotation * .24 + progress * 2.2);
+      ctx.rotate(backgroundRotation * .24 + cycle * .12);
       for (let i = 0; i < 18; i += 1) {
         const a = i / 18 * Math.PI * 2;
-        const r = min * (.15 + Math.sin(i * 1.7 + totalRotation) * .012 + art * .045);
+        const r = min * (.15 + Math.sin(i * 1.7 + backgroundRotation) * .012 + art * .045);
         ctx.beginPath();
         ctx.moveTo(Math.cos(a) * r * .42, Math.sin(a) * r * .42);
         ctx.quadraticCurveTo(Math.cos(a + .55) * r, Math.sin(a + .55) * r, Math.cos(a + 1.15) * r * .72, Math.sin(a + 1.15) * r * .72);
@@ -212,13 +214,11 @@ const nodes = [
       ctx.strokeStyle = `rgba(255, 224, 146, ${.28 + future * .34})`;
       ctx.lineWidth = (1.4 + future * 1.6) * dpr;
       ctx.beginPath();
-      ctx.arc(cx, cy, min * (.05 + future * .08), totalRotation, totalRotation + Math.PI * (1.15 + future));
+      ctx.arc(cx, cy, min * (.05 + future * .08), backgroundRotation, backgroundRotation + Math.PI * (1.15 + future));
       ctx.stroke();
       ctx.restore();
 
-      updateNodes(progress, totalRotation);
-      const phaseIndex = Math.min(4, Math.floor(progress * 5));
-      if (phaseLabel && phaseLabel.textContent !== phases[phaseIndex]) phaseLabel.textContent = phases[phaseIndex];
+      updateNodes(displayPhase, navRotation);
 
       if (!reduce) raf = requestAnimationFrame(draw);
     }
@@ -290,8 +290,10 @@ const nodes = [
 
 <style>
   .atlas {
-    --progress: 0;
-    --draw-progress: 0;
+    --science-glow: .45;
+    --history-glow: .42;
+    --art-glow: .46;
+    --future-glow: .44;
     --scroll-rotation: 0;
     min-height: 100svh;
     height: 100svh;
@@ -342,10 +344,10 @@ const nodes = [
     opacity: 0;
   }
 
-  .atlas__curve--science { opacity: calc(max(0, min(1, (var(--draw-progress) - .18) * 6)) * .36); }
-  .atlas__curve--history { opacity: calc(max(0, min(1, (var(--draw-progress) - .38) * 6)) * .34); }
-  .atlas__curve--art { opacity: calc(max(0, min(1, (var(--draw-progress) - .58) * 6)) * .48); stroke-dasharray: 2 13; }
-  .atlas__curve--future { opacity: calc(max(0, min(1, (var(--draw-progress) - .78) * 7)) * .58); stroke-dasharray: 1 10; }
+  .atlas__curve--science { opacity: calc(var(--science-glow) * .36); }
+  .atlas__curve--history { opacity: calc(var(--history-glow) * .34); }
+  .atlas__curve--art { opacity: calc(var(--art-glow) * .48); stroke-dasharray: 2 13; }
+  .atlas__curve--future { opacity: calc(var(--future-glow) * .58); stroke-dasharray: 1 10; }
 
   .atlas__shade {
     z-index: 5;
@@ -386,7 +388,7 @@ const nodes = [
     border: 1px solid rgba(236, 196, 114, .22);
     border-radius: 50%;
     pointer-events: none;
-    transform: translate(-50%, -50%) rotateX(68deg) rotateZ(calc(var(--scroll-rotation) * 1deg + var(--draw-progress) * 38deg));
+    transform: translate(-50%, -50%) rotateX(68deg) rotateZ(calc(var(--scroll-rotation) * 1deg));
   }
 
   .atlas__core::before { width: clamp(170px, 25vw, 330px); aspect-ratio: 1; }
@@ -471,33 +473,12 @@ const nodes = [
     text-transform: uppercase;
   }
 
-  .atlas__meter {
-    position: absolute;
-    right: clamp(18px, 3vw, 34px);
-    top: 50%;
-    z-index: 28;
-    width: 2px;
-    height: 130px;
-    overflow: hidden;
-    border-radius: 999px;
-    background: rgba(255,255,255,.13);
-    transform: translateY(-50%);
-  }
-
-  .atlas__meter span {
-    display: block;
-    width: 100%;
-    height: calc(var(--progress) * 100%);
-    background: linear-gradient(#fff7df, #d9a64e);
-  }
-
   @media (max-width: 900px) {
     .atlas__node { min-width: 118px; min-height: 48px; padding: 10px 12px; gap: 8px; border-radius: 18px; }
     .atlas__node-kicker { display: none; }
     .atlas__node-title { font-size: 13px; }
     .atlas__node-index { font-size: 9px; }
     .atlas__phase { max-width: 220px; font-size: 10px; letter-spacing: .16em; }
-    .atlas__meter { display: none; }
   }
 
   @media (max-width: 520px) {
