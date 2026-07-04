@@ -8,260 +8,259 @@ const nodes = [
 ];
 ---
 
-<section class="scroll-cinema" data-scroll-cinema aria-label="UGURCAN cinematic knowledge atlas homepage">
-  <div class="scroll-cinema__sticky">
-    <canvas class="scroll-cinema__canvas" data-cinema-canvas aria-hidden="true"></canvas>
-    <picture class="scroll-cinema__fallback" data-cinema-fallback aria-hidden="true">
-      <source srcset="/images/orbit-bg-mobile.webp" media="(orientation: portrait), (max-width: 640px)" />
-      <source srcset="/images/orbit-bg-tablet.webp" media="(max-width: 1180px)" />
-      <img src="/images/orbit-bg-desktop.webp" alt="" loading="eager" decoding="async" fetchpriority="high" draggable="false" />
-    </picture>
+<section class="atlas" data-knowledge-atlas aria-label="UGURCAN interactive knowledge atlas homepage">
+  <div class="atlas__sticky">
+    <canvas class="atlas__canvas" data-atlas-canvas aria-hidden="true"></canvas>
+    <svg class="atlas__sigils" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <linearGradient id="atlasGold" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stop-color="#fff4c7" stop-opacity=".7" />
+          <stop offset=".55" stop-color="#d7a84f" stop-opacity=".3" />
+          <stop offset="1" stop-color="#79d7ff" stop-opacity=".16" />
+        </linearGradient>
+      </defs>
+      <path class="atlas__curve atlas__curve--science" d="M173 424 C 304 244, 489 239, 594 392 S 866 570, 1038 355" />
+      <path class="atlas__curve atlas__curve--history" d="M128 519 C 316 571, 419 324, 608 397 S 858 502, 1068 279" />
+      <path class="atlas__curve atlas__curve--art" d="M195 294 C 347 196, 432 566, 595 402 S 842 202, 1032 491" />
+      <path class="atlas__curve atlas__curve--future" d="M108 402 C 332 361, 427 430, 600 400 S 881 342, 1104 403" />
+    </svg>
 
-    <div class="scroll-cinema__stars" aria-hidden="true"></div>
-    <div class="scroll-cinema__field" aria-hidden="true"></div>
-    <div class="scroll-cinema__orbit scroll-cinema__orbit--wide" aria-hidden="true"></div>
-    <div class="scroll-cinema__orbit scroll-cinema__orbit--tight" aria-hidden="true"></div>
-    <div class="scroll-cinema__gold" aria-hidden="true"></div>
-    <div class="scroll-cinema__depth" aria-hidden="true"></div>
-    <div class="scroll-cinema__vignette" aria-hidden="true"></div>
-    <div class="scroll-cinema__grain" aria-hidden="true"></div>
+    <div class="atlas__shade" aria-hidden="true"></div>
+    <div class="atlas__grain" aria-hidden="true"></div>
 
-    <a class="scroll-cinema__brand" href="/" aria-label="UGURCAN home">UGURCAN</a>
+    <a class="atlas__brand" href="/" aria-label="UGURCAN home">
+      <span>UGURCAN</span>
+      <small>Knowledge Atlas</small>
+    </a>
 
-    <nav class="scroll-cinema__nodes" aria-label="Primary sections" data-orbit-nav>
+    <nav class="atlas__nav" aria-label="Primary sections" data-atlas-nav>
       {nodes.map((node) => (
-        <a class:list={["scroll-cinema__node", `scroll-cinema__node--${node.className}`]} href={node.href} aria-label={`Open ${node.title}`} data-orbit-node>
-          <span class="scroll-cinema__node-index">{node.index}</span>
-          <span class="scroll-cinema__node-text">
-            <span class="scroll-cinema__node-title">{node.title}</span>
-            <span class="scroll-cinema__node-kicker">{node.kicker}</span>
+        <a class:list={["atlas__node", `atlas__node--${node.className}`]} href={node.href} aria-label={`Open ${node.title}`} data-atlas-node>
+          <span class="atlas__node-index">{node.index}</span>
+          <span class="atlas__node-mark" aria-hidden="true"></span>
+          <span class="atlas__node-text">
+            <span class="atlas__node-title">{node.title}</span>
+            <span class="atlas__node-kicker">{node.kicker}</span>
           </span>
-          <span class="scroll-cinema__node-arrow" aria-hidden="true">↗</span>
         </a>
       ))}
     </nav>
 
-    <div class="scroll-cinema__meter" aria-hidden="true">
-      <span></span>
-    </div>
+    <p class="atlas__phase" data-atlas-phase aria-live="polite">Quiet cosmic core</p>
+    <div class="atlas__meter" aria-hidden="true"><span></span></div>
   </div>
 </section>
 
 <script>
-  const scenes = document.querySelectorAll('[data-scroll-cinema]');
+  const atlases = document.querySelectorAll('[data-knowledge-atlas]');
 
-  scenes.forEach((scene) => {
-    const canvas = scene.querySelector('[data-cinema-canvas]');
-    const fallback = scene.querySelector('[data-cinema-fallback]');
+  atlases.forEach((atlas) => {
+    const canvas = atlas.querySelector('[data-atlas-canvas]');
     const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+    const nodes = Array.from(atlas.querySelectorAll('[data-atlas-node]'));
+    const phaseLabel = atlas.querySelector('[data-atlas-phase]');
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const finePointerQuery = window.matchMedia('(pointer: fine) and (min-width: 900px)');
-    const orbitNodes = Array.from(scene.querySelectorAll('[data-orbit-node]'));
-    const frameSets = {
-      desktop: { dir: '/frames/desktop', count: 160, warm: 10 },
-      tablet: { dir: '/frames/tablet', count: 110, warm: 7 },
-      mobile: { dir: '/frames/mobile', count: 72, warm: 4 },
-    };
-    const fallbackImages = {
-      desktop: '/images/orbit-bg-desktop.webp',
-      tablet: '/images/orbit-bg-tablet.webp',
-      mobile: '/images/orbit-bg-mobile.webp',
-    };
+    const phases = ['Quiet cosmic core', 'Science: particle field', 'History: orbital time', 'Art: organic harmonics', 'Future: unified atlas'];
 
-    let mode = 'desktop';
-    let reduce = reduceQuery.matches;
-    let hasFrames = false;
-    let frameCount = 1;
+    let width = 1;
+    let height = 1;
+    let dpr = 1;
     let target = 0;
-    let current = 0;
+    let progress = 0;
     let raf = 0;
-    let lastFrame = -1;
-    let images = [];
-    let fallbackImage = null;
-    let mouseX = 0;
-    let mouseY = 0;
+    let time = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+    let reduce = reduceQuery.matches;
+    let particles = [];
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-    const lerp = (start, end, amount) => start + (end - start) * amount;
-    const frameUrl = (set, index) => `${set.dir}/frame-${String(index).padStart(4, '0')}.webp`;
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const smooth = (edge0, edge1, x) => {
+      const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
+      return t * t * (3 - 2 * t);
+    };
 
-    function getMode() {
-      if (window.matchMedia('(orientation: portrait), (max-width: 640px)').matches) return 'mobile';
-      if (window.matchMedia('(max-width: 1180px)').matches) return 'tablet';
-      return 'desktop';
-    }
-
-    function loadImage(src) {
-      return new Promise((resolve, reject) => {
-        const image = new Image();
-        image.decoding = 'async';
-        image.onload = () => resolve(image);
-        image.onerror = reject;
-        image.src = src;
-      });
+    function seedParticles() {
+      const count = window.innerWidth < 700 ? 86 : window.innerWidth < 1100 ? 130 : 180;
+      particles = Array.from({ length: count }, (_, i) => ({
+        angle: (i * 2.399963 + (i % 7) * .17) % (Math.PI * 2),
+        radius: .12 + ((i * 37) % 100) / 100 * .78,
+        size: .45 + ((i * 19) % 100) / 100 * 1.75,
+        speed: .12 + ((i * 13) % 100) / 100 * .42,
+        tone: i % 5,
+      }));
     }
 
     function sizeCanvas() {
-      const dpr = Math.min(window.devicePixelRatio || 1, mode === 'mobile' ? 1.5 : 2);
-      const width = Math.max(1, Math.floor(canvas.clientWidth * dpr));
-      const height = Math.max(1, Math.floor(canvas.clientHeight * dpr));
+      dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.45 : 2);
+      const rect = canvas.getBoundingClientRect();
+      width = Math.max(1, Math.floor(rect.width * dpr));
+      height = Math.max(1, Math.floor(rect.height * dpr));
       if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
         canvas.height = height;
       }
     }
 
-    function drawCover(image) {
-      if (!image) return;
-      sizeCanvas();
-      const scale = Math.max(canvas.width / image.naturalWidth, canvas.height / image.naturalHeight);
-      const width = image.naturalWidth * scale;
-      const height = image.naturalHeight * scale;
-      const progressZoom = reduce ? 1.03 : lerp(1.03, 1.16, current);
-      const parallaxX = finePointerQuery.matches && !reduce ? mouseX * 16 * (window.devicePixelRatio || 1) : 0;
-      const parallaxY = finePointerQuery.matches && !reduce ? mouseY * 12 * (window.devicePixelRatio || 1) : 0;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function updateProgress() {
+      const rect = atlas.getBoundingClientRect();
+      const scrollable = Math.max(1, rect.height - window.innerHeight);
+      target = reduce ? 0 : clamp(-rect.top / scrollable, 0, 1);
+      atlas.style.setProperty('--progress', target.toFixed(4));
+      if (!raf) raf = requestAnimationFrame(draw);
+    }
+
+    function drawOrbitalRing(cx, cy, rx, ry, rotation, alpha, color) {
       ctx.save();
-      ctx.translate(canvas.width / 2 + parallaxX, canvas.height / 2 + parallaxY);
-      ctx.scale(progressZoom, progressZoom);
-      ctx.drawImage(image, -width / 2, -height / 2, width, height);
+      ctx.translate(cx, cy);
+      ctx.rotate(rotation);
+      ctx.scale(1, ry / rx);
+      ctx.beginPath();
+      ctx.arc(0, 0, rx, 0, Math.PI * 2);
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = alpha;
+      ctx.lineWidth = Math.max(1, dpr);
+      ctx.stroke();
       ctx.restore();
     }
 
-    function nearestLoadedFrame(index) {
-      if (images[index]) return { image: images[index], index };
-      for (let offset = 1; offset < frameCount; offset += 1) {
-        const before = index - offset;
-        const after = index + offset;
-        if (before >= 0 && images[before]) return { image: images[before], index: before };
-        if (after < frameCount && images[after]) return { image: images[after], index: after };
-      }
-      return { image: fallbackImage, index: -1 };
-    }
-
-    function paint() {
-      const requestedIndex = hasFrames ? Math.min(frameCount - 1, Math.round(current * (frameCount - 1))) : 0;
-      const { image, index } = hasFrames ? nearestLoadedFrame(requestedIndex) : { image: fallbackImage, index: 0 };
-      if (image && (index !== lastFrame || !hasFrames)) {
-        drawCover(image);
-        lastFrame = index;
-      }
-    }
-
-    function setSceneVars(progress) {
-      scene.style.setProperty('--progress', progress.toFixed(4));
-      scene.style.setProperty('--scene-scale', lerp(1, 1.08, progress).toFixed(4));
-      scene.style.setProperty('--scene-tilt', `${lerp(-.4, .7, progress).toFixed(3)}deg`);
-      scene.style.setProperty('--gold-opacity', lerp(.42, .76, progress).toFixed(4));
-      scene.style.setProperty('--depth-opacity', lerp(.25, .56, progress).toFixed(4));
-      scene.style.setProperty('--mx', mouseX.toFixed(4));
-      scene.style.setProperty('--my', mouseY.toFixed(4));
-    }
-
-    function updateOrbitNodes(progress) {
-      const nodeCount = orbitNodes.length;
-      if (!nodeCount) return;
-
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const radiusX = Math.min(viewportWidth * (mode === 'mobile' ? .38 : .34), 520);
-      const radiusY = Math.min(viewportHeight * (mode === 'mobile' ? .28 : .31), 290);
-      const rotation = progress * Math.PI * 2;
-
-      orbitNodes.forEach((node, index) => {
-        const baseAngle = (index / nodeCount) * Math.PI * 2;
-        const angle = baseAngle + rotation;
-        const x = Math.cos(angle) * radiusX;
-        const y = Math.sin(angle) * radiusY;
-        const depth = (Math.sin(angle) + 1) / 2;
-
-        node.style.setProperty('--orbit-x', `${x.toFixed(2)}px`);
-        node.style.setProperty('--orbit-y', `${y.toFixed(2)}px`);
-        node.style.setProperty('--orbit-scale', lerp(.72, 1.18, depth).toFixed(4));
-        node.style.setProperty('--orbit-opacity', lerp(.44, 1, depth).toFixed(4));
-        node.style.setProperty('--orbit-blur', `${lerp(1.6, 0, depth).toFixed(2)}px`);
-        node.style.setProperty('--orbit-z', String(Math.round(20 + depth * 80)));
-      });
-    }
-
-    function measure() {
-      const rect = scene.getBoundingClientRect();
-      const scrollable = Math.max(1, rect.height - window.innerHeight);
-      target = reduce ? 0 : clamp(-rect.top / scrollable, 0, 1);
-      setSceneVars(target);
-      if (!raf) raf = requestAnimationFrame(tick);
-    }
-
-    function tick() {
+    function draw() {
       raf = 0;
-      current = reduce ? target : lerp(current, target, mode === 'mobile' ? .18 : .1);
-      updateOrbitNodes(current);
-      paint();
-      if (Math.abs(current - target) > .001) raf = requestAnimationFrame(tick);
+      const easing = reduce ? 1 : window.innerWidth < 700 ? .18 : .095;
+      progress = lerp(progress, target, easing);
+      time += reduce ? 0 : .012;
+      atlas.style.setProperty('--draw-progress', progress.toFixed(4));
+      atlas.style.setProperty('--mx', pointerX.toFixed(3));
+      atlas.style.setProperty('--my', pointerY.toFixed(3));
+
+      const cx = width * (.5 + pointerX * .018);
+      const cy = height * (.5 + pointerY * .014);
+      const min = Math.min(width, height);
+      const science = smooth(.16, .38, progress);
+      const history = smooth(.36, .58, progress);
+      const art = smooth(.56, .78, progress);
+      const future = smooth(.76, 1, progress);
+
+      ctx.clearRect(0, 0, width, height);
+      const bg = ctx.createRadialGradient(cx, cy, min * .04, cx, cy, min * .86);
+      bg.addColorStop(0, `rgba(35, 29, 18, ${.78 + future * .1})`);
+      bg.addColorStop(.28, '#07111f');
+      bg.addColorStop(.68, '#030711');
+      bg.addColorStop(1, '#01030a');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, width, height);
+
+      ctx.save();
+      ctx.globalAlpha = .08 + future * .08;
+      ctx.strokeStyle = '#a9c8dd';
+      ctx.lineWidth = 1 * dpr;
+      const grid = 72 * dpr;
+      for (let x = (cx % grid); x < width; x += grid) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(lerp(x, cx, .08), height); ctx.stroke(); }
+      for (let y = (cy % grid); y < height; y += grid) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, lerp(y, cy, .08)); ctx.stroke(); }
+      ctx.restore();
+
+      particles.forEach((p) => {
+        const layerPull = lerp(.72, 1.08, progress);
+        const a = p.angle + time * p.speed + progress * (p.tone % 2 ? 1.7 : -1.25);
+        const orbit = p.radius * min * .58 * layerPull;
+        const x = cx + Math.cos(a) * orbit * (1 + history * .18);
+        const y = cy + Math.sin(a) * orbit * (.48 + art * .12);
+        const alpha = .14 + science * .36 + future * .18;
+        ctx.beginPath();
+        ctx.fillStyle = p.tone === 0 ? `rgba(235, 187, 91, ${alpha})` : `rgba(213, 231, 244, ${alpha * .72})`;
+        ctx.arc(x, y, p.size * dpr * (1 + future * .45), 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      for (let i = 0; i < 6; i += 1) {
+        drawOrbitalRing(cx, cy, min * (.19 + i * .082 + future * .018), min * (.055 + i * .024 + history * .02), time * (.18 + i * .03) + progress * i, .11 + i * .018 + history * .05, i % 2 ? 'rgba(240,198,111,.88)' : 'rgba(166,213,238,.62)');
+      }
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(time * .24 + progress * 2.2);
+      for (let i = 0; i < 18; i += 1) {
+        const a = i / 18 * Math.PI * 2;
+        const r = min * (.15 + Math.sin(i * 1.7 + time) * .012 + art * .045);
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(a) * r * .42, Math.sin(a) * r * .42);
+        ctx.quadraticCurveTo(Math.cos(a + .55) * r, Math.sin(a + .55) * r, Math.cos(a + 1.15) * r * .72, Math.sin(a + 1.15) * r * .72);
+        ctx.strokeStyle = `rgba(237, 202, 128, ${art * .18 + future * .08})`;
+        ctx.lineWidth = (1.2 + art * 1.2) * dpr;
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      const core = ctx.createRadialGradient(cx - min * .035, cy - min * .045, 0, cx, cy, min * (.145 + future * .018));
+      core.addColorStop(0, 'rgba(255,247,213,.95)');
+      core.addColorStop(.18, 'rgba(234,186,83,.8)');
+      core.addColorStop(.48, 'rgba(71,105,130,.34)');
+      core.addColorStop(1, 'rgba(2,6,14,0)');
+      ctx.fillStyle = core;
+      ctx.beginPath();
+      ctx.arc(cx, cy, min * (.15 + future * .02), 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = `rgba(255, 224, 146, ${.28 + future * .34})`;
+      ctx.lineWidth = (1.4 + future * 1.6) * dpr;
+      ctx.beginPath();
+      ctx.arc(cx, cy, min * (.05 + future * .08), time, time + Math.PI * (1.15 + future));
+      ctx.stroke();
+      ctx.restore();
+
+      updateNodes(progress);
+      const phaseIndex = Math.min(4, Math.floor(progress * 5));
+      if (phaseLabel && phaseLabel.textContent !== phases[phaseIndex]) phaseLabel.textContent = phases[phaseIndex];
+      if (Math.abs(progress - target) > .001 || !reduce) raf = requestAnimationFrame(draw);
     }
 
-    async function discoverAndPreload(nextMode) {
-      mode = nextMode;
-      hasFrames = false;
-      images = [];
-      lastFrame = -1;
-      fallbackImage = await loadImage(fallbackImages[mode]).catch(() => null);
-      fallback?.setAttribute('data-loaded', 'true');
-      paint();
-
-      const set = frameSets[mode];
-      const first = await loadImage(frameUrl(set, 1)).catch(() => null);
-      if (!first) return;
-      hasFrames = true;
-      frameCount = set.count;
-      images[0] = first;
-      fallback?.setAttribute('data-hidden', 'true');
-      for (let i = 2; i <= set.warm; i += 1) loadImage(frameUrl(set, i)).then((img) => { images[i - 1] = img; paint(); }).catch(() => {});
-      window.setTimeout(() => {
-        const step = mode === 'mobile' ? 2 : 1;
-        for (let i = set.warm + 1; i <= set.count; i += step) {
-          loadImage(frameUrl(set, i)).then((img) => { images[i - 1] = img; }).catch(() => { frameCount = Math.min(frameCount, i - 1); });
-        }
-      }, 600);
+    function updateNodes(p) {
+      const radiusX = Math.min(window.innerWidth * (window.innerWidth < 700 ? .36 : .34), 520);
+      const radiusY = Math.min(window.innerHeight * (window.innerWidth < 700 ? .33 : .28), 265);
+      nodes.forEach((node, index) => {
+        const angle = index / nodes.length * Math.PI * 2 - Math.PI / 2 + p * Math.PI * 1.45;
+        const depth = (Math.sin(angle) + 1) / 2;
+        node.style.setProperty('--x', `${Math.cos(angle) * radiusX}px`);
+        node.style.setProperty('--y', `${Math.sin(angle) * radiusY}px`);
+        node.style.setProperty('--s', lerp(.78, 1.12, depth).toFixed(3));
+        node.style.setProperty('--o', lerp(.56, 1, depth).toFixed(3));
+        node.style.setProperty('--z', String(Math.round(10 + depth * 90)));
+      });
     }
 
     function onPointerMove(event) {
       if (!finePointerQuery.matches || reduce) return;
-      mouseX = (event.clientX / window.innerWidth - .5) * 2;
-      mouseY = (event.clientY / window.innerHeight - .5) * 2;
-      setSceneVars(target);
-      if (!raf) raf = requestAnimationFrame(tick);
+      pointerX = (event.clientX / window.innerWidth - .5) * 2;
+      pointerY = (event.clientY / window.innerHeight - .5) * 2;
     }
 
-    updateOrbitNodes(0);
-    discoverAndPreload(getMode()).then(measure);
-    window.addEventListener('scroll', measure, { passive: true });
-    window.addEventListener('resize', () => {
-      const nextMode = getMode();
-      sizeCanvas();
-      if (nextMode !== mode) discoverAndPreload(nextMode).then(measure);
-      else measure();
-    }, { passive: true });
+    sizeCanvas();
+    seedParticles();
+    updateNodes(0);
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', () => { sizeCanvas(); seedParticles(); updateProgress(); }, { passive: true });
     window.addEventListener('pointermove', onPointerMove, { passive: true });
-    reduceQuery.addEventListener?.('change', (event) => { reduce = event.matches; measure(); });
+    reduceQuery.addEventListener?.('change', (event) => { reduce = event.matches; updateProgress(); });
   });
 </script>
 
 <style>
-  .scroll-cinema {
+  .atlas {
     --progress: 0;
-    --scene-scale: 1;
-    --scene-tilt: 0deg;
-    --gold-opacity: .42;
-    --depth-opacity: .25;
+    --draw-progress: 0;
     --mx: 0;
     --my: 0;
-    min-height: 320vh;
-    background: #030711;
+    min-height: 340vh;
+    background: #01030a;
     color: #fff7df;
   }
 
-  .scroll-cinema__sticky {
+  .atlas__sticky {
     position: sticky;
     top: 0;
     min-height: 100svh;
@@ -269,280 +268,224 @@ const nodes = [
     isolation: isolate;
     display: grid;
     place-items: center;
-    padding: clamp(92px, 9vw, 132px) clamp(18px, 5vw, 72px) clamp(28px, 5vw, 64px);
-    background:
-      radial-gradient(circle at 50% 42%, rgba(220, 174, 83, .14), transparent 31%),
-      linear-gradient(180deg, #050917 0%, #02040b 100%);
+    background: #01030a;
   }
 
-  .scroll-cinema__canvas,
-  .scroll-cinema__fallback,
-  .scroll-cinema__fallback img,
-  .scroll-cinema__stars,
-  .scroll-cinema__field,
-  .scroll-cinema__gold,
-  .scroll-cinema__depth,
-  .scroll-cinema__vignette,
-  .scroll-cinema__grain,
-  .scroll-cinema__orbit {
+  .atlas__canvas,
+  .atlas__sigils,
+  .atlas__shade,
+  .atlas__grain {
     position: absolute;
     inset: 0;
   }
 
-  .scroll-cinema__canvas {
-    width: 100%;
-    height: 100%;
-    z-index: -8;
-    transform: scale(var(--scene-scale)) rotate(var(--scene-tilt));
-  }
-
-  .scroll-cinema__fallback {
-    z-index: -9;
-    opacity: 1;
-    transition: opacity .6s ease;
-  }
-
-  .scroll-cinema__fallback[data-hidden="true"] { opacity: 0; }
-
-  .scroll-cinema__fallback img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transform: scale(calc(var(--scene-scale) + .02));
-    filter: saturate(.9) brightness(.78) contrast(1.05);
-  }
-
-  .scroll-cinema__stars {
-    z-index: -7;
-    opacity: .34;
-    background-image:
-      radial-gradient(circle, rgba(255,255,255,.8) 0 1px, transparent 1.5px),
-      radial-gradient(circle, rgba(232,190,103,.55) 0 1px, transparent 1.4px);
-    background-size: 120px 120px, 190px 190px;
-    transform: translate3d(calc(var(--mx) * -10px), calc(var(--my) * -8px), 0);
-  }
-
-  .scroll-cinema__field {
-    z-index: -6;
-    background:
-      linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px),
-      linear-gradient(0deg, rgba(255,255,255,.03) 1px, transparent 1px);
-    background-size: 88px 88px;
-    mask-image: radial-gradient(circle at center, #000 0 36%, transparent 72%);
-    opacity: calc(.08 + var(--progress) * .11);
-  }
-
-  .scroll-cinema__orbit {
-    z-index: -5;
-    width: min(82vw, 920px);
-    height: min(82vw, 920px);
-    margin: auto;
-    border: 1px solid rgba(232, 191, 111, .18);
-    border-radius: 50%;
-    transform: rotateX(68deg) rotateZ(calc(var(--progress) * 18deg));
-    box-shadow: 0 0 80px rgba(218, 169, 78, .06);
-  }
-
-  .scroll-cinema__orbit--tight {
-    width: min(58vw, 650px);
-    height: min(58vw, 650px);
-    border-color: rgba(255,255,255,.11);
-    transform: rotateX(70deg) rotateZ(calc(var(--progress) * -24deg));
-  }
-
-  .scroll-cinema__gold {
+  .atlas__canvas {
     z-index: -4;
-    opacity: var(--gold-opacity);
-    background:
-      radial-gradient(circle at calc(50% + var(--mx) * 5%) calc(43% + var(--my) * 4%), rgba(236, 181, 75, .34), transparent 20%),
-      radial-gradient(circle at 50% 92%, rgba(174, 120, 42, .2), transparent 34%);
-    mix-blend-mode: screen;
+    width: 100%;
+    height: 100%;
   }
 
-  .scroll-cinema__depth {
+  .atlas__sigils {
     z-index: -3;
-    opacity: var(--depth-opacity);
-    background: linear-gradient(180deg, rgba(2,4,11,.1), rgba(2,4,11,.72));
+    opacity: .82;
+    transform: translate3d(calc(var(--mx) * -10px), calc(var(--my) * -8px), 0) scale(1.02);
   }
 
-  .scroll-cinema__vignette {
+  .atlas__curve {
+    fill: none;
+    stroke: url(#atlasGold);
+    stroke-width: 1.25;
+    stroke-linecap: round;
+    stroke-dasharray: 9 18;
+    opacity: 0;
+  }
+
+  .atlas__curve--science { opacity: calc(max(0, min(1, (var(--draw-progress) - .18) * 6)) * .36); }
+  .atlas__curve--history { opacity: calc(max(0, min(1, (var(--draw-progress) - .38) * 6)) * .34); }
+  .atlas__curve--art { opacity: calc(max(0, min(1, (var(--draw-progress) - .58) * 6)) * .48); stroke-dasharray: 2 13; }
+  .atlas__curve--future { opacity: calc(max(0, min(1, (var(--draw-progress) - .78) * 7)) * .58); stroke-dasharray: 1 10; }
+
+  .atlas__shade {
     z-index: 5;
     pointer-events: none;
-    background: radial-gradient(circle at center, transparent 0 45%, rgba(1,3,9,.78) 100%);
+    background:
+      radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(1,3,10,.34) 64%, rgba(1,3,10,.92) 100%),
+      linear-gradient(180deg, rgba(1,3,10,.64), transparent 24%, transparent 70%, rgba(1,3,10,.72));
   }
 
-  .scroll-cinema__grain {
+  .atlas__grain {
     z-index: 6;
     pointer-events: none;
-    opacity: .13;
-    background-image: repeating-radial-gradient(circle at 20% 30%, rgba(255,255,255,.22) 0 1px, transparent 1px 4px);
+    opacity: .12;
     mix-blend-mode: overlay;
+    background-image: repeating-radial-gradient(circle at 30% 20%, rgba(255,255,255,.22) 0 1px, transparent 1px 4px);
   }
 
-  .scroll-cinema__brand {
-    position: absolute;
-    z-index: 12;
-    left: 50%;
-    top: 50%;
-    color: rgba(255, 247, 223, .9);
-    font-size: clamp(13px, 1.5vw, 18px);
-    font-weight: 850;
-    letter-spacing: .42em;
-    text-decoration: none;
-    text-shadow: 0 0 30px rgba(232, 190, 103, .55), 0 18px 60px rgba(0,0,0,.8);
-    transform: translate3d(calc(-50% + var(--mx) * -5px), calc(-50% + var(--my) * -4px), 0);
-  }
-
-  .scroll-cinema__brand::before {
-    content: "";
+  .atlas__brand {
     position: absolute;
     left: 50%;
     top: 50%;
-    width: clamp(140px, 19vw, 240px);
-    aspect-ratio: 1;
-    border: 1px solid rgba(232, 191, 111, .22);
-    border-radius: 999px;
-    pointer-events: none;
-    transform: translate(-50%, -50%) rotateX(66deg);
-    box-shadow: inset 0 0 34px rgba(232, 191, 111, .08), 0 0 70px rgba(232, 191, 111, .08);
-  }
-
-  .scroll-cinema__nodes {
-    position: absolute;
-    z-index: 20;
-    inset: 0;
-    pointer-events: none;
-    perspective: 1100px;
-    transform-style: preserve-3d;
-  }
-
-  .scroll-cinema__node {
-    --orbit-x: 0px;
-    --orbit-y: 0px;
-    --orbit-scale: 1;
-    --orbit-opacity: 1;
-    --orbit-blur: 0px;
-    --orbit-z: 20;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    z-index: var(--orbit-z);
+    z-index: 18;
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
-    gap: 11px;
-    min-width: clamp(132px, 15vw, 184px);
-    min-height: 56px;
-    padding: 12px 15px;
+    gap: 10px;
     color: #fff7df;
     text-decoration: none;
-    border: 1px solid rgba(255,255,255,.14);
-    border-radius: 999px;
-    background: linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.045));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.14), 0 20px 70px rgba(0,0,0,.24);
-    opacity: var(--orbit-opacity);
-    filter: blur(var(--orbit-blur)) brightness(calc(.72 + var(--orbit-opacity) * .38));
-    backdrop-filter: blur(22px) saturate(130%);
-    pointer-events: auto;
-    transform:
-      translate(-50%, -50%)
-      translate3d(var(--orbit-x), var(--orbit-y), 0)
-      scale(var(--orbit-scale));
-    transform-origin: center;
-    transition: border-color .22s ease, background .22s ease, box-shadow .22s ease, filter .22s ease;
-    will-change: transform, opacity, filter;
+    transform: translate3d(calc(-50% + var(--mx) * -6px), calc(-50% + var(--my) * -5px), 0);
   }
 
-  .scroll-cinema__node::before {
+  .atlas__brand span {
+    font-size: clamp(18px, 2.2vw, 31px);
+    font-weight: 850;
+    letter-spacing: .48em;
+    text-indent: .48em;
+    text-shadow: 0 0 36px rgba(234, 187, 91, .52), 0 22px 80px rgba(0,0,0,.86);
+  }
+
+  .atlas__brand small {
+    color: rgba(255,247,223,.56);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .34em;
+    text-transform: uppercase;
+  }
+
+  .atlas__brand::before,
+  .atlas__brand::after {
     content: "";
     position: absolute;
-    inset: -1px;
-    border-radius: inherit;
+    left: 50%;
+    top: 50%;
+    border: 1px solid rgba(236, 196, 114, .22);
+    border-radius: 50%;
     pointer-events: none;
-    background: radial-gradient(circle at 20% 0%, rgba(232,194,114,.26), transparent 34%);
-    opacity: 0;
-    transition: opacity .22s ease;
+    transform: translate(-50%, -50%) rotateX(68deg) rotateZ(calc(var(--draw-progress) * 38deg));
   }
 
-  .scroll-cinema__node:hover,
-  .scroll-cinema__node:focus-visible {
-    border-color: rgba(235, 196, 119, .52);
-    background: linear-gradient(135deg, rgba(255,255,255,.2), rgba(255,255,255,.075));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 28px 86px rgba(218, 169, 78, .2);
-    filter: blur(var(--orbit-blur)) brightness(1.14);
+  .atlas__brand::before { width: clamp(170px, 25vw, 330px); aspect-ratio: 1; }
+  .atlas__brand::after { width: clamp(250px, 38vw, 520px); aspect-ratio: 1; opacity: .5; }
+
+  .atlas__nav {
+    position: absolute;
+    inset: 0;
+    z-index: 30;
+    pointer-events: none;
+    perspective: 1200px;
+  }
+
+  .atlas__node {
+    --x: 0px;
+    --y: 0px;
+    --s: 1;
+    --o: 1;
+    --z: 20;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: var(--z);
+    display: inline-grid;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 10px;
+    min-width: clamp(138px, 15vw, 186px);
+    min-height: 58px;
+    padding: 11px 14px;
+    color: #fff7df;
+    text-decoration: none;
+    border: 1px solid rgba(255, 247, 223, .15);
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.045));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 24px 70px rgba(0,0,0,.32);
+    opacity: var(--o);
+    backdrop-filter: blur(24px) saturate(140%);
+    pointer-events: auto;
+    transform: translate(-50%, -50%) translate3d(var(--x), var(--y), 0) scale(var(--s));
+    transition: border-color .22s ease, background .22s ease, box-shadow .22s ease, opacity .22s ease;
+    will-change: transform, opacity;
+  }
+
+  .atlas__node:hover,
+  .atlas__node:focus-visible {
+    border-color: rgba(239, 202, 128, .62);
+    background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.075));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 28px 90px rgba(222, 174, 82, .22);
     outline: none;
   }
 
-  .scroll-cinema__node:hover::before,
-  .scroll-cinema__node:focus-visible::before { opacity: 1; }
-
-  .scroll-cinema__node-index {
-    color: rgba(233, 199, 127, .78);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: .16em;
+  .atlas__node-index {
+    color: rgba(237, 202, 128, .76);
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: .18em;
   }
 
-  .scroll-cinema__node-text {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 3px;
-    min-width: 0;
-  }
-
-  .scroll-cinema__node-title {
-    font-size: 15px;
-    font-weight: 760;
-    letter-spacing: -.01em;
-  }
-
-  .scroll-cinema__node-kicker {
-    color: rgba(255, 247, 223, .52);
-    font-size: 11px;
-    letter-spacing: .04em;
-    white-space: nowrap;
-  }
-
-  .scroll-cinema__node-arrow { color: rgba(233, 199, 127, .8); }
-
-  .scroll-cinema__meter {
-    position: absolute;
-    z-index: 25;
-    right: 24px;
-    top: 50%;
-    width: 2px;
-    height: 120px;
-    background: rgba(255,255,255,.12);
+  .atlas__node-mark {
+    width: 9px;
+    aspect-ratio: 1;
     border-radius: 999px;
-    overflow: hidden;
+    background: #eac06c;
+    box-shadow: 0 0 20px rgba(234, 192, 108, .7);
   }
 
-  .scroll-cinema__meter span {
+  .atlas__node-text { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
+  .atlas__node-title { font-size: 15px; font-weight: 780; letter-spacing: -.01em; }
+  .atlas__node-kicker { color: rgba(255,247,223,.55); font-size: 11px; white-space: nowrap; }
+
+  .atlas__phase {
+    position: absolute;
+    left: clamp(18px, 4vw, 56px);
+    bottom: clamp(18px, 4vw, 44px);
+    z-index: 28;
+    margin: 0;
+    color: rgba(255,247,223,.66);
+    font-size: 11px;
+    font-weight: 750;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+  }
+
+  .atlas__meter {
+    position: absolute;
+    right: clamp(18px, 3vw, 34px);
+    top: 50%;
+    z-index: 28;
+    width: 2px;
+    height: 130px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255,255,255,.13);
+    transform: translateY(-50%);
+  }
+
+  .atlas__meter span {
     display: block;
     width: 100%;
     height: calc(var(--progress) * 100%);
-    background: linear-gradient(#fff7df, #e4b866);
+    background: linear-gradient(#fff7df, #d9a64e);
   }
 
   @media (max-width: 900px) {
-    .scroll-cinema { min-height: 250vh; }
-    .scroll-cinema__sticky { padding: 72px 16px 28px; }
-    .scroll-cinema__brand { font-size: 12px; letter-spacing: .34em; }
-    .scroll-cinema__node {
-      min-height: 56px;
-      padding: 12px 14px;
-      border-radius: 18px;
-    }
-    .scroll-cinema__node-kicker { display: none; }
-    .scroll-cinema__meter { display: none; }
-    .scroll-cinema__orbit { width: 115vw; height: 115vw; }
+    .atlas { min-height: 300vh; }
+    .atlas__brand span { font-size: 15px; letter-spacing: .36em; text-indent: .36em; }
+    .atlas__brand small { display: none; }
+    .atlas__node { min-width: 118px; min-height: 48px; padding: 10px 12px; gap: 8px; border-radius: 18px; }
+    .atlas__node-kicker { display: none; }
+    .atlas__node-title { font-size: 13px; }
+    .atlas__node-index { font-size: 9px; }
+    .atlas__phase { max-width: 220px; font-size: 10px; letter-spacing: .16em; }
+    .atlas__meter { display: none; }
+  }
+
+  @media (max-width: 520px) {
+    .atlas__node { min-width: 104px; grid-template-columns: auto 1fr; }
+    .atlas__node-mark { display: none; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .scroll-cinema { min-height: 100svh; }
-    .scroll-cinema__sticky,
-    .scroll-cinema__canvas,
-    .scroll-cinema__fallback img,
-    .scroll-cinema__stars { transform: none; }
-    .scroll-cinema__node { transition: none; }
+    .atlas { min-height: 100svh; }
+    .atlas__sigils,
+    .atlas__brand { transform: none; }
+    .atlas__node { transition: none; }
   }
 </style>
