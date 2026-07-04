@@ -57,22 +57,22 @@ const nodes = [
     const nodes = Array.from(atlas.querySelectorAll('[data-atlas-node]'));
     const phaseLabel = atlas.querySelector('[data-atlas-phase]');
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const finePointerQuery = window.matchMedia('(pointer: fine) and (min-width: 900px)');
     const phases = ['Quiet cosmic core', 'Science: particle field', 'History: orbital time', 'Art: organic harmonics', 'Future: unified atlas'];
 
     let width = 1;
     let height = 1;
     let dpr = 1;
-    let target = 0;
-    let progress = 0;
-    let previousScrollY = window.scrollY;
-    let targetScrollRotation = 0;
-    let currentScrollRotation = 0;
     let raf = 0;
-    let pointerX = 0;
-    let pointerY = 0;
     let reduce = reduceQuery.matches;
     let particles = [];
+    let inputRotationTarget = 0;
+    let inputRotationCurrent = 0;
+    let virtualPhaseTarget = .18;
+    let virtualPhaseCurrent = .18;
+    let autoRotation = 0;
+    let lastTime = performance.now();
+    let lastTouchY = 0;
+    let touchStartedOnLink = false;
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
     const lerp = (a, b, t) => a + (b - a) * t;
@@ -80,6 +80,10 @@ const nodes = [
       const t = clamp((x - edge0) / (edge1 - edge0), 0, 1);
       return t * t * (3 - 2 * t);
     };
+
+    function wake() {
+      if (!raf) raf = requestAnimationFrame(draw);
+    }
 
     function seedParticles() {
       const count = window.innerWidth < 700 ? 86 : window.innerWidth < 1100 ? 130 : 180;
@@ -103,28 +107,6 @@ const nodes = [
       }
     }
 
-    function measure() {
-      const rect = atlas.getBoundingClientRect();
-      const scrollable = Math.max(1, rect.height - window.innerHeight);
-      target = reduce ? 0 : clamp(-rect.top / scrollable, 0, 1);
-
-      const currentScrollY = window.scrollY;
-      const delta = currentScrollY - previousScrollY;
-      previousScrollY = currentScrollY;
-
-      if (!reduce && Math.abs(delta) > 0) {
-        targetScrollRotation += delta * .006;
-
-        if (Math.abs(targetScrollRotation) > Math.PI * 2000) {
-          targetScrollRotation %= Math.PI * 2;
-          currentScrollRotation %= Math.PI * 2;
-        }
-      }
-
-      atlas.style.setProperty('--progress', target.toFixed(4));
-      if (!raf) raf = requestAnimationFrame(draw);
-    }
-
     function drawOrbitalRing(cx, cy, rx, ry, rotation, alpha, color) {
       ctx.save();
       ctx.translate(cx, cy);
@@ -139,19 +121,26 @@ const nodes = [
       ctx.restore();
     }
 
-    function draw() {
+    function draw(now = performance.now()) {
       raf = 0;
-      const easing = reduce ? 1 : window.innerWidth < 700 ? .18 : .095;
-      const rotationEasing = reduce ? 1 : window.innerWidth < 700 ? .2 : .12;
-      progress = lerp(progress, target, easing);
-      currentScrollRotation = reduce ? 0 : lerp(currentScrollRotation, targetScrollRotation, rotationEasing);
-      atlas.style.setProperty('--draw-progress', progress.toFixed(4));
-      atlas.style.setProperty('--scroll-rotation', (currentScrollRotation * 180 / Math.PI).toFixed(4));
-      atlas.style.setProperty('--mx', pointerX.toFixed(3));
-      atlas.style.setProperty('--my', pointerY.toFixed(3));
+      const isMobile = window.innerWidth < 700;
+      const dt = Math.min(50, now - lastTime) / 1000;
+      lastTime = now;
 
-      const cx = width * (.5 + pointerX * .018);
-      const cy = height * (.5 + pointerY * .014);
+      if (!reduce) autoRotation += dt * .045;
+
+      inputRotationCurrent = reduce ? 0 : lerp(inputRotationCurrent, inputRotationTarget, isMobile ? .18 : .11);
+      virtualPhaseCurrent = reduce ? .18 : lerp(virtualPhaseCurrent, virtualPhaseTarget, isMobile ? .12 : .08);
+
+      const progress = reduce ? .18 : ((virtualPhaseCurrent % 1) + 1) % 1;
+      const totalRotation = reduce ? 0 : autoRotation + inputRotationCurrent;
+
+      atlas.style.setProperty('--draw-progress', progress.toFixed(4));
+      atlas.style.setProperty('--progress', progress.toFixed(4));
+      atlas.style.setProperty('--scroll-rotation', (totalRotation * 180 / Math.PI).toFixed(4));
+
+      const cx = width * .5;
+      const cy = height * .5;
       const min = Math.min(width, height);
       const science = smooth(.16, .38, progress);
       const history = smooth(.36, .58, progress);
@@ -178,7 +167,7 @@ const nodes = [
 
       particles.forEach((p) => {
         const layerPull = lerp(.72, 1.08, progress);
-        const a = p.angle + currentScrollRotation * p.speed + progress * (p.tone % 2 ? 1.7 : -1.25);
+        const a = p.angle + totalRotation * p.speed + progress * (p.tone % 2 ? 1.7 : -1.25);
         const orbit = p.radius * min * .58 * layerPull;
         const x = cx + Math.cos(a) * orbit * (1 + history * .18);
         const y = cy + Math.sin(a) * orbit * (.48 + art * .12);
@@ -190,15 +179,15 @@ const nodes = [
       });
 
       for (let i = 0; i < 6; i += 1) {
-        drawOrbitalRing(cx, cy, min * (.19 + i * .082 + future * .018), min * (.055 + i * .024 + history * .02), currentScrollRotation * (.18 + i * .03) + progress * i, .11 + i * .018 + history * .05, i % 2 ? 'rgba(240,198,111,.88)' : 'rgba(166,213,238,.62)');
+        drawOrbitalRing(cx, cy, min * (.19 + i * .082 + future * .018), min * (.055 + i * .024 + history * .02), totalRotation * (.18 + i * .03) + progress * i, .11 + i * .018 + history * .05, i % 2 ? 'rgba(240,198,111,.88)' : 'rgba(166,213,238,.62)');
       }
 
       ctx.save();
       ctx.translate(cx, cy);
-      ctx.rotate(currentScrollRotation * .24 + progress * 2.2);
+      ctx.rotate(totalRotation * .24 + progress * 2.2);
       for (let i = 0; i < 18; i += 1) {
         const a = i / 18 * Math.PI * 2;
-        const r = min * (.15 + Math.sin(i * 1.7 + currentScrollRotation) * .012 + art * .045);
+        const r = min * (.15 + Math.sin(i * 1.7 + totalRotation) * .012 + art * .045);
         ctx.beginPath();
         ctx.moveTo(Math.cos(a) * r * .42, Math.sin(a) * r * .42);
         ctx.quadraticCurveTo(Math.cos(a + .55) * r, Math.sin(a + .55) * r, Math.cos(a + 1.15) * r * .72, Math.sin(a + 1.15) * r * .72);
@@ -223,14 +212,15 @@ const nodes = [
       ctx.strokeStyle = `rgba(255, 224, 146, ${.28 + future * .34})`;
       ctx.lineWidth = (1.4 + future * 1.6) * dpr;
       ctx.beginPath();
-      ctx.arc(cx, cy, min * (.05 + future * .08), currentScrollRotation, currentScrollRotation + Math.PI * (1.15 + future));
+      ctx.arc(cx, cy, min * (.05 + future * .08), totalRotation, totalRotation + Math.PI * (1.15 + future));
       ctx.stroke();
       ctx.restore();
 
-      updateNodes(progress, currentScrollRotation);
+      updateNodes(progress, totalRotation);
       const phaseIndex = Math.min(4, Math.floor(progress * 5));
       if (phaseLabel && phaseLabel.textContent !== phases[phaseIndex]) phaseLabel.textContent = phases[phaseIndex];
-      if (Math.abs(progress - target) > .001 || Math.abs(currentScrollRotation - targetScrollRotation) > .001) raf = requestAnimationFrame(draw);
+
+      if (!reduce) raf = requestAnimationFrame(draw);
     }
 
     function updateNodes(p, scrollRotation = 0) {
@@ -247,21 +237,54 @@ const nodes = [
       });
     }
 
-    function onPointerMove(event) {
-      if (!finePointerQuery.matches || reduce) return;
-      pointerX = (event.clientX / window.innerWidth - .5) * 2;
-      pointerY = (event.clientY / window.innerHeight - .5) * 2;
-      if (!raf) raf = requestAnimationFrame(draw);
+    function applyVirtualDelta(delta, rotationScale, phaseScale) {
+      inputRotationTarget += delta * rotationScale;
+      virtualPhaseTarget += delta * phaseScale;
+      wake();
+    }
+
+    function onWheel(event) {
+      if (reduce) return;
+      event.preventDefault();
+      const normalized = clamp(event.deltaY, -80, 80);
+      applyVirtualDelta(normalized, .006, .00055);
+    }
+
+    function onTouchStart(event) {
+      touchStartedOnLink = Boolean(event.target.closest('a'));
+      if (touchStartedOnLink || !event.touches.length) return;
+      lastTouchY = event.touches[0].clientY;
+    }
+
+    function onTouchMove(event) {
+      if (reduce || touchStartedOnLink || !event.touches.length) return;
+      const y = event.touches[0].clientY;
+      const delta = lastTouchY - y;
+      lastTouchY = y;
+      applyVirtualDelta(delta, .008, .00075);
+      event.preventDefault();
+    }
+
+    function onResize() {
+      sizeCanvas();
+      seedParticles();
+      wake();
     }
 
     sizeCanvas();
     seedParticles();
-    updateNodes(0);
-    measure();
-    window.addEventListener('scroll', measure, { passive: true });
-    window.addEventListener('resize', () => { sizeCanvas(); seedParticles(); measure(); }, { passive: true });
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
-    reduceQuery.addEventListener?.('change', (event) => { reduce = event.matches; measure(); });
+    updateNodes(.18);
+    wake();
+
+    atlas.addEventListener('wheel', onWheel, { passive: false });
+    atlas.addEventListener('touchstart', onTouchStart, { passive: true });
+    atlas.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('resize', onResize, { passive: true });
+    reduceQuery.addEventListener?.('change', (event) => {
+      reduce = event.matches;
+      lastTime = performance.now();
+      wake();
+    });
   });
 </script>
 
@@ -269,18 +292,20 @@ const nodes = [
   .atlas {
     --progress: 0;
     --draw-progress: 0;
-    --mx: 0;
-    --my: 0;
     --scroll-rotation: 0;
-    min-height: 520vh;
+    min-height: 100svh;
+    height: 100svh;
+    overflow: hidden;
+    overscroll-behavior: none;
+    touch-action: none;
     background: #01030a;
     color: #fff7df;
   }
 
   .atlas__sticky {
-    position: sticky;
-    top: 0;
+    position: relative;
     min-height: 100svh;
+    height: 100svh;
     overflow: hidden;
     isolation: isolate;
     display: grid;
@@ -305,7 +330,7 @@ const nodes = [
   .atlas__sigils {
     z-index: -3;
     opacity: .82;
-    transform: translate3d(calc(var(--mx) * -10px), calc(var(--my) * -8px), 0) scale(1.02);
+    transform: scale(1.02);
   }
 
   .atlas__curve {
@@ -349,7 +374,7 @@ const nodes = [
     gap: 10px;
     color: #fff7df;
     text-decoration: none;
-    transform: translate3d(calc(-50% + var(--mx) * -6px), calc(-50% + var(--my) * -5px), 0);
+    transform: translate3d(-50%, -50%, 0);
   }
 
   .atlas__core::before,
@@ -467,7 +492,6 @@ const nodes = [
   }
 
   @media (max-width: 900px) {
-    .atlas { min-height: 460vh; }
     .atlas__node { min-width: 118px; min-height: 48px; padding: 10px 12px; gap: 8px; border-radius: 18px; }
     .atlas__node-kicker { display: none; }
     .atlas__node-title { font-size: 13px; }
@@ -482,9 +506,9 @@ const nodes = [
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .atlas { min-height: 100svh; }
-    .atlas__sigils,
-    .atlas__core { transform: none; }
+    .atlas { touch-action: auto; }
+    .atlas__sigils { transform: scale(1.02); }
+    .atlas__core { transform: translate3d(-50%, -50%, 0); }
     .atlas__node { transition: none; }
   }
 </style>
