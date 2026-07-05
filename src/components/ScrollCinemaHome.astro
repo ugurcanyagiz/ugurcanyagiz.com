@@ -8,10 +8,31 @@ const nodes = [
     kicker: "Matter & mind",
     className: "science",
     children: [
-      { title: "Physics", href: "/science/physics", description: "Matter, force, motion, and the structure of reality." },
-      { title: "Astronomy", href: "/science/astronomy", description: "Stars, galaxies, cosmic scale, and observation." },
-      { title: "Biology", href: "/science/biology", description: "Life, evolution, systems, and adaptation." },
-      { title: "Mind & Intelligence", href: "/science/mind", description: "Cognition, AI, consciousness, and learning." },
+      { title: "Physics", href: "/science/physics", description: "Matter, force, motion, and the structure of reality.", topics: [
+        { title: "Classical Mechanics", href: "/science/physics/classical-mechanics", description: "Motion, force, energy, and systems." },
+        { title: "Quantum Theory", href: "/science/physics/quantum-theory", description: "Matter and probability at small scales." },
+        { title: "Relativity", href: "/science/physics/relativity", description: "Space, time, gravity, and light." },
+        { title: "Thermodynamics", href: "/science/physics/thermodynamics", description: "Heat, entropy, and transformation." },
+      ] },
+      { title: "Astronomy", href: "/science/astronomy", description: "Stars, galaxies, cosmic scale, and observation.", topics: [
+        { title: "Solar System", href: "/science/astronomy/solar-system", description: "Planets, moons, asteroids, and orbital motion." },
+        { title: "Stars", href: "/science/astronomy/stars", description: "Birth, life cycles, fusion, and stellar death." },
+        { title: "Galaxies", href: "/science/astronomy/galaxies", description: "Structure, motion, dark matter, and scale." },
+        { title: "Black Holes", href: "/science/astronomy/black-holes", description: "Gravity, horizons, accretion, and spacetime." },
+        { title: "Cosmology", href: "/science/astronomy/cosmology", description: "The origin, expansion, and fate of the universe." },
+      ] },
+      { title: "Biology", href: "/science/biology", description: "Life, evolution, systems, and adaptation.", topics: [
+        { title: "Evolution", href: "/science/biology/evolution", description: "Adaptation, selection, and deep time." },
+        { title: "Cells", href: "/science/biology/cells", description: "Structure, metabolism, and biological machinery." },
+        { title: "Ecology", href: "/science/biology/ecology", description: "Systems, environments, and interdependence." },
+        { title: "Human Body", href: "/science/biology/human-body", description: "Anatomy, physiology, and health." },
+      ] },
+      { title: "Mind & Intelligence", href: "/science/mind", description: "Cognition, AI, consciousness, and learning.", topics: [
+        { title: "Cognition", href: "/science/mind/cognition", description: "Perception, memory, learning, and thought." },
+        { title: "Consciousness", href: "/science/mind/consciousness", description: "Awareness, selfhood, and experience." },
+        { title: "Artificial Intelligence", href: "/science/mind/artificial-intelligence", description: "Models, agents, tools, and automation." },
+        { title: "Learning Systems", href: "/science/mind/learning-systems", description: "How humans and machines improve." },
+      ] },
     ],
   },
   {
@@ -22,10 +43,30 @@ const nodes = [
     kicker: "Time & empire",
     className: "history",
     children: [
-      { title: "Ancient Civilizations", href: "/history/ancient-civilizations", description: "Origins, cities, myths, and early power." },
-      { title: "Empires", href: "/history/empires", description: "Expansion, collapse, law, and cultural memory." },
-      { title: "Philosophy", href: "/history/philosophy", description: "Ideas that shaped civilization and selfhood." },
-      { title: "Maps & Timelines", href: "/history/maps-timelines", description: "Spatial and chronological ways of reading history." },
+      { title: "Ancient Civilizations", href: "/history/ancient-civilizations", description: "Origins, cities, myths, and early power.", topics: [
+        { title: "Mesopotamia", href: "/history/ancient-civilizations/mesopotamia", description: "Cities, writing, law, and early states." },
+        { title: "Ancient Egypt", href: "/history/ancient-civilizations/egypt", description: "Kingship, ritual, monuments, and memory." },
+        { title: "Ancient Greece", href: "/history/ancient-civilizations/greece", description: "Polis, philosophy, art, and politics." },
+        { title: "Ancient Rome", href: "/history/ancient-civilizations/rome", description: "Republic, empire, law, and infrastructure." },
+      ] },
+      { title: "Empires", href: "/history/empires", description: "Expansion, collapse, law, and cultural memory.", topics: [
+        { title: "Ottoman Empire", href: "/history/empires/ottoman", description: "Governance, culture, trade, and transformation." },
+        { title: "Roman Empire", href: "/history/empires/roman", description: "Power, citizenship, engineering, and collapse." },
+        { title: "Mongol Empire", href: "/history/empires/mongol", description: "Mobility, conquest, networks, and exchange." },
+        { title: "British Empire", href: "/history/empires/british", description: "Trade, industry, colonialism, and legacy." },
+      ] },
+      { title: "Philosophy", href: "/history/philosophy", description: "Ideas that shaped civilization and selfhood.", topics: [
+        { title: "Ancient Philosophy", href: "/history/philosophy/ancient", description: "Plato, Aristotle, ethics, and metaphysics." },
+        { title: "Enlightenment", href: "/history/philosophy/enlightenment", description: "Reason, liberty, science, and politics." },
+        { title: "Existentialism", href: "/history/philosophy/existentialism", description: "Freedom, meaning, anxiety, and selfhood." },
+        { title: "Political Thought", href: "/history/philosophy/political-thought", description: "Power, justice, law, and society." },
+      ] },
+      { title: "Maps & Timelines", href: "/history/maps-timelines", description: "Spatial and chronological ways of reading history.", topics: [
+        { title: "World Timelines", href: "/history/maps-timelines/world-timelines", description: "Chronological maps of major changes." },
+        { title: "Trade Routes", href: "/history/maps-timelines/trade-routes", description: "Silk roads, seas, ports, and exchange." },
+        { title: "Migration", href: "/history/maps-timelines/migration", description: "Movement, settlement, identity, and change." },
+        { title: "Historical Maps", href: "/history/maps-timelines/historical-maps", description: "Space, borders, memory, and worldview." },
+      ] },
     ],
   },
   {
@@ -36,10 +77,30 @@ const nodes = [
     kicker: "Form & feeling",
     className: "art",
     children: [
-      { title: "Visual Studies", href: "/art/visual-studies", description: "Image, form, color, and composition." },
-      { title: "Design", href: "/art/design", description: "Interfaces, systems, objects, and visual language." },
-      { title: "Cinema", href: "/art/cinema", description: "Movement, atmosphere, editing, and narrative." },
-      { title: "Architecture", href: "/art/architecture", description: "Space, material, proportion, and memory." },
+      { title: "Visual Studies", href: "/art/visual-studies", description: "Image, form, color, and composition.", topics: [
+        { title: "Composition", href: "/art/visual-studies/composition", description: "Balance, rhythm, contrast, and structure." },
+        { title: "Color", href: "/art/visual-studies/color", description: "Harmony, symbolism, light, and emotion." },
+        { title: "Image Reading", href: "/art/visual-studies/image-reading", description: "Meaning, context, and visual culture." },
+        { title: "Photography", href: "/art/visual-studies/photography", description: "Frame, time, light, and memory." },
+      ] },
+      { title: "Design", href: "/art/design", description: "Interfaces, systems, objects, and visual language.", topics: [
+        { title: "Interface Design", href: "/art/design/interface-design", description: "Screens, flows, hierarchy, and interaction." },
+        { title: "Graphic Design", href: "/art/design/graphic-design", description: "Type, layout, identity, and systems." },
+        { title: "Product Design", href: "/art/design/product-design", description: "Objects, use, ergonomics, and experience." },
+        { title: "Design Systems", href: "/art/design/design-systems", description: "Components, tokens, patterns, and consistency." },
+      ] },
+      { title: "Cinema", href: "/art/cinema", description: "Movement, atmosphere, editing, and narrative.", topics: [
+        { title: "Cinematography", href: "/art/cinema/cinematography", description: "Light, lens, framing, and movement." },
+        { title: "Editing", href: "/art/cinema/editing", description: "Rhythm, continuity, contrast, and time." },
+        { title: "Film Language", href: "/art/cinema/film-language", description: "Image, sound, meaning, and emotion." },
+        { title: "Directors", href: "/art/cinema/directors", description: "Style, authorship, and visual identity." },
+      ] },
+      { title: "Architecture", href: "/art/architecture", description: "Space, material, proportion, and memory.", topics: [
+        { title: "Spatial Design", href: "/art/architecture/spatial-design", description: "Movement, proportion, and atmosphere." },
+        { title: "Materials", href: "/art/architecture/materials", description: "Stone, wood, glass, concrete, and memory." },
+        { title: "Cities", href: "/art/architecture/cities", description: "Urban form, public space, and infrastructure." },
+        { title: "Sacred Spaces", href: "/art/architecture/sacred-spaces", description: "Ritual, geometry, silence, and light." },
+      ] },
     ],
   },
   {
@@ -50,10 +111,30 @@ const nodes = [
     kicker: "Signals ahead",
     className: "future",
     children: [
-      { title: "Artificial Intelligence", href: "/future/artificial-intelligence", description: "Intelligence, automation, agents, and tools." },
-      { title: "Space Futures", href: "/future/space", description: "Exploration, settlement, telescopes, and orbital life." },
-      { title: "Technology", href: "/future/technology", description: "Signals, interfaces, networks, and emerging systems." },
-      { title: "Society", href: "/future/society", description: "How people, cities, work, and culture may change." },
+      { title: "Artificial Intelligence", href: "/future/artificial-intelligence", description: "Intelligence, automation, agents, and tools.", topics: [
+        { title: "AI Agents", href: "/future/artificial-intelligence/agents", description: "Tools that plan, act, and collaborate." },
+        { title: "Automation", href: "/future/artificial-intelligence/automation", description: "Workflows, systems, and productivity." },
+        { title: "AI Creativity", href: "/future/artificial-intelligence/creativity", description: "Images, music, writing, and design." },
+        { title: "Human-AI Collaboration", href: "/future/artificial-intelligence/collaboration", description: "Decision support, learning, and augmentation." },
+      ] },
+      { title: "Space Futures", href: "/future/space", description: "Exploration, settlement, telescopes, and orbital life.", topics: [
+        { title: "Mars", href: "/future/space/mars", description: "Exploration, settlement, and survival." },
+        { title: "Orbital Life", href: "/future/space/orbital-life", description: "Stations, habitats, and space industry." },
+        { title: "Telescopes", href: "/future/space/telescopes", description: "Observation, discovery, and deep time." },
+        { title: "Space Economy", href: "/future/space/economy", description: "Launch, satellites, mining, and infrastructure." },
+      ] },
+      { title: "Technology", href: "/future/technology", description: "Signals, interfaces, networks, and emerging systems.", topics: [
+        { title: "Interfaces", href: "/future/technology/interfaces", description: "Spatial, voice, wearable, and ambient computing." },
+        { title: "Networks", href: "/future/technology/networks", description: "Connectivity, protocols, and global systems." },
+        { title: "Robotics", href: "/future/technology/robotics", description: "Machines, autonomy, factories, and homes." },
+        { title: "Biotechnology", href: "/future/technology/biotechnology", description: "Engineering life, medicine, and adaptation." },
+      ] },
+      { title: "Society", href: "/future/society", description: "How people, cities, work, and culture may change.", topics: [
+        { title: "Future of Work", href: "/future/society/work", description: "Jobs, automation, skills, and identity." },
+        { title: "Cities", href: "/future/society/cities", description: "Mobility, density, climate, and design." },
+        { title: "Education", href: "/future/society/education", description: "Learning systems, AI tutors, and access." },
+        { title: "Culture", href: "/future/society/culture", description: "Media, attention, values, and community." },
+      ] },
     ],
   },
   {
@@ -64,10 +145,30 @@ const nodes = [
     kicker: "Field notes",
     className: "jlog",
     children: [
-      { title: "Personal Notes", href: "/blog/personal-notes", description: "Short reflections and observations." },
-      { title: "Essays", href: "/blog/essays", description: "Longer written thoughts and arguments." },
-      { title: "Reading Log", href: "/blog/reading-log", description: "Books, articles, ideas, and references." },
-      { title: "Research Notes", href: "/blog/research-notes", description: "Collected fragments and study notes." },
+      { title: "Personal Notes", href: "/blog/personal-notes", description: "Short reflections and observations.", topics: [
+        { title: "Reflections", href: "/blog/personal-notes/reflections", description: "Short personal observations." },
+        { title: "Daily Notes", href: "/blog/personal-notes/daily-notes", description: "Small thoughts and captured moments." },
+        { title: "Questions", href: "/blog/personal-notes/questions", description: "Open questions and idea fragments." },
+        { title: "Lessons", href: "/blog/personal-notes/lessons", description: "Things learned through work and life." },
+      ] },
+      { title: "Essays", href: "/blog/essays", description: "Longer written thoughts and arguments.", topics: [
+        { title: "Science Essays", href: "/blog/essays/science", description: "Longer thoughts on science and meaning." },
+        { title: "Culture Essays", href: "/blog/essays/culture", description: "Art, history, media, and society." },
+        { title: "Technology Essays", href: "/blog/essays/technology", description: "AI, tools, systems, and work." },
+        { title: "Personal Essays", href: "/blog/essays/personal", description: "Memory, identity, place, and change." },
+      ] },
+      { title: "Reading Log", href: "/blog/reading-log", description: "Books, articles, ideas, and references.", topics: [
+        { title: "Books", href: "/blog/reading-log/books", description: "Notes from books and long-form reading." },
+        { title: "Articles", href: "/blog/reading-log/articles", description: "Saved ideas from articles and essays." },
+        { title: "Quotes", href: "/blog/reading-log/quotes", description: "Short excerpts and reflections." },
+        { title: "References", href: "/blog/reading-log/references", description: "Sources, links, and study material." },
+      ] },
+      { title: "Research Notes", href: "/blog/research-notes", description: "Collected fragments and study notes.", topics: [
+        { title: "Science Notes", href: "/blog/research-notes/science", description: "Concepts, models, and explanations." },
+        { title: "History Notes", href: "/blog/research-notes/history", description: "Events, timelines, and historical patterns." },
+        { title: "Design Notes", href: "/blog/research-notes/design", description: "Interface, visual, and product observations." },
+        { title: "AI Notes", href: "/blog/research-notes/ai", description: "Tools, prompts, systems, and experiments." },
+      ] },
     ],
   },
 ];
@@ -144,18 +245,53 @@ const nodes = [
             aria-label={`${node.title} subtopics`}
             tabindex="-1"
           >
-            <p class="atlas__focus-kicker">{node.kicker}</p>
-            <h2 class="atlas__focus-title">{node.title}</h2>
-            <div class="atlas__focus-subitems">
-              {node.children.map((child, childIndex) => (
-                <a class="atlas__focus-subitem" href={child.href} style={`--i:${childIndex}`}>
-                  <span class="atlas__focus-dot" aria-hidden="true"></span>
-                  <span class="atlas__focus-copy">
-                    <span class="atlas__focus-subtitle">{child.title}</span>
-                    <span class="atlas__focus-description">{child.description}</span>
-                  </span>
-                </a>
-              ))}
+            <div class="atlas__panel-stage" data-panel-stage>
+              <div class="atlas__panel-view atlas__panel-view--subtopics" data-panel-view="subtopics">
+                <p class="atlas__focus-kicker">{node.kicker}</p>
+                <h2 class="atlas__focus-title">{node.title}</h2>
+                <div class="atlas__focus-subitems atlas__panel-scroll">
+                  {node.children.map((child, childIndex) => (
+                    <button
+                      class="atlas__focus-subitem"
+                      type="button"
+                      style={`--i:${childIndex}`}
+                      data-subtopic-button
+                      data-category={node.key}
+                      data-subtopic={child.title}
+                    >
+                      <span class="atlas__focus-dot" aria-hidden="true"></span>
+                      <span class="atlas__focus-copy">
+                        <span class="atlas__focus-subtitle">{child.title}</span>
+                        <span class="atlas__focus-description">{child.description}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div class="atlas__panel-view atlas__panel-view--topics" data-panel-view="topics" aria-hidden="true">
+                {node.children.map((child) => (
+                  <div class="atlas__topic-set" data-topic-set data-subtopic={child.title}>
+                    <button class="atlas__topic-back" type="button" data-back-to-subtopics>
+                      <span aria-hidden="true">←</span> Back to {node.title}
+                    </button>
+                    <p class="atlas__topic-breadcrumb">{node.title} / {child.title}</p>
+                    <h3 class="atlas__topic-title">{child.title}</h3>
+                    <p class="atlas__topic-description">{child.description}</p>
+                    <div class="atlas__topic-items atlas__panel-scroll">
+                      {child.topics.map((topic, topicIndex) => (
+                        <a class="atlas__topic-item" href={topic.href} style={`--i:${topicIndex}`}>
+                          <span class="atlas__focus-dot" aria-hidden="true"></span>
+                          <span class="atlas__focus-copy">
+                            <span class="atlas__focus-subtitle">{topic.title}</span>
+                            <span class="atlas__focus-description">{topic.description}</span>
+                          </span>
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         ))}
@@ -177,6 +313,8 @@ const nodes = [
     const focusPanel = atlas.querySelector('[data-focus-panel]');
     const focusClose = atlas.querySelector('[data-focus-close]');
     const focusSections = Array.from(atlas.querySelectorAll('[data-focus-section]'));
+    const subtopicButtons = Array.from(atlas.querySelectorAll('[data-subtopic-button]'));
+    const backToSubtopicsButtons = Array.from(atlas.querySelectorAll('[data-back-to-subtopics]'));
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     let width = 1;
@@ -195,6 +333,7 @@ const nodes = [
     let touchStartedOnLink = false;
     let touchStartedInSubmenu = false;
     let activeCategory = null;
+    let activeSubtopic = null;
     let frozenNavRotation = 0;
 
     atlas.style.setProperty('--focus-x', '0');
@@ -434,6 +573,7 @@ const nodes = [
     function closeSubmenu({ restoreFocus = true } = {}) {
       const previousButton = activeCategory ? nodeButtons.find((button) => button.dataset.category === activeCategory) : null;
       activeCategory = null;
+      activeSubtopic = null;
       delete atlas.dataset.mode;
       delete atlas.dataset.activeCategory;
       atlas.style.setProperty('--focus-x', '0');
@@ -445,12 +585,59 @@ const nodes = [
       });
       focusSections.forEach((section) => {
         delete section.dataset.active;
+        delete section.dataset.panelLevel;
+        section.querySelectorAll('[data-panel-view="topics"]').forEach((view) => view.setAttribute('aria-hidden', 'true'));
+        section.querySelectorAll('[data-topic-set]').forEach((set) => delete set.dataset.active);
       });
       nodeButtons.forEach((button) => {
         button.setAttribute('aria-expanded', 'false');
       });
       if (restoreFocus && previousButton) previousButton.focus({ preventScroll: true });
       wake();
+    }
+
+    function resetPanel(section) {
+      if (!section) return;
+      activeSubtopic = null;
+      section.dataset.panelLevel = 'subtopics';
+      section.querySelector('[data-panel-view="subtopics"]')?.removeAttribute('aria-hidden');
+      section.querySelector('[data-panel-view="topics"]')?.setAttribute('aria-hidden', 'true');
+      section.querySelectorAll('[data-topic-set]').forEach((set) => delete set.dataset.active);
+    }
+
+    function openTopicPanel(button) {
+      if (!activeCategory || !button) return;
+      const section = focusSections.find((item) => item.dataset.category === activeCategory);
+      const subtopic = button.dataset.subtopic;
+      if (!section || !subtopic) return;
+      activeSubtopic = subtopic;
+      section.dataset.panelLevel = 'topics';
+      const subtopicsView = section.querySelector('[data-panel-view="subtopics"]');
+      const topicsView = section.querySelector('[data-panel-view="topics"]');
+      subtopicsView?.setAttribute('aria-hidden', 'true');
+      topicsView?.removeAttribute('aria-hidden');
+      section.querySelectorAll('[data-topic-set]').forEach((set) => {
+        if (set.dataset.subtopic === subtopic) set.dataset.active = 'true';
+        else delete set.dataset.active;
+      });
+      window.setTimeout(() => {
+        const activeSet = section.querySelector('[data-topic-set][data-active="true"]');
+        const backButton = activeSet?.querySelector('[data-back-to-subtopics]');
+        backButton?.focus({ preventScroll: true });
+      }, reduce ? 0 : 340);
+    }
+
+    function backToSubtopics({ restoreFocus = true } = {}) {
+      if (!activeCategory) return;
+      const section = focusSections.find((item) => item.dataset.category === activeCategory);
+      const previousSubtopic = activeSubtopic;
+      resetPanel(section);
+      if (restoreFocus && section) {
+        window.setTimeout(() => {
+          const target = Array.from(section.querySelectorAll('[data-subtopic-button]')).find((button) => button.dataset.subtopic === previousSubtopic);
+          target?.focus({ preventScroll: true });
+        }, reduce ? 0 : 340);
+      }
     }
 
     function openSubmenu(category) {
@@ -464,8 +651,13 @@ const nodes = [
         else delete shell.dataset.active;
       });
       focusSections.forEach((section) => {
-        if (section.dataset.category === category) section.dataset.active = 'true';
-        else delete section.dataset.active;
+        if (section.dataset.category === category) {
+          section.dataset.active = 'true';
+          resetPanel(section);
+        } else {
+          delete section.dataset.active;
+          delete section.dataset.panelLevel;
+        }
       });
       nodeButtons.forEach((button) => {
         button.setAttribute('aria-expanded', String(button.dataset.category === category));
@@ -474,8 +666,8 @@ const nodes = [
       requestAnimationFrame(() => {
         setFocusCamera(activeShell);
         const activeSection = focusSections.find((section) => section.dataset.category === category);
-        const firstLink = activeSection?.querySelector('a');
-        (firstLink || activeSection)?.focus({ preventScroll: true });
+        const firstSubtopic = activeSection?.querySelector('[data-subtopic-button]');
+        (firstSubtopic || activeSection)?.focus({ preventScroll: true });
       });
       wake();
     }
@@ -497,7 +689,10 @@ const nodes = [
     }
 
     function onKeyDown(event) {
-      if (event.key === 'Escape' && activeCategory) closeSubmenu();
+      if (event.key === 'Escape' && activeCategory) {
+        if (activeSubtopic) backToSubtopics();
+        else closeSubmenu();
+      }
     }
 
     function onResize() {
@@ -516,6 +711,16 @@ const nodes = [
     atlas.addEventListener('touchstart', onTouchStart, { passive: true });
     atlas.addEventListener('touchmove', onTouchMove, { passive: false });
     nodeButtons.forEach((button) => button.addEventListener('click', onNodeClick));
+    subtopicButtons.forEach((button) => button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      openTopicPanel(event.currentTarget);
+    }));
+    backToSubtopicsButtons.forEach((button) => button.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      backToSubtopics();
+    }));
     document.addEventListener('click', onDocumentClick);
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('resize', onResize, { passive: true });
@@ -614,7 +819,10 @@ const nodes = [
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    width: 100%;
     color: #fff7df;
+    font: inherit;
+    text-align: left;
     text-decoration: none;
     transform: translate3d(-50%, -50%, 0);
   }
@@ -809,10 +1017,45 @@ const nodes = [
 
   .atlas__focus-section { display: none; }
   .atlas__focus-section[data-active="true"] { display: block; }
+
+  .atlas__panel-stage {
+    position: relative;
+    min-height: min(52svh, 460px);
+    overflow: hidden;
+  }
+
+  .atlas__panel-view {
+    transition: opacity 420ms cubic-bezier(.16, 1, .3, 1), transform 420ms cubic-bezier(.16, 1, .3, 1);
+    will-change: opacity, transform;
+  }
+
+  .atlas__panel-view--topics {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(26px, 0, 0);
+  }
+
+  .atlas__focus-section[data-panel-level="topics"] .atlas__panel-view--subtopics {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(-22px, 0, 0);
+  }
+
+  .atlas__focus-section[data-panel-level="topics"] .atlas__panel-view--topics {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(0, 0, 0);
+  }
+
+  .atlas__topic-set { display: none; }
+  .atlas__topic-set[data-active="true"] { display: block; }
   .atlas__focus-kicker { margin: 0 0 5px; color: rgba(121,215,255,.68); font-size: 11px; font-weight: 760; letter-spacing: .18em; text-transform: uppercase; }
   .atlas__focus-title { margin: 0 0 16px; color: #fff7df; font-size: clamp(26px, 3vw, 38px); line-height: .95; letter-spacing: -.045em; }
 
-  .atlas__focus-subitems {
+  .atlas__focus-subitems,
+  .atlas__topic-items {
     display: grid;
     gap: 10px;
     max-height: min(52svh, 460px);
@@ -823,32 +1066,78 @@ const nodes = [
     scrollbar-color: rgba(239, 202, 128, .45) rgba(255, 255, 255, .06);
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
+    mask-image: linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
   }
 
-  .atlas__focus-subitem {
+  .atlas__focus-subitems::-webkit-scrollbar,
+  .atlas__topic-items::-webkit-scrollbar { width: 6px; }
+  .atlas__focus-subitems::-webkit-scrollbar-track,
+  .atlas__topic-items::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 999px; }
+  .atlas__focus-subitems::-webkit-scrollbar-thumb,
+  .atlas__topic-items::-webkit-scrollbar-thumb { background: rgba(239,202,128,.42); border-radius: 999px; }
+
+  .atlas__focus-subitem,
+  .atlas__topic-item {
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: start;
     gap: 11px;
     padding: 13px 14px;
+    width: 100%;
     color: #fff7df;
+    font: inherit;
+    text-align: left;
     text-decoration: none;
     border: 1px solid rgba(255,247,223,.12);
     border-radius: 18px;
     background: linear-gradient(135deg, rgba(255,255,255,.115), rgba(255,255,255,.04));
+    cursor: pointer;
     box-shadow: 0 18px 60px rgba(0,0,0,.25);
     opacity: 0;
     transform: translateY(12px);
     transition: opacity 320ms ease, transform 520ms cubic-bezier(.16, 1, .3, 1), border-color .22s ease, box-shadow .22s ease;
   }
 
-  .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem {
+  .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem,
+  .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-item {
     opacity: 1;
     transform: translateY(0);
     transition-delay: calc(300ms + var(--i) * 55ms);
   }
 
-  .atlas__focus-subitem:hover { border-color: rgba(239,202,128,.62); box-shadow: 0 24px 70px rgba(222,174,82,.18); transform: translateY(-2px); }
+  .atlas__focus-subitem:hover,
+  .atlas__topic-item:hover { border-color: rgba(239,202,128,.62); box-shadow: 0 24px 70px rgba(222,174,82,.18); transform: translateY(-2px); }
+
+  .atlas__topic-back {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 12px;
+    padding: 7px 10px;
+    color: rgba(255,247,223,.72);
+    font: inherit;
+    font-size: 10px;
+    font-weight: 780;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,247,223,.12);
+    border-radius: 999px;
+    background: rgba(255,255,255,.055);
+    cursor: pointer;
+  }
+
+  .atlas__topic-back:hover,
+  .atlas__topic-back:focus-visible,
+  .atlas__topic-item:focus-visible {
+    border-color: rgba(239,202,128,.68);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(239,202,128,.13);
+  }
+
+  .atlas__topic-breadcrumb { margin: 0 0 5px; color: rgba(121,215,255,.68); font-size: 10px; font-weight: 760; letter-spacing: .14em; text-transform: uppercase; }
+  .atlas__topic-title { margin: 0 0 7px; color: #fff7df; font-size: clamp(23px, 2.4vw, 32px); line-height: .98; letter-spacing: -.04em; }
+  .atlas__topic-description { margin: 0 0 14px; color: rgba(255,247,223,.62); font-size: 12px; line-height: 1.45; }
   .atlas__focus-dot { width: 8px; aspect-ratio: 1; margin-top: 6px; border-radius: 999px; background: #efca80; box-shadow: 0 0 18px rgba(239,202,128,.62), 0 0 34px rgba(121,215,255,.16); }
   .atlas__focus-copy { display: grid; gap: 4px; }
   .atlas__focus-subtitle { font-size: 14px; font-weight: 800; letter-spacing: -.01em; }
@@ -889,7 +1178,7 @@ const nodes = [
   @media (max-width: 900px) {
     .atlas__node { min-width: 118px; min-height: 48px; padding: 10px 12px; gap: 8px; border-radius: 18px; }
     .atlas__focus-panel { width: min(360px, 42vw); right: clamp(20px, 5vw, 54px); }
-    .atlas__focus-subitems { max-height: min(52svh, 430px); }
+    .atlas__focus-subitems, .atlas__topic-items { max-height: min(52svh, 430px); }
     .atlas__node-kicker { display: none; }
     .atlas__node-title { font-size: 13px; }
     .atlas__node-index { font-size: 9px; }
@@ -916,8 +1205,10 @@ const nodes = [
     .atlas[data-mode="focus"] .atlas__focus-panel { transform: translate3d(0, 0, 0) scale(1); }
     .atlas__focus-connector { display: none; }
     .atlas__focus-chrome { max-height: 62svh; padding: 15px; border-radius: 24px; }
+    .atlas__panel-stage { min-height: min(45svh, 390px); }
     .atlas__focus-subitems { max-height: min(45svh, 390px); padding: 2px 6px 2px 2px; }
-    .atlas__focus-subitem { padding: 11px 12px; }
+    .atlas__topic-items { max-height: min(32svh, 300px); padding: 2px 6px 2px 2px; }
+    .atlas__focus-subitem, .atlas__topic-item { padding: 11px 12px; }
     .atlas__focus-description { font-size: 10px; }
   }
 
@@ -935,7 +1226,10 @@ const nodes = [
     .atlas__node,
     .atlas__focus-panel,
     .atlas__focus-subitem,
-    .atlas__focus-connector { transition: opacity .12s ease; }
-    .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem { transition-delay: 0ms; }
+    .atlas__topic-item,
+    .atlas__panel-view,
+    .atlas__focus-connector { transition: opacity .12s ease; transform: none; }
+    .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem,
+    .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-item { transition-delay: 0ms; }
   }
 </style>
