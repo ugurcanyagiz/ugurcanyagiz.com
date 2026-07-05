@@ -1,10 +1,75 @@
 ---
 const nodes = [
-  { title: "Science", href: "/science", index: "01", kicker: "Matter & mind", className: "science" },
-  { title: "History", href: "/history", index: "02", kicker: "Time & empire", className: "history" },
-  { title: "Art", href: "/art", index: "03", kicker: "Form & feeling", className: "art" },
-  { title: "Future", href: "/future", index: "04", kicker: "Signals ahead", className: "future" },
-  { title: "JLOG", href: "/blog", index: "05", kicker: "Field notes", className: "jlog" },
+  {
+    key: "science",
+    title: "Science",
+    href: "/science",
+    index: "01",
+    kicker: "Matter & mind",
+    className: "science",
+    children: [
+      { title: "Physics", href: "/science/physics", description: "Matter, force, motion, and the structure of reality." },
+      { title: "Astronomy", href: "/science/astronomy", description: "Stars, galaxies, cosmic scale, and observation." },
+      { title: "Biology", href: "/science/biology", description: "Life, evolution, systems, and adaptation." },
+      { title: "Mind & Intelligence", href: "/science/mind", description: "Cognition, AI, consciousness, and learning." },
+    ],
+  },
+  {
+    key: "history",
+    title: "History",
+    href: "/history",
+    index: "02",
+    kicker: "Time & empire",
+    className: "history",
+    children: [
+      { title: "Ancient Civilizations", href: "/history/ancient-civilizations", description: "Origins, cities, myths, and early power." },
+      { title: "Empires", href: "/history/empires", description: "Expansion, collapse, law, and cultural memory." },
+      { title: "Philosophy", href: "/history/philosophy", description: "Ideas that shaped civilization and selfhood." },
+      { title: "Maps & Timelines", href: "/history/maps-timelines", description: "Spatial and chronological ways of reading history." },
+    ],
+  },
+  {
+    key: "art",
+    title: "Art",
+    href: "/art",
+    index: "03",
+    kicker: "Form & feeling",
+    className: "art",
+    children: [
+      { title: "Visual Studies", href: "/art/visual-studies", description: "Image, form, color, and composition." },
+      { title: "Design", href: "/art/design", description: "Interfaces, systems, objects, and visual language." },
+      { title: "Cinema", href: "/art/cinema", description: "Movement, atmosphere, editing, and narrative." },
+      { title: "Architecture", href: "/art/architecture", description: "Space, material, proportion, and memory." },
+    ],
+  },
+  {
+    key: "future",
+    title: "Future",
+    href: "/future",
+    index: "04",
+    kicker: "Signals ahead",
+    className: "future",
+    children: [
+      { title: "Artificial Intelligence", href: "/future/artificial-intelligence", description: "Intelligence, automation, agents, and tools." },
+      { title: "Space Futures", href: "/future/space", description: "Exploration, settlement, telescopes, and orbital life." },
+      { title: "Technology", href: "/future/technology", description: "Signals, interfaces, networks, and emerging systems." },
+      { title: "Society", href: "/future/society", description: "How people, cities, work, and culture may change." },
+    ],
+  },
+  {
+    key: "jlog",
+    title: "JLOG",
+    href: "/blog",
+    index: "05",
+    kicker: "Field notes",
+    className: "jlog",
+    children: [
+      { title: "Personal Notes", href: "/blog/personal-notes", description: "Short reflections and observations." },
+      { title: "Essays", href: "/blog/essays", description: "Longer written thoughts and arguments." },
+      { title: "Reading Log", href: "/blog/reading-log", description: "Books, articles, ideas, and references." },
+      { title: "Research Notes", href: "/blog/research-notes", description: "Collected fragments and study notes." },
+    ],
+  },
 ];
 ---
 
@@ -32,14 +97,46 @@ const nodes = [
 
     <nav class="atlas__nav" aria-label="Primary sections" data-atlas-nav>
       {nodes.map((node) => (
-        <a class:list={["atlas__node", `atlas__node--${node.className}`]} href={node.href} aria-label={`Open ${node.title}`} data-atlas-node>
-          <span class="atlas__node-index">{node.index}</span>
-          <span class="atlas__node-mark" aria-hidden="true"></span>
-          <span class="atlas__node-text">
-            <span class="atlas__node-title">{node.title}</span>
-            <span class="atlas__node-kicker">{node.kicker}</span>
-          </span>
-        </a>
+        <div
+          class:list={["atlas__node-shell", `atlas__node-shell--${node.className}`]}
+          data-atlas-node-shell
+          data-category={node.key}
+        >
+          <button
+            class:list={["atlas__node", `atlas__node--${node.className}`]}
+            type="button"
+            aria-expanded="false"
+            aria-controls={`atlas-submenu-${node.key}`}
+            data-atlas-node
+            data-category={node.key}
+          >
+            <span class="atlas__node-index">{node.index}</span>
+            <span class="atlas__node-mark" aria-hidden="true"></span>
+            <span class="atlas__node-text">
+              <span class="atlas__node-title">{node.title}</span>
+              <span class="atlas__node-kicker">{node.kicker}</span>
+            </span>
+          </button>
+
+          <div
+            id={`atlas-submenu-${node.key}`}
+            class="atlas__submenu"
+            data-atlas-submenu
+            aria-label={`${node.title} subtopics`}
+          >
+            <span class="atlas__connector" aria-hidden="true"></span>
+
+            {node.children.map((child, childIndex) => (
+              <a class="atlas__subitem" href={child.href} style={`--i:${childIndex}`}>
+                <span class="atlas__subitem-dot" aria-hidden="true"></span>
+                <span class="atlas__subitem-copy">
+                  <span class="atlas__subitem-title">{child.title}</span>
+                  <span class="atlas__subitem-description">{child.description}</span>
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
       ))}
     </nav>
 
@@ -53,7 +150,8 @@ const nodes = [
   atlases.forEach((atlas) => {
     const canvas = atlas.querySelector('[data-atlas-canvas]');
     const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
-    const nodes = Array.from(atlas.querySelectorAll('[data-atlas-node]'));
+    const nodeShells = Array.from(atlas.querySelectorAll('[data-atlas-node-shell]'));
+    const nodeButtons = Array.from(atlas.querySelectorAll('[data-atlas-node]'));
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     let width = 1;
@@ -70,6 +168,8 @@ const nodes = [
     let lastTime = performance.now();
     let lastTouchY = 0;
     let touchStartedOnLink = false;
+    let activeCategory = null;
+    let frozenNavRotation = 0;
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
     const lerp = (a, b, t) => a + (b - a) * t;
@@ -125,7 +225,7 @@ const nodes = [
       virtualPhaseCurrent = reduce ? .18 : lerp(virtualPhaseCurrent, virtualPhaseTarget, isMobile ? .12 : .08);
 
       const backgroundRotation = reduce ? 0 : autoRotation + inputRotationCurrent;
-      const navRotation = reduce ? 0 : inputRotationCurrent;
+      const navRotation = reduce ? 0 : activeCategory ? frozenNavRotation : inputRotationCurrent;
       const phase = reduce ? .18 : virtualPhaseCurrent + autoRotation * .08;
       const displayPhase = reduce ? .18 : virtualPhaseCurrent;
       const cycle = phase * Math.PI * 2;
@@ -226,8 +326,8 @@ const nodes = [
     function updateNodes(p, scrollRotation = 0) {
       const radiusX = Math.min(window.innerWidth * (window.innerWidth < 700 ? .36 : .34), 520);
       const radiusY = Math.min(window.innerHeight * (window.innerWidth < 700 ? .33 : .28), 265);
-      nodes.forEach((node, index) => {
-        const angle = index / nodes.length * Math.PI * 2 - Math.PI / 2 + scrollRotation + p * .45;
+      nodeShells.forEach((node, index) => {
+        const angle = index / nodeShells.length * Math.PI * 2 - Math.PI / 2 + scrollRotation + p * .45;
         const depth = (Math.sin(angle) + 1) / 2;
         node.style.setProperty('--x', `${Math.cos(angle) * radiusX}px`);
         node.style.setProperty('--y', `${Math.sin(angle) * radiusY}px`);
@@ -238,7 +338,7 @@ const nodes = [
     }
 
     function applyVirtualDelta(delta, rotationScale, phaseScale) {
-      inputRotationTarget += delta * rotationScale;
+      if (!activeCategory) inputRotationTarget += delta * rotationScale;
       virtualPhaseTarget += delta * phaseScale;
       wake();
     }
@@ -251,7 +351,7 @@ const nodes = [
     }
 
     function onTouchStart(event) {
-      touchStartedOnLink = Boolean(event.target.closest('a'));
+      touchStartedOnLink = Boolean(event.target.closest('a, [data-atlas-node]'));
       if (touchStartedOnLink || !event.touches.length) return;
       lastTouchY = event.touches[0].clientY;
     }
@@ -263,6 +363,51 @@ const nodes = [
       lastTouchY = y;
       applyVirtualDelta(delta, .008, .00075);
       event.preventDefault();
+    }
+
+    function closeSubmenu() {
+      activeCategory = null;
+      delete atlas.dataset.mode;
+      delete atlas.dataset.activeCategory;
+      nodeShells.forEach((shell) => {
+        delete shell.dataset.active;
+      });
+      nodeButtons.forEach((button) => {
+        button.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    function openSubmenu(category) {
+      activeCategory = category;
+      frozenNavRotation = inputRotationCurrent;
+      atlas.dataset.mode = 'submenu';
+      atlas.dataset.activeCategory = category;
+      nodeShells.forEach((shell) => {
+        if (shell.dataset.category === category) shell.dataset.active = 'true';
+        else delete shell.dataset.active;
+      });
+      nodeButtons.forEach((button) => {
+        button.setAttribute('aria-expanded', String(button.dataset.category === category));
+      });
+      wake();
+    }
+
+    function onNodeClick(event) {
+      event.stopPropagation();
+      const category = event.currentTarget.dataset.category;
+      if (!category) return;
+      if (activeCategory === category) closeSubmenu();
+      else openSubmenu(category);
+    }
+
+    function onDocumentClick(event) {
+      if (!activeCategory) return;
+      const activeShell = atlas.querySelector('.atlas__node-shell[data-active="true"]');
+      if (activeShell && !activeShell.contains(event.target)) closeSubmenu();
+    }
+
+    function onKeyDown(event) {
+      if (event.key === 'Escape' && activeCategory) closeSubmenu();
     }
 
     function onResize() {
@@ -279,6 +424,9 @@ const nodes = [
     atlas.addEventListener('wheel', onWheel, { passive: false });
     atlas.addEventListener('touchstart', onTouchStart, { passive: true });
     atlas.addEventListener('touchmove', onTouchMove, { passive: false });
+    nodeButtons.forEach((button) => button.addEventListener('click', onNodeClick));
+    document.addEventListener('click', onDocumentClick);
+    window.addEventListener('keydown', onKeyDown);
     window.addEventListener('resize', onResize, { passive: true });
     reduceQuery.addEventListener?.('change', (event) => {
       reduce = event.matches;
@@ -402,7 +550,7 @@ const nodes = [
     perspective: 1200px;
   }
 
-  .atlas__node {
+  .atlas__node-shell {
     --x: 0px;
     --y: 0px;
     --s: 1;
@@ -412,6 +560,15 @@ const nodes = [
     left: 50%;
     top: 50%;
     z-index: var(--z);
+    opacity: var(--o);
+    pointer-events: none;
+    transform: translate(-50%, -50%) translate3d(var(--x), var(--y), 0) scale(var(--s));
+    transition: opacity .32s ease, filter .32s ease, transform .42s cubic-bezier(.2,.8,.2,1);
+    will-change: transform, opacity;
+  }
+
+  .atlas__node {
+    appearance: none;
     display: inline-grid;
     grid-template-columns: auto auto 1fr;
     align-items: center;
@@ -420,17 +577,16 @@ const nodes = [
     min-height: 58px;
     padding: 11px 14px;
     color: #fff7df;
-    text-decoration: none;
+    font: inherit;
+    text-align: left;
     border: 1px solid rgba(255, 247, 223, .15);
     border-radius: 999px;
     background: linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.045));
     box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 24px 70px rgba(0,0,0,.32);
-    opacity: var(--o);
     backdrop-filter: blur(24px) saturate(140%);
+    cursor: pointer;
     pointer-events: auto;
-    transform: translate(-50%, -50%) translate3d(var(--x), var(--y), 0) scale(var(--s));
-    transition: border-color .22s ease, background .22s ease, box-shadow .22s ease, opacity .22s ease;
-    will-change: transform, opacity;
+    transition: border-color .22s ease, background .22s ease, box-shadow .22s ease;
   }
 
   .atlas__node:hover,
@@ -440,6 +596,132 @@ const nodes = [
     box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 28px 90px rgba(222, 174, 82, .22);
     outline: none;
   }
+
+
+
+  .atlas[data-mode="submenu"] .atlas__shade {
+    background:
+      radial-gradient(circle at 50% 50%, rgba(1,3,10,.08) 0 28%, rgba(1,3,10,.48) 64%, rgba(1,3,10,.95) 100%),
+      linear-gradient(180deg, rgba(1,3,10,.7), transparent 24%, transparent 70%, rgba(1,3,10,.78));
+  }
+
+  .atlas[data-mode="submenu"] .atlas__node-shell:not([data-active="true"]) {
+    opacity: .42;
+    filter: saturate(.72) brightness(.78);
+  }
+
+  .atlas__node-shell[data-active="true"] {
+    opacity: 1;
+    filter: none;
+  }
+
+  .atlas__node-shell[data-active="true"] .atlas__node {
+    border-color: rgba(239, 202, 128, .72);
+    background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.075));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 28px 90px rgba(222, 174, 82, .24);
+  }
+
+  .atlas__submenu {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    display: grid;
+    gap: 9px;
+    width: min(360px, 42vw);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate3d(22px, -50%, 0) scale(.96);
+    transition: opacity .32s ease, transform .42s cubic-bezier(.2,.8,.2,1);
+  }
+
+  .atlas__node-shell[data-active="true"] .atlas__submenu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate3d(34px, -50%, 0) scale(1);
+  }
+
+  .atlas__node-shell--history .atlas__submenu,
+  .atlas__node-shell--art .atlas__submenu {
+    left: auto;
+    right: 100%;
+    transform: translate3d(-22px, -50%, 0) scale(.96);
+  }
+
+  .atlas__node-shell--history[data-active="true"] .atlas__submenu,
+  .atlas__node-shell--art[data-active="true"] .atlas__submenu {
+    transform: translate3d(-34px, -50%, 0) scale(1);
+  }
+
+  .atlas__node-shell--science .atlas__submenu,
+  .atlas__node-shell--jlog .atlas__submenu { top: 66%; }
+  .atlas__node-shell--art .atlas__submenu,
+  .atlas__node-shell--future .atlas__submenu { top: 34%; }
+
+  .atlas__connector {
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    width: 34px;
+    height: 1px;
+    opacity: 0;
+    background: linear-gradient(90deg, rgba(239,202,128,0), rgba(239,202,128,.7));
+    transform-origin: right center;
+    transition: opacity .28s ease;
+  }
+
+  .atlas__node-shell--history .atlas__connector,
+  .atlas__node-shell--art .atlas__connector {
+    right: auto;
+    left: 100%;
+    background: linear-gradient(90deg, rgba(239,202,128,.7), rgba(239,202,128,0));
+  }
+
+  .atlas__node-shell[data-active="true"] .atlas__connector { opacity: 1; }
+
+  .atlas__subitem {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 10px;
+    padding: 12px 14px;
+    color: #fff7df;
+    text-decoration: none;
+    border: 1px solid rgba(255,247,223,.12);
+    border-radius: 18px;
+    background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.045));
+    box-shadow: 0 18px 60px rgba(0,0,0,.28);
+    backdrop-filter: blur(22px) saturate(140%);
+    opacity: 0;
+    transform: translateY(10px) scale(.98);
+    transition: opacity .28s ease, transform .34s cubic-bezier(.2,.8,.2,1), border-color .22s ease, box-shadow .22s ease;
+  }
+
+  .atlas__node-shell[data-active="true"] .atlas__subitem {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: calc(var(--i) * 55ms);
+  }
+
+  .atlas__subitem:hover,
+  .atlas__subitem:focus-visible {
+    border-color: rgba(239,202,128,.62);
+    box-shadow: 0 24px 70px rgba(222,174,82,.18);
+    outline: none;
+    transform: translateY(-2px) scale(1.01);
+  }
+
+  .atlas__subitem-dot {
+    width: 8px;
+    aspect-ratio: 1;
+    margin-top: 6px;
+    border-radius: 999px;
+    background: #efca80;
+    box-shadow: 0 0 18px rgba(239,202,128,.62), 0 0 34px rgba(121,215,255,.16);
+  }
+
+  .atlas__subitem-copy { display: grid; gap: 3px; }
+  .atlas__subitem-title { font-size: 13px; font-weight: 780; letter-spacing: -.01em; }
+  .atlas__subitem-description { color: rgba(255,247,223,.62); font-size: 11px; line-height: 1.35; }
 
   .atlas__node-index {
     color: rgba(237, 202, 128, .76);
@@ -475,10 +757,40 @@ const nodes = [
 
   @media (max-width: 900px) {
     .atlas__node { min-width: 118px; min-height: 48px; padding: 10px 12px; gap: 8px; border-radius: 18px; }
+    .atlas__submenu { width: min(320px, 48vw); }
     .atlas__node-kicker { display: none; }
     .atlas__node-title { font-size: 13px; }
     .atlas__node-index { font-size: 9px; }
     .atlas__phase { max-width: 220px; font-size: 10px; letter-spacing: .16em; }
+  }
+
+  @media (max-width: 700px) {
+    .atlas__submenu,
+    .atlas__node-shell--history .atlas__submenu,
+    .atlas__node-shell--art .atlas__submenu {
+      position: fixed;
+      left: 16px;
+      right: 16px;
+      top: auto;
+      bottom: 18px;
+      z-index: 120;
+      width: auto;
+      max-height: 55svh;
+      overflow: auto;
+      padding: 2px;
+      transform: translate3d(0, 18px, 0) scale(.98);
+      overscroll-behavior: contain;
+    }
+
+    .atlas__node-shell[data-active="true"] .atlas__submenu,
+    .atlas__node-shell--history[data-active="true"] .atlas__submenu,
+    .atlas__node-shell--art[data-active="true"] .atlas__submenu {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    .atlas__connector { display: none; }
+    .atlas__subitem { padding: 11px 12px; }
+    .atlas__subitem-description { font-size: 10px; }
   }
 
   @media (max-width: 520px) {
@@ -490,6 +802,11 @@ const nodes = [
     .atlas { touch-action: auto; }
     .atlas__sigils { transform: scale(1.02); }
     .atlas__core { transform: translate3d(-50%, -50%, 0); }
-    .atlas__node { transition: none; }
+    .atlas__node-shell,
+    .atlas__node,
+    .atlas__submenu,
+    .atlas__subitem,
+    .atlas__connector { transition: opacity .12s ease; }
+    .atlas__node-shell[data-active="true"] .atlas__subitem { transition-delay: 0ms; }
   }
 </style>
