@@ -117,30 +117,50 @@ const nodes = [
               <span class="atlas__node-kicker">{node.kicker}</span>
             </span>
           </button>
+        </div>
+      ))}
+    </nav>
 
-          <div
+
+    <div
+      id="atlas-focus-panel"
+      class="atlas__focus-panel"
+      data-focus-panel
+      aria-live="polite"
+      aria-hidden="true"
+    >
+      <span class="atlas__focus-connector" aria-hidden="true"></span>
+      <div class="atlas__focus-chrome">
+        <button class="atlas__focus-close" type="button" data-focus-close aria-label="Back to atlas">
+          <span aria-hidden="true">←</span> Back to atlas
+        </button>
+
+        {nodes.map((node) => (
+          <section
             id={`atlas-submenu-${node.key}`}
-            class="atlas__submenu"
-            data-atlas-submenu
+            class="atlas__focus-section"
+            data-focus-section
+            data-category={node.key}
             aria-label={`${node.title} subtopics`}
+            tabindex="-1"
           >
-            <span class="atlas__connector" aria-hidden="true"></span>
-
-            <div class="atlas__subitems" tabindex="0">
+            <p class="atlas__focus-kicker">{node.kicker}</p>
+            <h2 class="atlas__focus-title">{node.title}</h2>
+            <div class="atlas__focus-subitems">
               {node.children.map((child, childIndex) => (
-                <a class="atlas__subitem" href={child.href} style={`--i:${childIndex}`}>
-                  <span class="atlas__subitem-dot" aria-hidden="true"></span>
-                  <span class="atlas__subitem-copy">
-                    <span class="atlas__subitem-title">{child.title}</span>
-                    <span class="atlas__subitem-description">{child.description}</span>
+                <a class="atlas__focus-subitem" href={child.href} style={`--i:${childIndex}`}>
+                  <span class="atlas__focus-dot" aria-hidden="true"></span>
+                  <span class="atlas__focus-copy">
+                    <span class="atlas__focus-subtitle">{child.title}</span>
+                    <span class="atlas__focus-description">{child.description}</span>
                   </span>
                 </a>
               ))}
             </div>
-          </div>
-        </div>
-      ))}
-    </nav>
+          </section>
+        ))}
+      </div>
+    </div>
 
     <p class="atlas__phase" data-atlas-phase>COSMIC KNOWLEDGE FIELD</p>
   </div>
@@ -154,6 +174,9 @@ const nodes = [
     const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
     const nodeShells = Array.from(atlas.querySelectorAll('[data-atlas-node-shell]'));
     const nodeButtons = Array.from(atlas.querySelectorAll('[data-atlas-node]'));
+    const focusPanel = atlas.querySelector('[data-focus-panel]');
+    const focusClose = atlas.querySelector('[data-focus-close]');
+    const focusSections = Array.from(atlas.querySelectorAll('[data-focus-section]'));
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     let width = 1;
@@ -173,6 +196,10 @@ const nodes = [
     let touchStartedInSubmenu = false;
     let activeCategory = null;
     let frozenNavRotation = 0;
+
+    atlas.style.setProperty('--focus-x', '0');
+    atlas.style.setProperty('--focus-y', '0');
+    atlas.style.setProperty('--focus-scale', '1');
 
     const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
     const lerp = (a, b, t) => a + (b - a) * t;
@@ -347,13 +374,13 @@ const nodes = [
     }
 
     function isInsideScrollableSubmenu(target) {
-      return target instanceof Element && Boolean(target.closest('.atlas__submenu, .atlas__subitems'));
+      return target instanceof Element && Boolean(target.closest('.atlas__focus-panel, .atlas__focus-subitems'));
     }
 
     function onWheel(event) {
       if (reduce) return;
 
-      if (atlas.dataset.mode === 'submenu' && isInsideScrollableSubmenu(event.target)) {
+      if (atlas.dataset.mode === 'focus' && isInsideScrollableSubmenu(event.target)) {
         return;
       }
 
@@ -379,29 +406,76 @@ const nodes = [
       event.preventDefault();
     }
 
-    function closeSubmenu() {
+    function getFocusScale() {
+      if (reduce) return 1;
+      if (window.innerWidth < 700) return 1.04;
+      if (window.innerWidth < 1024) return 1.24;
+      return 1.42;
+    }
+
+    function setFocusCamera(shell) {
+      if (!shell || reduce) {
+        atlas.style.setProperty('--focus-x', '0');
+        atlas.style.setProperty('--focus-y', '0');
+        atlas.style.setProperty('--focus-scale', String(getFocusScale()));
+        return;
+      }
+
+      const rect = shell.getBoundingClientRect();
+      const nodeCenterX = rect.left + rect.width / 2;
+      const nodeCenterY = rect.top + rect.height / 2;
+      const targetX = window.innerWidth < 700 ? window.innerWidth * .5 : window.innerWidth * .42;
+      const targetY = window.innerWidth < 700 ? window.innerHeight * .42 : window.innerHeight * .5;
+      atlas.style.setProperty('--focus-x', (nodeCenterX - targetX).toFixed(2));
+      atlas.style.setProperty('--focus-y', (nodeCenterY - targetY).toFixed(2));
+      atlas.style.setProperty('--focus-scale', String(getFocusScale()));
+    }
+
+    function closeSubmenu({ restoreFocus = true } = {}) {
+      const previousButton = activeCategory ? nodeButtons.find((button) => button.dataset.category === activeCategory) : null;
       activeCategory = null;
       delete atlas.dataset.mode;
       delete atlas.dataset.activeCategory;
+      atlas.style.setProperty('--focus-x', '0');
+      atlas.style.setProperty('--focus-y', '0');
+      atlas.style.setProperty('--focus-scale', '1');
+      focusPanel?.setAttribute('aria-hidden', 'true');
       nodeShells.forEach((shell) => {
         delete shell.dataset.active;
+      });
+      focusSections.forEach((section) => {
+        delete section.dataset.active;
       });
       nodeButtons.forEach((button) => {
         button.setAttribute('aria-expanded', 'false');
       });
+      if (restoreFocus && previousButton) previousButton.focus({ preventScroll: true });
+      wake();
     }
 
     function openSubmenu(category) {
       activeCategory = category;
       frozenNavRotation = inputRotationCurrent;
-      atlas.dataset.mode = 'submenu';
+      atlas.dataset.mode = 'focus';
       atlas.dataset.activeCategory = category;
+      const activeShell = nodeShells.find((shell) => shell.dataset.category === category);
       nodeShells.forEach((shell) => {
         if (shell.dataset.category === category) shell.dataset.active = 'true';
         else delete shell.dataset.active;
       });
+      focusSections.forEach((section) => {
+        if (section.dataset.category === category) section.dataset.active = 'true';
+        else delete section.dataset.active;
+      });
       nodeButtons.forEach((button) => {
         button.setAttribute('aria-expanded', String(button.dataset.category === category));
+      });
+      focusPanel?.setAttribute('aria-hidden', 'false');
+      requestAnimationFrame(() => {
+        setFocusCamera(activeShell);
+        const activeSection = focusSections.find((section) => section.dataset.category === category);
+        const firstLink = activeSection?.querySelector('a');
+        (firstLink || activeSection)?.focus({ preventScroll: true });
       });
       wake();
     }
@@ -417,7 +491,9 @@ const nodes = [
     function onDocumentClick(event) {
       if (!activeCategory) return;
       const activeShell = atlas.querySelector('.atlas__node-shell[data-active="true"]');
-      if (activeShell && !activeShell.contains(event.target)) closeSubmenu();
+      if (focusPanel?.contains(event.target)) return;
+      if (activeShell && activeShell.contains(event.target)) return;
+      closeSubmenu({ restoreFocus: false });
     }
 
     function onKeyDown(event) {
@@ -427,6 +503,7 @@ const nodes = [
     function onResize() {
       sizeCanvas();
       seedParticles();
+      if (activeCategory) setFocusCamera(nodeShells.find((shell) => shell.dataset.category === activeCategory));
       wake();
     }
 
@@ -442,6 +519,7 @@ const nodes = [
     document.addEventListener('click', onDocumentClick);
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('resize', onResize, { passive: true });
+    focusClose?.addEventListener('click', () => closeSubmenu());
     reduceQuery.addEventListener?.('change', (event) => {
       reduce = event.matches;
       lastTime = performance.now();
@@ -613,15 +691,31 @@ const nodes = [
 
 
 
-  .atlas[data-mode="submenu"] .atlas__shade {
+  .atlas[data-mode="focus"] .atlas__shade {
     background:
-      radial-gradient(circle at 50% 50%, rgba(1,3,10,.08) 0 28%, rgba(1,3,10,.48) 64%, rgba(1,3,10,.95) 100%),
-      linear-gradient(180deg, rgba(1,3,10,.7), transparent 24%, transparent 70%, rgba(1,3,10,.78));
+      radial-gradient(circle at 42% 50%, rgba(1,3,10,.04) 0 24%, rgba(1,3,10,.52) 62%, rgba(1,3,10,.95) 100%),
+      linear-gradient(180deg, rgba(1,3,10,.72), transparent 24%, transparent 70%, rgba(1,3,10,.8));
   }
 
-  .atlas[data-mode="submenu"] .atlas__node-shell:not([data-active="true"]) {
-    opacity: .42;
-    filter: saturate(.72) brightness(.78);
+  .atlas[data-mode="focus"] .atlas__sigils,
+  .atlas[data-mode="focus"] .atlas__core {
+    opacity: .55;
+    filter: saturate(.78) brightness(.82);
+  }
+
+  .atlas[data-mode="focus"] .atlas__nav {
+    transform: translate3d(calc(var(--focus-x) * -1px), calc(var(--focus-y) * -1px), 0) scale(var(--focus-scale));
+  }
+
+  .atlas__nav {
+    transform-origin: center center;
+    transition: transform 760ms cubic-bezier(.16, 1, .3, 1);
+    will-change: transform;
+  }
+
+  .atlas[data-mode="focus"] .atlas__node-shell:not([data-active="true"]) {
+    opacity: .26;
+    filter: saturate(.55) brightness(.62) blur(1.5px);
   }
 
   .atlas__node-shell[data-active="true"] {
@@ -630,152 +724,135 @@ const nodes = [
   }
 
   .atlas__node-shell[data-active="true"] .atlas__node {
-    border-color: rgba(239, 202, 128, .72);
-    background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.075));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 28px 90px rgba(222, 174, 82, .24);
+    border-color: rgba(239, 202, 128, .76);
+    background: linear-gradient(135deg, rgba(255,255,255,.24), rgba(255,255,255,.08));
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 30px 100px rgba(222, 174, 82, .3), 0 0 80px rgba(121,215,255,.14);
   }
 
-  .atlas__submenu {
+  .atlas__focus-panel {
     position: absolute;
-    left: 100%;
+    right: clamp(32px, 7vw, 96px);
     top: 50%;
-    width: min(380px, 42vw);
-    opacity: 0;
+    z-index: 70;
+    width: min(390px, 36vw);
+    max-height: min(64svh, 560px);
     pointer-events: none;
-    transform: translate3d(22px, -50%, 0) scale(.96);
-    transition: opacity .32s ease, transform .42s cubic-bezier(.2,.8,.2,1);
+    opacity: 0;
+    transform: translate3d(18px, -50%, 0) scale(.985);
+    transition: opacity 420ms ease 180ms, transform 720ms cubic-bezier(.16, 1, .3, 1) 180ms;
   }
 
-  .atlas__node-shell[data-active="true"] .atlas__submenu {
+  .atlas[data-mode="focus"] .atlas__focus-panel {
     opacity: 1;
     pointer-events: auto;
-    transform: translate3d(34px, -50%, 0) scale(1);
+    transform: translate3d(0, -50%, 0) scale(1);
   }
 
-  .atlas__node-shell--history .atlas__submenu,
-  .atlas__node-shell--art .atlas__submenu {
-    left: auto;
+  .atlas__focus-connector {
+    position: absolute;
     right: 100%;
-    transform: translate3d(-22px, -50%, 0) scale(.96);
+    top: 50%;
+    width: clamp(58px, 8vw, 132px);
+    height: 1px;
+    opacity: 0;
+    background: linear-gradient(90deg, rgba(239,202,128,0), rgba(239,202,128,.72), rgba(121,215,255,.32));
+    box-shadow: 0 0 18px rgba(239,202,128,.2);
+    transform: scaleX(.2);
+    transform-origin: right center;
+    transition: opacity 420ms ease 280ms, transform 760ms cubic-bezier(.16, 1, .3, 1) 280ms;
   }
 
-  .atlas__node-shell--history[data-active="true"] .atlas__submenu,
-  .atlas__node-shell--art[data-active="true"] .atlas__submenu {
-    transform: translate3d(-34px, -50%, 0) scale(1);
+  .atlas[data-mode="focus"] .atlas__focus-connector {
+    opacity: 1;
+    transform: scaleX(1);
   }
 
-  .atlas__node-shell--science .atlas__submenu,
-  .atlas__node-shell--jlog .atlas__submenu { top: 66%; }
-  .atlas__node-shell--art .atlas__submenu,
-  .atlas__node-shell--future .atlas__submenu { top: 34%; }
+  .atlas__focus-chrome {
+    max-height: min(64svh, 560px);
+    overflow: hidden;
+    padding: 18px;
+    border: 1px solid rgba(239,202,128,.34);
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 18% 0, rgba(239,202,128,.16), transparent 38%),
+      linear-gradient(145deg, rgba(9,15,28,.84), rgba(3,7,16,.68));
+    box-shadow: 0 34px 120px rgba(0,0,0,.48), 0 0 70px rgba(92,178,223,.12), inset 0 1px 0 rgba(255,255,255,.16);
+    backdrop-filter: blur(28px) saturate(150%);
+  }
 
-  .atlas__subitems {
+  .atlas__focus-close {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 16px;
+    padding: 8px 11px;
+    color: rgba(255,247,223,.7);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 760;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    border: 1px solid rgba(255,247,223,.12);
+    border-radius: 999px;
+    background: rgba(255,255,255,.055);
+    cursor: pointer;
+  }
+
+  .atlas__focus-close:hover,
+  .atlas__focus-close:focus-visible,
+  .atlas__focus-subitem:focus-visible {
+    border-color: rgba(239,202,128,.68);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(239,202,128,.13);
+  }
+
+  .atlas__focus-section { display: none; }
+  .atlas__focus-section[data-active="true"] { display: block; }
+  .atlas__focus-kicker { margin: 0 0 5px; color: rgba(121,215,255,.68); font-size: 11px; font-weight: 760; letter-spacing: .18em; text-transform: uppercase; }
+  .atlas__focus-title { margin: 0 0 16px; color: #fff7df; font-size: clamp(26px, 3vw, 38px); line-height: .95; letter-spacing: -.045em; }
+
+  .atlas__focus-subitems {
     display: grid;
     gap: 10px;
-    max-height: min(62svh, 520px);
+    max-height: min(52svh, 460px);
     overflow-y: auto;
     overscroll-behavior: contain;
-    padding: 4px 6px 4px 4px;
-    pointer-events: auto;
+    padding: 2px 6px 2px 2px;
     scrollbar-width: thin;
     scrollbar-color: rgba(239, 202, 128, .45) rgba(255, 255, 255, .06);
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
-    mask-image: linear-gradient(
-      to bottom,
-      transparent 0,
-      black 18px,
-      black calc(100% - 18px),
-      transparent 100%
-    );
   }
 
-  .atlas__subitems:focus-visible {
-    outline: 1px solid rgba(239, 202, 128, .72);
-    outline-offset: 4px;
-    border-radius: 20px;
-  }
-
-  .atlas__subitems::-webkit-scrollbar { width: 6px; }
-
-  .atlas__subitems::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, .045);
-    border-radius: 999px;
-  }
-
-  .atlas__subitems::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      rgba(239, 202, 128, .64),
-      rgba(121, 215, 255, .24)
-    );
-    border-radius: 999px;
-  }
-
-  .atlas__connector {
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    width: 34px;
-    height: 1px;
-    opacity: 0;
-    background: linear-gradient(90deg, rgba(239,202,128,0), rgba(239,202,128,.7));
-    transform-origin: right center;
-    transition: opacity .28s ease;
-  }
-
-  .atlas__node-shell--history .atlas__connector,
-  .atlas__node-shell--art .atlas__connector {
-    right: auto;
-    left: 100%;
-    background: linear-gradient(90deg, rgba(239,202,128,.7), rgba(239,202,128,0));
-  }
-
-  .atlas__node-shell[data-active="true"] .atlas__connector { opacity: 1; }
-
-  .atlas__subitem {
+  .atlas__focus-subitem {
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: start;
-    gap: 10px;
-    padding: 12px 14px;
+    gap: 11px;
+    padding: 13px 14px;
     color: #fff7df;
     text-decoration: none;
     border: 1px solid rgba(255,247,223,.12);
     border-radius: 18px;
-    background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.045));
-    box-shadow: 0 18px 60px rgba(0,0,0,.28);
-    backdrop-filter: blur(22px) saturate(140%);
+    background: linear-gradient(135deg, rgba(255,255,255,.115), rgba(255,255,255,.04));
+    box-shadow: 0 18px 60px rgba(0,0,0,.25);
     opacity: 0;
-    transform: translateY(10px) scale(.98);
-    transition: opacity .28s ease, transform .34s cubic-bezier(.2,.8,.2,1), border-color .22s ease, box-shadow .22s ease;
+    transform: translateY(12px);
+    transition: opacity 320ms ease, transform 520ms cubic-bezier(.16, 1, .3, 1), border-color .22s ease, box-shadow .22s ease;
   }
 
-  .atlas__node-shell[data-active="true"] .atlas__subitem {
+  .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem {
     opacity: 1;
-    transform: translateY(0) scale(1);
-    transition-delay: calc(var(--i) * 55ms);
+    transform: translateY(0);
+    transition-delay: calc(300ms + var(--i) * 55ms);
   }
 
-  .atlas__subitem:hover,
-  .atlas__subitem:focus-visible {
-    border-color: rgba(239,202,128,.62);
-    box-shadow: 0 24px 70px rgba(222,174,82,.18);
-    outline: none;
-    transform: translateY(-2px) scale(1.01);
-  }
-
-  .atlas__subitem-dot {
-    width: 8px;
-    aspect-ratio: 1;
-    margin-top: 6px;
-    border-radius: 999px;
-    background: #efca80;
-    box-shadow: 0 0 18px rgba(239,202,128,.62), 0 0 34px rgba(121,215,255,.16);
-  }
-
-  .atlas__subitem-copy { display: grid; gap: 3px; }
-  .atlas__subitem-title { font-size: 13px; font-weight: 780; letter-spacing: -.01em; }
-  .atlas__subitem-description { color: rgba(255,247,223,.62); font-size: 11px; line-height: 1.35; }
+  .atlas__focus-subitem:hover { border-color: rgba(239,202,128,.62); box-shadow: 0 24px 70px rgba(222,174,82,.18); transform: translateY(-2px); }
+  .atlas__focus-dot { width: 8px; aspect-ratio: 1; margin-top: 6px; border-radius: 999px; background: #efca80; box-shadow: 0 0 18px rgba(239,202,128,.62), 0 0 34px rgba(121,215,255,.16); }
+  .atlas__focus-copy { display: grid; gap: 4px; }
+  .atlas__focus-subtitle { font-size: 14px; font-weight: 800; letter-spacing: -.01em; }
+  .atlas__focus-description { color: rgba(255,247,223,.62); font-size: 11px; line-height: 1.4; }
 
   .atlas__node-index {
     color: rgba(237, 202, 128, .76);
@@ -811,8 +888,8 @@ const nodes = [
 
   @media (max-width: 900px) {
     .atlas__node { min-width: 118px; min-height: 48px; padding: 10px 12px; gap: 8px; border-radius: 18px; }
-    .atlas__submenu { width: min(320px, 48vw); }
-    .atlas__subitems { max-height: min(58svh, 480px); }
+    .atlas__focus-panel { width: min(360px, 42vw); right: clamp(20px, 5vw, 54px); }
+    .atlas__focus-subitems { max-height: min(52svh, 430px); }
     .atlas__node-kicker { display: none; }
     .atlas__node-title { font-size: 13px; }
     .atlas__node-index { font-size: 9px; }
@@ -820,33 +897,28 @@ const nodes = [
   }
 
   @media (max-width: 700px) {
-    .atlas__submenu,
-    .atlas__node-shell--history .atlas__submenu,
-    .atlas__node-shell--art .atlas__submenu {
+    .atlas[data-mode="focus"] { touch-action: pan-y; }
+    .atlas[data-mode="focus"] .atlas__nav { transform: scale(var(--focus-scale)); }
+
+    .atlas__focus-panel {
       position: fixed;
       left: 14px;
       right: 14px;
       top: auto;
-      bottom: 18px;
+      bottom: 14px;
       z-index: 120;
       width: calc(100vw - 28px);
       max-height: 62svh;
-      overflow: hidden;
-      padding: 2px;
       transform: translate3d(0, 18px, 0) scale(.98);
       overscroll-behavior: contain;
     }
 
-    .atlas__node-shell[data-active="true"] .atlas__submenu,
-    .atlas__node-shell--history[data-active="true"] .atlas__submenu,
-    .atlas__node-shell--art[data-active="true"] .atlas__submenu {
-      transform: translate3d(0, 0, 0) scale(1);
-    }
-
-    .atlas__connector { display: none; }
-    .atlas__subitems { max-height: min(58svh, 480px); padding: 4px 6px 4px 4px; }
-    .atlas__subitem { padding: 11px 12px; }
-    .atlas__subitem-description { font-size: 10px; }
+    .atlas[data-mode="focus"] .atlas__focus-panel { transform: translate3d(0, 0, 0) scale(1); }
+    .atlas__focus-connector { display: none; }
+    .atlas__focus-chrome { max-height: 62svh; padding: 15px; border-radius: 24px; }
+    .atlas__focus-subitems { max-height: min(45svh, 390px); padding: 2px 6px 2px 2px; }
+    .atlas__focus-subitem { padding: 11px 12px; }
+    .atlas__focus-description { font-size: 10px; }
   }
 
   @media (max-width: 520px) {
@@ -858,11 +930,12 @@ const nodes = [
     .atlas { touch-action: auto; }
     .atlas__sigils { transform: scale(1.02); }
     .atlas__core { transform: translate3d(-50%, -50%, 0); }
+    .atlas[data-mode="focus"] .atlas__nav { transform: none; }
     .atlas__node-shell,
     .atlas__node,
-    .atlas__submenu,
-    .atlas__subitem,
-    .atlas__connector { transition: opacity .12s ease; }
-    .atlas__node-shell[data-active="true"] .atlas__subitem { transition-delay: 0ms; }
+    .atlas__focus-panel,
+    .atlas__focus-subitem,
+    .atlas__focus-connector { transition: opacity .12s ease; }
+    .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem { transition-delay: 0ms; }
   }
 </style>
