@@ -1,4 +1,6 @@
 ---
+const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
+
 const nodes = [
   {
     key: "science",
@@ -278,9 +280,14 @@ const nodes = [
                     <p class="atlas__topic-breadcrumb">{node.title} / {child.title}</p>
                     <h3 class="atlas__topic-title">{child.title}</h3>
                     <p class="atlas__topic-description">{child.description}</p>
-                    <div class="atlas__topic-items atlas__panel-scroll">
+                    <div class="atlas__topic-cards atlas__panel-scroll">
                       {child.topics.map((topic, topicIndex) => (
-                        <a class="atlas__topic-item" href={topic.href} style={`--i:${topicIndex}`}>
+                        <a
+                          class:list={["atlas__topic-card", currentPath === topic.href && "atlas__topic-card--active"]}
+                          href={topic.href}
+                          style={`--i:${topicIndex}`}
+                          aria-current={currentPath === topic.href ? "page" : undefined}
+                        >
                           <span class="atlas__focus-dot" aria-hidden="true"></span>
                           <span class="atlas__focus-copy">
                             <span class="atlas__focus-subtitle">{topic.title}</span>
@@ -331,6 +338,7 @@ const nodes = [
     let lastTime = performance.now();
     let lastTouchY = 0;
     let touchStartedOnLink = false;
+    let touchStartedOnPanelButton = false;
     let touchStartedInSubmenu = false;
     let activeCategory = null;
     let activeSubtopic = null;
@@ -529,15 +537,16 @@ const nodes = [
     }
 
     function onTouchStart(event) {
-      touchStartedOnLink = event.target instanceof Element && Boolean(event.target.closest('a, [data-atlas-node]'));
+      touchStartedOnLink = event.target instanceof Element && Boolean(event.target.closest('a'));
+      touchStartedOnPanelButton = event.target instanceof Element && Boolean(event.target.closest('[data-atlas-node], [data-subtopic-button], [data-back-to-subtopics], [data-focus-close]'));
       touchStartedInSubmenu = isInsideScrollableSubmenu(event.target);
 
-      if (touchStartedOnLink || touchStartedInSubmenu || !event.touches.length) return;
+      if (touchStartedOnLink || touchStartedOnPanelButton || touchStartedInSubmenu || !event.touches.length) return;
       lastTouchY = event.touches[0].clientY;
     }
 
     function onTouchMove(event) {
-      if (reduce || touchStartedOnLink || touchStartedInSubmenu || !event.touches.length) return;
+      if (reduce || touchStartedOnLink || touchStartedOnPanelButton || touchStartedInSubmenu || !event.touches.length) return;
       const y = event.touches[0].clientY;
       const delta = lastTouchY - y;
       lastTouchY = y;
@@ -1055,7 +1064,7 @@ const nodes = [
   .atlas__focus-title { margin: 0 0 16px; color: #fff7df; font-size: clamp(26px, 3vw, 38px); line-height: .95; letter-spacing: -.045em; }
 
   .atlas__focus-subitems,
-  .atlas__topic-items {
+  .atlas__topic-cards {
     display: grid;
     gap: 10px;
     max-height: min(52svh, 460px);
@@ -1070,14 +1079,14 @@ const nodes = [
   }
 
   .atlas__focus-subitems::-webkit-scrollbar,
-  .atlas__topic-items::-webkit-scrollbar { width: 6px; }
+  .atlas__topic-cards::-webkit-scrollbar { width: 6px; }
   .atlas__focus-subitems::-webkit-scrollbar-track,
-  .atlas__topic-items::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 999px; }
+  .atlas__topic-cards::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 999px; }
   .atlas__focus-subitems::-webkit-scrollbar-thumb,
-  .atlas__topic-items::-webkit-scrollbar-thumb { background: rgba(239,202,128,.42); border-radius: 999px; }
+  .atlas__topic-cards::-webkit-scrollbar-thumb { background: rgba(239,202,128,.42); border-radius: 999px; }
 
   .atlas__focus-subitem,
-  .atlas__topic-item {
+  .atlas__topic-card {
     display: grid;
     grid-template-columns: auto 1fr;
     align-items: start;
@@ -1099,14 +1108,28 @@ const nodes = [
   }
 
   .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem,
-  .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-item {
+  .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-card {
     opacity: 1;
     transform: translateY(0);
     transition-delay: calc(300ms + var(--i) * 55ms);
   }
 
   .atlas__focus-subitem:hover,
-  .atlas__topic-item:hover { border-color: rgba(239,202,128,.62); box-shadow: 0 24px 70px rgba(222,174,82,.18); transform: translateY(-2px); }
+  .atlas__topic-card:hover { border-color: rgba(239,202,128,.62); box-shadow: 0 24px 70px rgba(222,174,82,.18); transform: translateY(-2px); }
+
+  .atlas__topic-card--active,
+  .atlas__topic-card[aria-current="page"] {
+    border-color: rgba(121, 215, 255, .82);
+    background:
+      radial-gradient(circle at 12% 0, rgba(121, 215, 255, .22), transparent 42%),
+      linear-gradient(135deg, rgba(239,202,128,.2), rgba(255,255,255,.07));
+    box-shadow: 0 24px 76px rgba(121,215,255,.2), inset 0 1px 0 rgba(255,255,255,.22);
+  }
+
+  .atlas__topic-card--active .atlas__focus-description,
+  .atlas__topic-card[aria-current="page"] .atlas__focus-description {
+    color: rgba(255,247,223,.78);
+  }
 
   .atlas__topic-back {
     appearance: none;
@@ -1129,7 +1152,7 @@ const nodes = [
 
   .atlas__topic-back:hover,
   .atlas__topic-back:focus-visible,
-  .atlas__topic-item:focus-visible {
+  .atlas__topic-card:focus-visible {
     border-color: rgba(239,202,128,.68);
     outline: none;
     box-shadow: 0 0 0 3px rgba(239,202,128,.13);
@@ -1178,7 +1201,7 @@ const nodes = [
   @media (max-width: 900px) {
     .atlas__node { min-width: 118px; min-height: 48px; padding: 10px 12px; gap: 8px; border-radius: 18px; }
     .atlas__focus-panel { width: min(360px, 42vw); right: clamp(20px, 5vw, 54px); }
-    .atlas__focus-subitems, .atlas__topic-items { max-height: min(52svh, 430px); }
+    .atlas__focus-subitems, .atlas__topic-cards { max-height: min(52svh, 430px); }
     .atlas__node-kicker { display: none; }
     .atlas__node-title { font-size: 13px; }
     .atlas__node-index { font-size: 9px; }
@@ -1207,8 +1230,8 @@ const nodes = [
     .atlas__focus-chrome { max-height: 62svh; padding: 15px; border-radius: 24px; }
     .atlas__panel-stage { min-height: min(45svh, 390px); }
     .atlas__focus-subitems { max-height: min(45svh, 390px); padding: 2px 6px 2px 2px; }
-    .atlas__topic-items { max-height: min(32svh, 300px); padding: 2px 6px 2px 2px; }
-    .atlas__focus-subitem, .atlas__topic-item { padding: 11px 12px; }
+    .atlas__topic-cards { max-height: min(32svh, 300px); padding: 2px 6px 2px 2px; }
+    .atlas__focus-subitem, .atlas__topic-card { padding: 11px 12px; }
     .atlas__focus-description { font-size: 10px; }
   }
 
@@ -1226,10 +1249,10 @@ const nodes = [
     .atlas__node,
     .atlas__focus-panel,
     .atlas__focus-subitem,
-    .atlas__topic-item,
+    .atlas__topic-card,
     .atlas__panel-view,
     .atlas__focus-connector { transition: opacity .12s ease; transform: none; }
     .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem,
-    .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-item { transition-delay: 0ms; }
+    .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-card { transition-delay: 0ms; }
   }
 </style>

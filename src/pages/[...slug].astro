@@ -1,0 +1,147 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+export function getStaticPaths() {
+  return [
+  { params: { slug: 'art/architecture/cities' } },
+  { params: { slug: 'art/architecture/materials' } },
+  { params: { slug: 'art/architecture/sacred-spaces' } },
+  { params: { slug: 'art/architecture/spatial-design' } },
+  { params: { slug: 'art/cinema/cinematography' } },
+  { params: { slug: 'art/cinema/directors' } },
+  { params: { slug: 'art/cinema/editing' } },
+  { params: { slug: 'art/cinema/film-language' } },
+  { params: { slug: 'art/design/design-systems' } },
+  { params: { slug: 'art/design/graphic-design' } },
+  { params: { slug: 'art/design/interface-design' } },
+  { params: { slug: 'art/design/product-design' } },
+  { params: { slug: 'art/visual-studies/color' } },
+  { params: { slug: 'art/visual-studies/composition' } },
+  { params: { slug: 'art/visual-studies/image-reading' } },
+  { params: { slug: 'art/visual-studies/photography' } },
+  { params: { slug: 'blog/essays/culture' } },
+  { params: { slug: 'blog/essays/personal' } },
+  { params: { slug: 'blog/essays/science' } },
+  { params: { slug: 'blog/essays/technology' } },
+  { params: { slug: 'blog/personal-notes/daily-notes' } },
+  { params: { slug: 'blog/personal-notes/lessons' } },
+  { params: { slug: 'blog/personal-notes/questions' } },
+  { params: { slug: 'blog/personal-notes/reflections' } },
+  { params: { slug: 'blog/reading-log/articles' } },
+  { params: { slug: 'blog/reading-log/books' } },
+  { params: { slug: 'blog/reading-log/quotes' } },
+  { params: { slug: 'blog/reading-log/references' } },
+  { params: { slug: 'blog/research-notes/ai' } },
+  { params: { slug: 'blog/research-notes/design' } },
+  { params: { slug: 'blog/research-notes/history' } },
+  { params: { slug: 'blog/research-notes/science' } },
+  { params: { slug: 'future/artificial-intelligence/agents' } },
+  { params: { slug: 'future/artificial-intelligence/automation' } },
+  { params: { slug: 'future/artificial-intelligence/collaboration' } },
+  { params: { slug: 'future/artificial-intelligence/creativity' } },
+  { params: { slug: 'future/society/cities' } },
+  { params: { slug: 'future/society/culture' } },
+  { params: { slug: 'future/society/education' } },
+  { params: { slug: 'future/society/work' } },
+  { params: { slug: 'future/space/economy' } },
+  { params: { slug: 'future/space/mars' } },
+  { params: { slug: 'future/space/orbital-life' } },
+  { params: { slug: 'future/space/telescopes' } },
+  { params: { slug: 'future/technology/biotechnology' } },
+  { params: { slug: 'future/technology/interfaces' } },
+  { params: { slug: 'future/technology/networks' } },
+  { params: { slug: 'future/technology/robotics' } },
+  { params: { slug: 'history/ancient-civilizations/egypt' } },
+  { params: { slug: 'history/ancient-civilizations/greece' } },
+  { params: { slug: 'history/ancient-civilizations/mesopotamia' } },
+  { params: { slug: 'history/ancient-civilizations/rome' } },
+  { params: { slug: 'history/empires/british' } },
+  { params: { slug: 'history/empires/mongol' } },
+  { params: { slug: 'history/empires/ottoman' } },
+  { params: { slug: 'history/empires/roman' } },
+  { params: { slug: 'history/maps-timelines/historical-maps' } },
+  { params: { slug: 'history/maps-timelines/migration' } },
+  { params: { slug: 'history/maps-timelines/trade-routes' } },
+  { params: { slug: 'history/maps-timelines/world-timelines' } },
+  { params: { slug: 'history/philosophy/ancient' } },
+  { params: { slug: 'history/philosophy/enlightenment' } },
+  { params: { slug: 'history/philosophy/existentialism' } },
+  { params: { slug: 'history/philosophy/political-thought' } },
+  { params: { slug: 'science/astronomy/black-holes' } },
+  { params: { slug: 'science/astronomy/cosmology' } },
+  { params: { slug: 'science/astronomy/galaxies' } },
+  { params: { slug: 'science/astronomy/solar-system' } },
+  { params: { slug: 'science/astronomy/stars' } },
+  { params: { slug: 'science/biology/cells' } },
+  { params: { slug: 'science/biology/ecology' } },
+  { params: { slug: 'science/biology/evolution' } },
+  { params: { slug: 'science/biology/human-body' } },
+  { params: { slug: 'science/mind/artificial-intelligence' } },
+  { params: { slug: 'science/mind/cognition' } },
+  { params: { slug: 'science/mind/consciousness' } },
+  { params: { slug: 'science/mind/learning-systems' } },
+  { params: { slug: 'science/physics/classical-mechanics' } },
+  { params: { slug: 'science/physics/quantum-theory' } },
+  { params: { slug: 'science/physics/relativity' } },
+  { params: { slug: 'science/physics/thermodynamics' } }
+  ];
+}
+
+const slug = Astro.params.slug ?? "";
+const title = slug
+  .split("/")
+  .filter(Boolean)
+  .map((part) => part.replace(/-/g, " "))
+  .join(" / ") || "Topic";
+---
+
+<Layout
+  title={`${title} | UGURCAN YAGIZ`}
+  description={`Placeholder page for ${title}.`}
+  theme="dark"
+>
+  <article class="topic-placeholder">
+    <p class="topic-placeholder__eyebrow">Knowledge atlas topic</p>
+    <h1>{title}</h1>
+    <p>
+      This is a placeholder page for <code>/{slug}</code>. A full topic page can be added here later.
+    </p>
+    <a href="/">← Back to atlas</a>
+  </article>
+</Layout>
+
+<style>
+  .topic-placeholder {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(72px, 12vw, 140px) 24px;
+    color: #fff7df;
+  }
+
+  .topic-placeholder__eyebrow {
+    margin: 0 0 12px;
+    color: rgba(121, 215, 255, .78);
+    font-size: 12px;
+    font-weight: 760;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+  }
+
+  .topic-placeholder h1 {
+    margin: 0 0 18px;
+    font-size: clamp(42px, 8vw, 88px);
+    line-height: .95;
+    text-transform: capitalize;
+  }
+
+  .topic-placeholder p {
+    color: rgba(255, 247, 223, .72);
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  .topic-placeholder a {
+    color: #efca80;
+    font-weight: 800;
+  }
+</style>
