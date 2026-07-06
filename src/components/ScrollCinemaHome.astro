@@ -158,6 +158,8 @@ const nodes = atlasData;
     let dpr = 1;
     let raf = 0;
     let reduce = reduceQuery.matches;
+
+    const motion = () => (reduce ? .38 : 1);
     let particles = [];
     let inputRotationTarget = 0;
     let inputRotationCurrent = 0;
@@ -225,15 +227,15 @@ const nodes = atlasData;
       const dt = Math.min(50, now - lastTime) / 1000;
       lastTime = now;
 
-      if (!reduce) autoRotation += dt * .045;
+      autoRotation += dt * .045 * motion();
 
-      inputRotationCurrent = reduce ? 0 : lerp(inputRotationCurrent, inputRotationTarget, isMobile ? .18 : .11);
-      virtualPhaseCurrent = reduce ? .18 : lerp(virtualPhaseCurrent, virtualPhaseTarget, isMobile ? .12 : .08);
+      inputRotationCurrent = lerp(inputRotationCurrent, inputRotationTarget, isMobile ? .18 : .11);
+      virtualPhaseCurrent = lerp(virtualPhaseCurrent, virtualPhaseTarget, isMobile ? .12 : .08);
 
-      const backgroundRotation = reduce ? 0 : autoRotation + inputRotationCurrent;
-      const navRotation = reduce ? 0 : activeCategory ? frozenNavRotation : inputRotationCurrent;
-      const phase = reduce ? .18 : virtualPhaseCurrent + autoRotation * .08;
-      const displayPhase = reduce ? .18 : virtualPhaseCurrent;
+      const backgroundRotation = autoRotation + inputRotationCurrent;
+      const navRotation = activeCategory ? frozenNavRotation : inputRotationCurrent;
+      const phase = virtualPhaseCurrent + autoRotation * .08;
+      const displayPhase = virtualPhaseCurrent;
       const cycle = phase * Math.PI * 2;
 
       const scienceGlow = clamp(.45 + .25 * Math.sin(cycle + 0), 0, 1);
@@ -326,7 +328,7 @@ const nodes = atlasData;
 
       updateNodes(displayPhase, navRotation);
 
-      if (!reduce) raf = requestAnimationFrame(draw);
+      raf = requestAnimationFrame(draw);
     }
 
     function updateNodes(p, scrollRotation = 0) {
@@ -344,8 +346,9 @@ const nodes = atlasData;
     }
 
     function applyVirtualDelta(delta, rotationScale, phaseScale) {
-      if (!activeCategory) inputRotationTarget += delta * rotationScale;
-      virtualPhaseTarget += delta * phaseScale;
+      const scale = motion();
+      if (!activeCategory) inputRotationTarget += delta * rotationScale * scale;
+      virtualPhaseTarget += delta * phaseScale * scale;
       wake();
     }
 
@@ -354,8 +357,6 @@ const nodes = atlasData;
     }
 
     function onWheel(event) {
-      if (reduce) return;
-
       if (atlas.dataset.mode === 'focus' && isInsideScrollableSubmenu(event.target)) {
         return;
       }
@@ -375,7 +376,7 @@ const nodes = atlasData;
     }
 
     function onTouchMove(event) {
-      if (reduce || touchStartedOnLink || touchStartedOnPanelButton || touchStartedInSubmenu || !event.touches.length) return;
+      if (touchStartedOnLink || touchStartedOnPanelButton || touchStartedInSubmenu || !event.touches.length) return;
       const y = event.touches[0].clientY;
       const delta = lastTouchY - y;
       lastTouchY = y;
@@ -384,14 +385,13 @@ const nodes = atlasData;
     }
 
     function getFocusScale() {
-      if (reduce) return 1;
-      if (window.innerWidth < 700) return 1.04;
+      if (window.innerWidth < 700) return reduce ? 1.02 : 1.04;
       if (window.innerWidth < 1024) return 1.24;
       return 1.42;
     }
 
     function setFocusCamera(shell) {
-      if (!shell || reduce) {
+      if (!shell) {
         atlas.style.setProperty('--focus-x', '0');
         atlas.style.setProperty('--focus-y', '0');
         atlas.style.setProperty('--focus-scale', String(getFocusScale()));
@@ -1074,13 +1074,20 @@ const nodes = atlasData;
     .atlas__sigils { transform: scale(1.02); }
     .atlas__core { transform: translate3d(-50%, -50%, 0); }
     .atlas[data-mode="focus"] .atlas__nav { transform: none; }
-    .atlas__node-shell,
+
+    /*
+      Reduced-motion is common on Windows machines even when the user still
+      expects this homepage to move. Keep the transform-driven atlas layout and
+      JS scroll response intact; only shorten CSS transitions here.
+    */
+    .atlas__node-shell { transition: opacity .12s ease, filter .12s ease; }
+
     .atlas__node,
     .atlas__focus-panel,
     .atlas__focus-subitem,
     .atlas__topic-card,
     .atlas__panel-view,
-    .atlas__focus-connector { transition: opacity .12s ease; transform: none; }
+    .atlas__focus-connector { transition: opacity .12s ease; }
     .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem,
     .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-card { transition-delay: 0ms; }
   }
