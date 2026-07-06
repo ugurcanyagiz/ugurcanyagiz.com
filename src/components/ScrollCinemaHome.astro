@@ -1074,13 +1074,21 @@ const nodes = atlasData;
     .atlas__sigils { transform: scale(1.02); }
     .atlas__core { transform: translate3d(-50%, -50%, 0); }
     .atlas[data-mode="focus"] .atlas__nav { transform: none; }
-    .atlas__node-shell,
+
+    /*
+      Keep the node-shell transform in reduced-motion mode. The JavaScript
+      writes each menu item's stable orbit position into --x/--y/--s; if this
+      media query forces transform:none, Windows/browser-level "reduce motion"
+      settings collapse every menu button into the exact center of the screen.
+    */
+    .atlas__node-shell { transition: opacity .12s ease, filter .12s ease; }
+
     .atlas__node,
     .atlas__focus-panel,
     .atlas__focus-subitem,
     .atlas__topic-card,
     .atlas__panel-view,
-    .atlas__focus-connector { transition: opacity .12s ease; transform: none; }
+    .atlas__focus-connector { transition: opacity .12s ease; }
     .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem,
     .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-card { transition-delay: 0ms; }
   }
