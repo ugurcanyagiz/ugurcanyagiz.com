@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import SiteLayout from "../components/SiteLayout.astro";
 
 export function getStaticPaths() {
   return [
@@ -95,7 +95,7 @@ const title = slug
   .join(" / ") || "Topic";
 ---
 
-<Layout
+<SiteLayout
   title={`${title} | UGURCAN YAGIZ`}
   description={`Placeholder page for ${title}.`}
   theme="dark"
@@ -108,7 +108,7 @@ const title = slug
     </p>
     <a href="/">← Back to Atlas</a>
   </article>
-</Layout>
+</SiteLayout>
 
 <style>
   .topic-placeholder {

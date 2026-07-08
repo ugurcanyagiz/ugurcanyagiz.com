@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import SiteLayout from "../components/SiteLayout.astro";
 
 const scienceCards = [
   ["Matter", "Atoms gather like quiet alphabets, composing stone, ocean, skin, and star."],
@@ -16,7 +16,7 @@ const civilizationCards = [
 ];
 ---
 
-<Layout
+<SiteLayout
   title="The Memory of Earth | Ugurcan Yagiz"
   description="A surreal 3D digital experience exploring science, civilization, time, and the future."
 >
@@ -113,7 +113,7 @@ const civilizationCards = [
       </div>
     </section>
   </section>
-</Layout>
+</SiteLayout>
 
 <script>
   import * as THREE from "https://esm.sh/three@0.181.2";
