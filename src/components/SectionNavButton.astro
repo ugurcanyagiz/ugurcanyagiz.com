@@ -1,24 +1,19 @@
 ---
+import MenuButton from "./MenuButton.astro";
+import type { NavItem } from "../lib/navigation";
+
 export interface Props {
   index: string;
   label: string;
   href: string;
   active?: boolean;
   className?: string;
+  sectionId?: string;
+  subtitle?: string;
 }
 
-const { index, label, href, active = false, className = "" } = Astro.props;
-const classes = ["section-nav-button", active && "is-active", className].filter(Boolean).join(" ");
+const { index, label, href, active = false, className = "", sectionId = label.toLowerCase(), subtitle = "" } = Astro.props;
+const item: NavItem = { index, label, href: href.startsWith('#') ? `/${sectionId === 'jlog' ? 'blog' : sectionId}` : href, key: (sectionId === 'jlog' ? 'blog' : sectionId) as NavItem['key'], sectionId, subtitle, description: subtitle };
 ---
 
-<a
-  class={classes}
-  href={href}
-  data-section-nav-button
-  aria-current={active ? "page" : undefined}
-  aria-label={`Open ${label}`}
->
-  <span class="section-nav-button__index" aria-hidden="true">{index}</span>
-  <span class="section-nav-button__label">{label}</span>
-  <span class="section-nav-button__indicator" aria-hidden="true"></span>
-</a>
+<MenuButton item={item} href={href} active={active} className={className} ariaCurrent={active ? 'location' : false} />

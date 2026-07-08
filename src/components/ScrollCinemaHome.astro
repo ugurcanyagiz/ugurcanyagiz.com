@@ -1,17 +1,20 @@
 ---
 import SectionNavButton from "./SectionNavButton.astro";
-import { atlasData } from "../lib/atlasData";
+import { NAV_ITEMS } from "../lib/navigation";
 
 const phases = [
   { key: "intro", eyebrow: "Cosmic Knowledge Atlas", title: "A cinematic archive of ideas.", text: "Science, memory, art, and the future — held in orbit.", accent: "Enter", href: "/me" },
-  { key: "science", eyebrow: "01 / Science", title: "Curiosity becomes structure.", text: "Matter. Mind. Life. Uncertainty.", accent: "Observe", href: "/science" },
-  { key: "history", eyebrow: "02 / History", title: "Memory bends the present.", text: "Old forces. New consequences.", accent: "Remember", href: "/history" },
-  { key: "art", eyebrow: "03 / Art", title: "Feeling finds form.", text: "Color, sound, space, cinema.", accent: "Feel", href: "/art" },
-  { key: "future", eyebrow: "04 / Astrophysics & Future", title: "The horizon is alive.", text: "Signals from intelligence, space, energy, and time.", accent: "Project", href: "/future" },
-  { key: "explore", eyebrow: "05 / Explore", title: "Science. Memory. Art. Orbit.", text: "Choose a constellation.", accent: "Navigate", href: "/blog" },
+  ...NAV_ITEMS.map((item) => ({
+    key: item.sectionId,
+    eyebrow: `${item.index} / ${item.label}`,
+    title: item.label === "JLOG" ? "Field notes from the orbit." : item.subtitle,
+    text: item.description,
+    accent: item.label === "JLOG" ? "Open JLOG" : `Explore ${item.label}`,
+    href: item.href,
+  })),
 ];
 
-const navItems = atlasData.filter((item) => item.href).slice(0, 5);
+const navItems = NAV_ITEMS;
 ---
 
 <section class="cinema-atlas" data-cinema-atlas aria-label="Scroll reactive Cosmic Knowledge Atlas homepage">
@@ -68,9 +71,11 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
         {navItems.map((item) => (
           <SectionNavButton
             index={item.index}
-            label={item.title}
-            href={item.href}
-            className={`section-nav-button--${item.className}`}
+            label={item.label}
+            href={`#${item.sectionId}`}
+            sectionId={item.sectionId}
+            subtitle={item.subtitle}
+            className={`section-nav-button--${item.sectionId}`}
           />
         ))}
       </nav>
@@ -96,7 +101,7 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     const label = root.querySelector('[data-active-label]');
     const bar = root.querySelector('[data-progress-bar]');
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const phaseNames = ['Intro', 'Science', 'History', 'Art', 'Future', 'Explore'];
+    const phaseNames = ['Intro', 'Science', 'History', 'Art', 'Future', 'JLOG'];
     const accents = [
       [239, 202, 128],
       [121, 215, 255],
@@ -114,6 +119,19 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     let height = 1;
     let dpr = 1;
     let stars = [];
+
+    navButtons.forEach((button, index) => {
+      button.addEventListener('click', (event) => {
+        const href = button.getAttribute('href') || '';
+        if (!href.startsWith('#')) return;
+        event.preventDefault();
+        const max = root.offsetHeight - window.innerHeight;
+        const phaseIndex = index + 1;
+        const nextProgress = phaseIndex / Math.max(1, phases.length - 1);
+        window.scrollTo({ top: window.scrollY + root.getBoundingClientRect().top + max * nextProgress, behavior: reduced ? 'auto' : 'smooth' });
+        history.replaceState(null, '', href);
+      });
+    });
 
     function seed() {
       dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -219,7 +237,7 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
         const isActive = active === index + 1 || (active === 5 && index === 4);
         button.classList.toggle('is-active', isActive);
         if (isActive) {
-          button.setAttribute('aria-current', 'page');
+          button.setAttribute('aria-current', 'location');
         } else {
           button.removeAttribute('aria-current');
         }

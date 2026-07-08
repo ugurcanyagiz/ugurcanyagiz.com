@@ -1,11 +1,7 @@
 ---
-const items = [
-  { label: "JLOG", href: "/blog" },
-  { label: "Science", href: "/science" },
-  { label: "History", href: "/history" },
-  { label: "Art", href: "/art" },
-  { label: "Future", href: "/future" },
-];
+
+import { NAV_ITEMS } from '../lib/navigation';
+const items = NAV_ITEMS.map((item) => ({ label: item.label, href: item.href }));
 ---
 
 <nav class="orbit-navigation" data-orbit-navigation aria-label="Primary categories">
