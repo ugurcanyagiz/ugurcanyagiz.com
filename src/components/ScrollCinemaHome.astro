@@ -1,1094 +1,312 @@
 ---
 import { atlasData } from "../lib/atlasData";
 
-const currentPath = Astro.url.pathname.replace(/\/$/, "") || "/";
-const nodes = atlasData;
+const phases = [
+  { key: "intro", eyebrow: "Cosmic Knowledge Atlas", title: "A cinematic archive of ideas.", text: "Science, memory, art, and the future — held in orbit.", accent: "Enter", href: "/me" },
+  { key: "science", eyebrow: "01 / Science", title: "Curiosity becomes structure.", text: "Matter. Mind. Life. Uncertainty.", accent: "Observe", href: "/science" },
+  { key: "history", eyebrow: "02 / History", title: "Memory bends the present.", text: "Old forces. New consequences.", accent: "Remember", href: "/history" },
+  { key: "art", eyebrow: "03 / Art", title: "Feeling finds form.", text: "Color, sound, space, cinema.", accent: "Feel", href: "/art" },
+  { key: "future", eyebrow: "04 / Astrophysics & Future", title: "The horizon is alive.", text: "Signals from intelligence, space, energy, and time.", accent: "Project", href: "/future" },
+  { key: "explore", eyebrow: "05 / Explore", title: "Science. Memory. Art. Orbit.", text: "Choose a constellation.", accent: "Navigate", href: "/blog" },
+];
+
+const navItems = atlasData.filter((item) => item.href).slice(0, 5);
 ---
 
-<section class="atlas" data-knowledge-atlas aria-label="UGURCAN interactive knowledge atlas homepage">
-  <div class="atlas__sticky">
-    <canvas class="atlas__canvas" data-atlas-canvas aria-hidden="true"></canvas>
-    <svg class="atlas__sigils" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <defs>
-        <linearGradient id="atlasGold" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0" stop-color="#fff4c7" stop-opacity=".7" />
-          <stop offset=".55" stop-color="#d7a84f" stop-opacity=".3" />
-          <stop offset="1" stop-color="#79d7ff" stop-opacity=".16" />
-        </linearGradient>
-      </defs>
-      <path class="atlas__curve atlas__curve--science" d="M173 424 C 304 244, 489 239, 594 392 S 866 570, 1038 355" />
-      <path class="atlas__curve atlas__curve--history" d="M128 519 C 316 571, 419 324, 608 397 S 858 502, 1068 279" />
-      <path class="atlas__curve atlas__curve--art" d="M195 294 C 347 196, 432 566, 595 402 S 842 202, 1032 491" />
-      <path class="atlas__curve atlas__curve--future" d="M108 402 C 332 361, 427 430, 600 400 S 881 342, 1104 403" />
-    </svg>
+<section class="cinema-atlas" data-cinema-atlas aria-label="Scroll reactive Cosmic Knowledge Atlas homepage">
+  <div class="cinema-atlas__sticky">
+    <canvas class="cinema-atlas__canvas" data-atlas-canvas aria-hidden="true"></canvas>
+    <div class="cinema-atlas__stars" aria-hidden="true"></div>
+    <div class="cinema-atlas__aurora" aria-hidden="true"></div>
+    <div class="cinema-atlas__vignette" aria-hidden="true"></div>
+    <div class="cinema-atlas__map" aria-hidden="true">
+      <span class="cinema-atlas__arc cinema-atlas__arc--one"></span>
+      <span class="cinema-atlas__arc cinema-atlas__arc--two"></span>
+      <span class="cinema-atlas__arc cinema-atlas__arc--three"></span>
+      <span class="cinema-atlas__axis"></span>
+      <span class="cinema-atlas__scanline cinema-atlas__scanline--one"></span>
+      <span class="cinema-atlas__scanline cinema-atlas__scanline--two"></span>
+    </div>
 
-    <div class="atlas__shade" aria-hidden="true"></div>
-    <div class="atlas__grain" aria-hidden="true"></div>
-
-    <div class="atlas__core" aria-hidden="true"></div>
-
-    <nav class="atlas__nav" aria-label="Primary sections" data-atlas-nav>
-      {nodes.map((node) => (
-        <div
-          class:list={["atlas__node-shell", `atlas__node-shell--${node.className}`]}
-          data-atlas-node-shell
-          data-category={node.key}
-        >
-          <button
-            class:list={["atlas__node", `atlas__node--${node.className}`]}
-            type="button"
-            aria-expanded="false"
-            aria-controls={`atlas-submenu-${node.key}`}
-            data-atlas-node
-            data-category={node.key}
-          >
-            <span class="atlas__node-index">{node.index}</span>
-            <span class="atlas__node-mark" aria-hidden="true"></span>
-            <span class="atlas__node-text">
-              <span class="atlas__node-title">{node.title}</span>
-              <span class="atlas__node-kicker">{node.kicker}</span>
-            </span>
-          </button>
-        </div>
-      ))}
-    </nav>
-
-
-    <div
-      id="atlas-focus-panel"
-      class="atlas__focus-panel"
-      data-focus-panel
-      aria-live="polite"
-      aria-hidden="true"
-    >
-      <span class="atlas__focus-connector" aria-hidden="true"></span>
-      <div class="atlas__focus-chrome">
-        <button class="atlas__focus-close" type="button" data-focus-close aria-label="Back to atlas">
-          <span aria-hidden="true">←</span> Back to atlas
-        </button>
-
-        {nodes.map((node) => (
-          <section
-            id={`atlas-submenu-${node.key}`}
-            class="atlas__focus-section"
-            data-focus-section
-            data-category={node.key}
-            aria-label={`${node.title} subtopics`}
-            tabindex="-1"
-          >
-            <div class="atlas__panel-stage" data-panel-stage>
-              <div class="atlas__panel-view atlas__panel-view--subtopics" data-panel-view="subtopics">
-                <p class="atlas__focus-kicker">{node.kicker}</p>
-                <h2 class="atlas__focus-title">{node.title}</h2>
-                <div class="atlas__focus-subitems atlas__panel-scroll">
-                  {node.children.map((child, childIndex) => (
-                    <button
-                      class="atlas__focus-subitem"
-                      type="button"
-                      style={`--i:${childIndex}`}
-                      data-subtopic-button
-                      data-category={node.key}
-                      data-subtopic={child.title}
-                    >
-                      <span class="atlas__focus-dot" aria-hidden="true"></span>
-                      <span class="atlas__focus-copy">
-                        <span class="atlas__focus-subtitle">{child.title}</span>
-                        <span class="atlas__focus-description">{child.description}</span>
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div class="atlas__panel-view atlas__panel-view--topics" data-panel-view="topics" aria-hidden="true">
-                {node.children.map((child) => (
-                  <div class="atlas__topic-set" data-topic-set data-subtopic={child.title}>
-                    <button class="atlas__topic-back" type="button" data-back-to-subtopics>
-                      <span aria-hidden="true">←</span> Back to {node.title}
-                    </button>
-                    <p class="atlas__topic-breadcrumb">{node.title} / {child.title}</p>
-                    <h3 class="atlas__topic-title">{child.title}</h3>
-                    <p class="atlas__topic-description">{child.description}</p>
-                    <div class="atlas__topic-cards atlas__panel-scroll">
-                      {child.topics.map((topic, topicIndex) => (
-                        <a
-                          class:list={["atlas__topic-card", currentPath === topic.href && "atlas__topic-card--active"]}
-                          href={topic.href}
-                          style={`--i:${topicIndex}`}
-                          aria-current={currentPath === topic.href ? "page" : undefined}
-                        >
-                          <span class="atlas__focus-dot" aria-hidden="true"></span>
-                          <span class="atlas__focus-copy">
-                            <span class="atlas__focus-subtitle">{topic.title}</span>
-                            <span class="atlas__focus-description">{topic.description}</span>
-                          </span>
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        ))}
+    <div class="cinema-atlas__camera">
+      <div class="cinema-atlas__object" aria-hidden="true">
+        <span class="cinema-atlas__orb cinema-atlas__orb--core"></span>
+        <span class="cinema-atlas__orb cinema-atlas__orb--halo"></span>
+        <span class="cinema-atlas__orb cinema-atlas__orb--meridian"></span>
+        <span class="cinema-atlas__orb cinema-atlas__orb--aperture"></span>
+        <span class="cinema-atlas__orb cinema-atlas__orb--crown"></span>
+        <span class="cinema-atlas__needle cinema-atlas__needle--one"></span>
+        <span class="cinema-atlas__needle cinema-atlas__needle--two"></span>
+        <span class="cinema-atlas__glyph cinema-atlas__glyph--north">ATLAS</span>
+        <span class="cinema-atlas__glyph cinema-atlas__glyph--south">SCROLL FIELD</span>
+        <span class="cinema-atlas__satellite cinema-atlas__satellite--a"></span>
+        <span class="cinema-atlas__satellite cinema-atlas__satellite--b"></span>
+        <span class="cinema-atlas__satellite cinema-atlas__satellite--c"></span>
+        <span class="cinema-atlas__satellite cinema-atlas__satellite--d"></span>
       </div>
     </div>
 
-    <p class="atlas__phase" data-atlas-phase>COSMIC KNOWLEDGE FIELD</p>
+    <div class="cinema-atlas__copy" aria-live="polite">
+      {phases.map((phase, index) => (
+        <article class="cinema-atlas__phase" data-phase={index} data-phase-key={phase.key}>
+          <p class="cinema-atlas__eyebrow">{phase.eyebrow}</p>
+          <h1 class="cinema-atlas__title">{phase.title}</h1>
+          <p class="cinema-atlas__text">{phase.text}</p>
+          <a class="cinema-atlas__phase-link" href={phase.href}>{phase.accent}</a>
+        </article>
+      ))}
+    </div>
+
+    <nav class="cinema-atlas__nav" aria-label="Atlas navigation">
+      {navItems.map((item) => (
+        <a class={`cinema-atlas__nav-link cinema-atlas__nav-link--${item.className}`} href={item.href}>
+          <span>{item.index}</span>{item.title}
+        </a>
+      ))}
+    </nav>
+
+    <div class="cinema-atlas__hud" aria-hidden="true">
+      <span data-active-label>Intro</span>
+      <span class="cinema-atlas__progress"><i data-progress-bar></i></span>
+      <span>Scroll controls the atlas</span>
+    </div>
   </div>
+  <div class="cinema-atlas__scroll-space" aria-hidden="true"></div>
 </section>
 
 <script>
-  const atlases = document.querySelectorAll('[data-knowledge-atlas]');
+  const roots = document.querySelectorAll('[data-cinema-atlas]');
 
-  atlases.forEach((atlas) => {
-    const canvas = atlas.querySelector('[data-atlas-canvas]');
-    const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
-    const nodeShells = Array.from(atlas.querySelectorAll('[data-atlas-node-shell]'));
-    const nodeButtons = Array.from(atlas.querySelectorAll('[data-atlas-node]'));
-    const focusPanel = atlas.querySelector('[data-focus-panel]');
-    const focusClose = atlas.querySelector('[data-focus-close]');
-    const focusSections = Array.from(atlas.querySelectorAll('[data-focus-section]'));
-    const subtopicButtons = Array.from(atlas.querySelectorAll('[data-subtopic-button]'));
-    const backToSubtopicsButtons = Array.from(atlas.querySelectorAll('[data-back-to-subtopics]'));
+  roots.forEach((root) => {
+    const canvas = root.querySelector('[data-atlas-canvas]');
+    const ctx = canvas?.getContext('2d', { alpha: true, desynchronized: true });
+    const phases = Array.from(root.querySelectorAll('[data-phase]'));
+    const label = root.querySelector('[data-active-label]');
+    const bar = root.querySelector('[data-progress-bar]');
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-
+    const phaseNames = ['Intro', 'Science', 'History', 'Art', 'Future', 'Explore'];
+    const accents = [
+      [239, 202, 128],
+      [121, 215, 255],
+      [221, 169, 101],
+      [237, 141, 191],
+      [139, 255, 214],
+      [255, 247, 223],
+    ];
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    const lerp = (a, b, t) => a + (b - a) * t;
+    let progress = 0;
+    let target = 0;
+    let raf = 0;
     let width = 1;
     let height = 1;
     let dpr = 1;
-    let raf = 0;
-    let reduce = reduceQuery.matches;
+    let stars = [];
 
-    const motion = () => (reduce ? .38 : 1);
-    let particles = [];
-    let inputRotationTarget = 0;
-    let inputRotationCurrent = 0;
-    let virtualPhaseTarget = .18;
-    let virtualPhaseCurrent = .18;
-    let autoRotation = 0;
-    let lastTime = performance.now();
-    let lastTouchY = 0;
-    let touchStartedOnLink = false;
-    let touchStartedOnPanelButton = false;
-    let touchStartedInSubmenu = false;
-    let activeCategory = null;
-    let activeSubtopic = null;
-    let frozenNavRotation = 0;
-
-    atlas.style.setProperty('--focus-x', '0');
-    atlas.style.setProperty('--focus-y', '0');
-    atlas.style.setProperty('--focus-scale', '1');
-
-    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
-    const lerp = (a, b, t) => a + (b - a) * t;
-    function wake() {
-      if (!raf) raf = requestAnimationFrame(draw);
-    }
-
-    function seedParticles() {
-      const count = window.innerWidth < 700 ? 86 : window.innerWidth < 1100 ? 130 : 180;
-      particles = Array.from({ length: count }, (_, i) => ({
-        angle: (i * 2.399963 + (i % 7) * .17) % (Math.PI * 2),
-        radius: .12 + ((i * 37) % 100) / 100 * .78,
-        size: .45 + ((i * 19) % 100) / 100 * 1.75,
-        speed: .12 + ((i * 13) % 100) / 100 * .42,
-        tone: i % 5,
-      }));
-    }
-
-    function sizeCanvas() {
-      dpr = Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.45 : 2);
+    function seed() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
       const rect = canvas.getBoundingClientRect();
       width = Math.max(1, Math.floor(rect.width * dpr));
       height = Math.max(1, Math.floor(rect.height * dpr));
-      if (canvas.width !== width || canvas.height !== height) {
-        canvas.width = width;
-        canvas.height = height;
-      }
+      canvas.width = width;
+      canvas.height = height;
+      const count = window.innerWidth < 700 ? 120 : 240;
+      stars = Array.from({ length: count }, (_, i) => ({
+        x: ((i * 47) % 101) / 100,
+        y: ((i * 83) % 97) / 96,
+        r: .35 + ((i * 17) % 100) / 95,
+        z: .25 + ((i * 29) % 100) / 100,
+        drift: i % 2 ? 1 : -1,
+      }));
     }
 
-    function drawOrbitalRing(cx, cy, rx, ry, rotation, alpha, color) {
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(rotation);
-      ctx.scale(1, ry / rx);
-      ctx.beginPath();
-      ctx.arc(0, 0, rx, 0, Math.PI * 2);
-      ctx.strokeStyle = color;
-      ctx.globalAlpha = alpha;
-      ctx.lineWidth = Math.max(1, dpr);
-      ctx.stroke();
-      ctx.restore();
+    function measure() {
+      const rect = root.getBoundingClientRect();
+      const max = root.offsetHeight - window.innerHeight;
+      target = max > 0 ? clamp(-rect.top / max, 0, 1) : 0;
+      if (!raf) raf = requestAnimationFrame(render);
     }
 
-    function draw(now = performance.now()) {
-      raf = 0;
-      const isMobile = window.innerWidth < 700;
-      const dt = Math.min(50, now - lastTime) / 1000;
-      lastTime = now;
-
-      autoRotation += dt * .045 * motion();
-
-      inputRotationCurrent = lerp(inputRotationCurrent, inputRotationTarget, isMobile ? .18 : .11);
-      virtualPhaseCurrent = lerp(virtualPhaseCurrent, virtualPhaseTarget, isMobile ? .12 : .08);
-
-      const backgroundRotation = autoRotation + inputRotationCurrent;
-      const navRotation = activeCategory ? frozenNavRotation : inputRotationCurrent;
-      const phase = virtualPhaseCurrent + autoRotation * .08;
-      const displayPhase = virtualPhaseCurrent;
-      const cycle = phase * Math.PI * 2;
-
-      const scienceGlow = clamp(.45 + .25 * Math.sin(cycle + 0), 0, 1);
-      const historyGlow = clamp(.42 + .22 * Math.sin(cycle + Math.PI * .5), 0, 1);
-      const artGlow = clamp(.46 + .24 * Math.sin(cycle + Math.PI), 0, 1);
-      const futureGlow = clamp(.44 + .23 * Math.sin(cycle + Math.PI * 1.5), 0, 1);
-
-      atlas.style.setProperty('--science-glow', scienceGlow.toFixed(4));
-      atlas.style.setProperty('--history-glow', historyGlow.toFixed(4));
-      atlas.style.setProperty('--art-glow', artGlow.toFixed(4));
-      atlas.style.setProperty('--future-glow', futureGlow.toFixed(4));
-      atlas.style.setProperty('--scroll-rotation', (backgroundRotation * 180 / Math.PI).toFixed(4));
-
-      const cx = width * .5;
-      const cy = height * .5;
-      const min = Math.min(width, height);
-      const science = scienceGlow;
-      const history = historyGlow;
-      const art = artGlow;
-      const future = futureGlow;
-
+    function draw(p) {
+      if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
-      const bg = ctx.createRadialGradient(cx, cy, min * .04, cx, cy, min * .86);
-      bg.addColorStop(0, `rgba(35, 29, 18, ${.78 + future * .1})`);
-      bg.addColorStop(.28, '#07111f');
-      bg.addColorStop(.68, '#030711');
-      bg.addColorStop(1, '#01030a');
-      ctx.fillStyle = bg;
+      const cx = width * (.54 + Math.sin(p * Math.PI * 2) * .08);
+      const cy = height * (.48 + Math.cos(p * Math.PI * 1.4) * .055);
+      const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(width, height) * .75);
+      g.addColorStop(0, `rgba(255, 241, 198, ${.20 + p * .10})`);
+      g.addColorStop(.22, `rgba(59, 111, 152, ${.26 + Math.sin(p * 9) * .06})`);
+      g.addColorStop(.52, `rgba(117, 74, 151, ${.10 + Math.cos(p * 7) * .04})`);
+      g.addColorStop(1, 'rgba(1, 3, 10, 0)');
+      ctx.fillStyle = g;
       ctx.fillRect(0, 0, width, height);
-
-      ctx.save();
-      ctx.globalAlpha = .08 + future * .08;
-      ctx.strokeStyle = '#a9c8dd';
-      ctx.lineWidth = 1 * dpr;
-      const grid = 72 * dpr;
-      for (let x = (cx % grid); x < width; x += grid) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(lerp(x, cx, .08), height); ctx.stroke(); }
-      for (let y = (cy % grid); y < height; y += grid) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, lerp(y, cy, .08)); ctx.stroke(); }
-      ctx.restore();
-
-      particles.forEach((p) => {
-        const layerPull = lerp(.78, 1.08, science);
-        const a = p.angle + backgroundRotation * p.speed + cycle * .18 * (p.tone % 2 ? 1.7 : -1.25);
-        const orbit = p.radius * min * .58 * layerPull;
-        const x = cx + Math.cos(a) * orbit * (1 + history * .18);
-        const y = cy + Math.sin(a) * orbit * (.48 + art * .12);
-        const alpha = .14 + science * .36 + future * .18;
+      stars.forEach((s) => {
+        const x = ((s.x + p * s.z * .26 * s.drift + 1) % 1) * width;
+        const y = ((s.y + p * s.z * .14) % 1) * height;
+        ctx.globalAlpha = .18 + s.z * .55;
+        ctx.fillStyle = s.z > .8 ? '#f0ca80' : '#d8efff';
         ctx.beginPath();
-        ctx.fillStyle = p.tone === 0 ? `rgba(235, 187, 91, ${alpha})` : `rgba(213, 231, 244, ${alpha * .72})`;
-        ctx.arc(x, y, p.size * dpr * (1 + future * .45), 0, Math.PI * 2);
+        ctx.arc(x, y, s.r * dpr, 0, Math.PI * 2);
         ctx.fill();
-      });
-
-      for (let i = 0; i < 6; i += 1) {
-        drawOrbitalRing(cx, cy, min * (.19 + i * .082 + future * .018), min * (.055 + i * .024 + history * .02), backgroundRotation * (.18 + i * .03) + cycle * .08 * i, .11 + i * .018 + history * .05, i % 2 ? 'rgba(240,198,111,.88)' : 'rgba(166,213,238,.62)');
-      }
-
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(backgroundRotation * .24 + cycle * .12);
-      for (let i = 0; i < 18; i += 1) {
-        const a = i / 18 * Math.PI * 2;
-        const r = min * (.15 + Math.sin(i * 1.7 + backgroundRotation) * .012 + art * .045);
-        ctx.beginPath();
-        ctx.moveTo(Math.cos(a) * r * .42, Math.sin(a) * r * .42);
-        ctx.quadraticCurveTo(Math.cos(a + .55) * r, Math.sin(a + .55) * r, Math.cos(a + 1.15) * r * .72, Math.sin(a + 1.15) * r * .72);
-        ctx.strokeStyle = `rgba(237, 202, 128, ${art * .18 + future * .08})`;
-        ctx.lineWidth = (1.2 + art * 1.2) * dpr;
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      const core = ctx.createRadialGradient(cx - min * .035, cy - min * .045, 0, cx, cy, min * (.145 + future * .018));
-      core.addColorStop(0, 'rgba(255,247,213,.95)');
-      core.addColorStop(.18, 'rgba(234,186,83,.8)');
-      core.addColorStop(.48, 'rgba(71,105,130,.34)');
-      core.addColorStop(1, 'rgba(2,6,14,0)');
-      ctx.fillStyle = core;
-      ctx.beginPath();
-      ctx.arc(cx, cy, min * (.15 + future * .02), 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.save();
-      ctx.globalCompositeOperation = 'lighter';
-      ctx.strokeStyle = `rgba(255, 224, 146, ${.28 + future * .34})`;
-      ctx.lineWidth = (1.4 + future * 1.6) * dpr;
-      ctx.beginPath();
-      ctx.arc(cx, cy, min * (.05 + future * .08), backgroundRotation, backgroundRotation + Math.PI * (1.15 + future));
-      ctx.stroke();
-      ctx.restore();
-
-      updateNodes(displayPhase, navRotation);
-
-      raf = requestAnimationFrame(draw);
-    }
-
-    function updateNodes(p, scrollRotation = 0) {
-      const radiusX = Math.min(window.innerWidth * (window.innerWidth < 700 ? .36 : .34), 520);
-      const radiusY = Math.min(window.innerHeight * (window.innerWidth < 700 ? .33 : .28), 265);
-      nodeShells.forEach((node, index) => {
-        const angle = index / nodeShells.length * Math.PI * 2 - Math.PI / 2 + scrollRotation + p * .45;
-        const depth = (Math.sin(angle) + 1) / 2;
-        node.style.setProperty('--x', `${Math.cos(angle) * radiusX}px`);
-        node.style.setProperty('--y', `${Math.sin(angle) * radiusY}px`);
-        node.style.setProperty('--s', lerp(.78, 1.12, depth).toFixed(3));
-        node.style.setProperty('--o', lerp(.56, 1, depth).toFixed(3));
-        node.style.setProperty('--z', String(Math.round(10 + depth * 90)));
-      });
-    }
-
-    function applyVirtualDelta(delta, rotationScale, phaseScale) {
-      const scale = motion();
-      if (!activeCategory) inputRotationTarget += delta * rotationScale * scale;
-      virtualPhaseTarget += delta * phaseScale * scale;
-      wake();
-    }
-
-    function isInsideScrollableSubmenu(target) {
-      return target instanceof Element && Boolean(target.closest('.atlas__focus-panel, .atlas__focus-subitems'));
-    }
-
-    function onWheel(event) {
-      if (atlas.dataset.mode === 'focus' && isInsideScrollableSubmenu(event.target)) {
-        return;
-      }
-
-      event.preventDefault();
-      const normalized = clamp(event.deltaY, -80, 80);
-      applyVirtualDelta(normalized, .006, .00055);
-    }
-
-    function onTouchStart(event) {
-      touchStartedOnLink = event.target instanceof Element && Boolean(event.target.closest('a'));
-      touchStartedOnPanelButton = event.target instanceof Element && Boolean(event.target.closest('[data-atlas-node], [data-subtopic-button], [data-back-to-subtopics], [data-focus-close]'));
-      touchStartedInSubmenu = isInsideScrollableSubmenu(event.target);
-
-      if (touchStartedOnLink || touchStartedOnPanelButton || touchStartedInSubmenu || !event.touches.length) return;
-      lastTouchY = event.touches[0].clientY;
-    }
-
-    function onTouchMove(event) {
-      if (touchStartedOnLink || touchStartedOnPanelButton || touchStartedInSubmenu || !event.touches.length) return;
-      const y = event.touches[0].clientY;
-      const delta = lastTouchY - y;
-      lastTouchY = y;
-      applyVirtualDelta(delta, .008, .00075);
-      event.preventDefault();
-    }
-
-    function getFocusScale() {
-      if (window.innerWidth < 700) return reduce ? 1.02 : 1.04;
-      if (window.innerWidth < 1024) return 1.24;
-      return 1.42;
-    }
-
-    function setFocusCamera(shell) {
-      if (!shell) {
-        atlas.style.setProperty('--focus-x', '0');
-        atlas.style.setProperty('--focus-y', '0');
-        atlas.style.setProperty('--focus-scale', String(getFocusScale()));
-        return;
-      }
-
-      const rect = shell.getBoundingClientRect();
-      const nodeCenterX = rect.left + rect.width / 2;
-      const nodeCenterY = rect.top + rect.height / 2;
-      const targetX = window.innerWidth < 700 ? window.innerWidth * .5 : window.innerWidth * .42;
-      const targetY = window.innerWidth < 700 ? window.innerHeight * .42 : window.innerHeight * .5;
-      atlas.style.setProperty('--focus-x', (nodeCenterX - targetX).toFixed(2));
-      atlas.style.setProperty('--focus-y', (nodeCenterY - targetY).toFixed(2));
-      atlas.style.setProperty('--focus-scale', String(getFocusScale()));
-    }
-
-    function closeSubmenu({ restoreFocus = true } = {}) {
-      const previousButton = activeCategory ? nodeButtons.find((button) => button.dataset.category === activeCategory) : null;
-      activeCategory = null;
-      activeSubtopic = null;
-      delete atlas.dataset.mode;
-      delete atlas.dataset.activeCategory;
-      atlas.style.setProperty('--focus-x', '0');
-      atlas.style.setProperty('--focus-y', '0');
-      atlas.style.setProperty('--focus-scale', '1');
-      focusPanel?.setAttribute('aria-hidden', 'true');
-      nodeShells.forEach((shell) => {
-        delete shell.dataset.active;
-      });
-      focusSections.forEach((section) => {
-        delete section.dataset.active;
-        delete section.dataset.panelLevel;
-        section.querySelectorAll('[data-panel-view="topics"]').forEach((view) => view.setAttribute('aria-hidden', 'true'));
-        section.querySelectorAll('[data-topic-set]').forEach((set) => delete set.dataset.active);
-      });
-      nodeButtons.forEach((button) => {
-        button.setAttribute('aria-expanded', 'false');
-      });
-      if (restoreFocus && previousButton) previousButton.focus({ preventScroll: true });
-      wake();
-    }
-
-    function resetPanel(section) {
-      if (!section) return;
-      activeSubtopic = null;
-      section.dataset.panelLevel = 'subtopics';
-      section.querySelector('[data-panel-view="subtopics"]')?.removeAttribute('aria-hidden');
-      section.querySelector('[data-panel-view="topics"]')?.setAttribute('aria-hidden', 'true');
-      section.querySelectorAll('[data-topic-set]').forEach((set) => delete set.dataset.active);
-    }
-
-    function openTopicPanel(button) {
-      if (!activeCategory || !button) return;
-      const section = focusSections.find((item) => item.dataset.category === activeCategory);
-      const subtopic = button.dataset.subtopic;
-      if (!section || !subtopic) return;
-      activeSubtopic = subtopic;
-      section.dataset.panelLevel = 'topics';
-      const subtopicsView = section.querySelector('[data-panel-view="subtopics"]');
-      const topicsView = section.querySelector('[data-panel-view="topics"]');
-      subtopicsView?.setAttribute('aria-hidden', 'true');
-      topicsView?.removeAttribute('aria-hidden');
-      section.querySelectorAll('[data-topic-set]').forEach((set) => {
-        if (set.dataset.subtopic === subtopic) set.dataset.active = 'true';
-        else delete set.dataset.active;
-      });
-      window.setTimeout(() => {
-        const activeSet = section.querySelector('[data-topic-set][data-active="true"]');
-        const backButton = activeSet?.querySelector('[data-back-to-subtopics]');
-        backButton?.focus({ preventScroll: true });
-      }, reduce ? 0 : 340);
-    }
-
-    function backToSubtopics({ restoreFocus = true } = {}) {
-      if (!activeCategory) return;
-      const section = focusSections.find((item) => item.dataset.category === activeCategory);
-      const previousSubtopic = activeSubtopic;
-      resetPanel(section);
-      if (restoreFocus && section) {
-        window.setTimeout(() => {
-          const target = Array.from(section.querySelectorAll('[data-subtopic-button]')).find((button) => button.dataset.subtopic === previousSubtopic);
-          target?.focus({ preventScroll: true });
-        }, reduce ? 0 : 340);
-      }
-    }
-
-    function openSubmenu(category) {
-      activeCategory = category;
-      frozenNavRotation = inputRotationCurrent;
-      atlas.dataset.mode = 'focus';
-      atlas.dataset.activeCategory = category;
-      const activeShell = nodeShells.find((shell) => shell.dataset.category === category);
-      nodeShells.forEach((shell) => {
-        if (shell.dataset.category === category) shell.dataset.active = 'true';
-        else delete shell.dataset.active;
-      });
-      focusSections.forEach((section) => {
-        if (section.dataset.category === category) {
-          section.dataset.active = 'true';
-          resetPanel(section);
-        } else {
-          delete section.dataset.active;
-          delete section.dataset.panelLevel;
+        if (s.z > .86) {
+          ctx.globalAlpha *= .28;
+          ctx.fillRect(x - s.r * dpr * 7, y, s.r * dpr * 14, Math.max(1, .35 * dpr));
         }
       });
-      nodeButtons.forEach((button) => {
-        button.setAttribute('aria-expanded', String(button.dataset.category === category));
-      });
-      focusPanel?.setAttribute('aria-hidden', 'false');
-      requestAnimationFrame(() => {
-        setFocusCamera(activeShell);
-        const activeSection = focusSections.find((section) => section.dataset.category === category);
-        const firstSubtopic = activeSection?.querySelector('[data-subtopic-button]');
-        (firstSubtopic || activeSection)?.focus({ preventScroll: true });
-      });
-      wake();
-    }
-
-    function onNodeClick(event) {
-      event.stopPropagation();
-      const category = event.currentTarget.dataset.category;
-      if (!category) return;
-      if (activeCategory === category) closeSubmenu();
-      else openSubmenu(category);
-    }
-
-    function onDocumentClick(event) {
-      if (!activeCategory) return;
-      const activeShell = atlas.querySelector('.atlas__node-shell[data-active="true"]');
-      if (focusPanel?.contains(event.target)) return;
-      if (activeShell && activeShell.contains(event.target)) return;
-      closeSubmenu({ restoreFocus: false });
-    }
-
-    function onKeyDown(event) {
-      if (event.key === 'Escape' && activeCategory) {
-        if (activeSubtopic) backToSubtopics();
-        else closeSubmenu();
+      ctx.globalAlpha = .20;
+      ctx.strokeStyle = '#bcdff2';
+      ctx.lineWidth = dpr;
+      for (let i = 0; i < 9; i++) {
+        ctx.beginPath();
+        ctx.ellipse(cx, cy, width * (.12 + i * .055), height * (.035 + i * .017), p * Math.PI + i * .28, 0, Math.PI * 2);
+        ctx.stroke();
       }
+      ctx.globalAlpha = 1;
     }
 
-    function onResize() {
-      sizeCanvas();
-      seedParticles();
-      if (activeCategory) setFocusCamera(nodeShells.find((shell) => shell.dataset.category === activeCategory));
-      wake();
+    function render() {
+      raf = 0;
+      const reduced = reduceQuery.matches;
+      progress = reduced ? target : lerp(progress, target, .09);
+      const sceneCount = phases.length;
+      const sceneFloat = progress * (sceneCount - 1);
+      const active = clamp(Math.round(sceneFloat), 0, sceneCount - 1);
+      const sceneProgress = sceneFloat - Math.floor(sceneFloat);
+      const cameraX = Math.sin(progress * Math.PI * 2.1) * 13;
+      const cameraY = Math.cos(progress * Math.PI * 1.55) * 8;
+      const cameraScale = 1.04 + progress * .46 + Math.sin(progress * Math.PI * 3) * .07;
+      root.style.setProperty('--scroll-progress', progress.toFixed(4));
+      root.style.setProperty('--scene-progress', sceneProgress.toFixed(4));
+      root.style.setProperty('--camera-x', `${cameraX.toFixed(3)}vw`);
+      root.style.setProperty('--camera-y', `${cameraY.toFixed(3)}vh`);
+      root.style.setProperty('--stars-x', `${(cameraX * -.35).toFixed(3)}vw`);
+      root.style.setProperty('--stars-y', `${(cameraY * -.45).toFixed(3)}vh`);
+      root.style.setProperty('--map-x', `${(cameraX * -.65).toFixed(3)}vw`);
+      root.style.setProperty('--map-y', `${(cameraY * -.55).toFixed(3)}vh`);
+      root.style.setProperty('--camera-scale', cameraScale.toFixed(4));
+      root.style.setProperty('--orb-rotation', `${(progress * 980).toFixed(2)}deg`);
+      root.style.setProperty('--orb-rotation-reverse', `${(progress * -760).toFixed(2)}deg`);
+      root.style.setProperty('--orb-rotation-slow', `${(progress * 430).toFixed(2)}deg`);
+      root.style.setProperty('--axis-rotation', `${(progress * 42).toFixed(2)}deg`);
+      root.style.setProperty('--object-tilt', `${(Math.sin(progress * Math.PI * 2) * 18).toFixed(2)}deg`);
+      root.style.setProperty('--lens-x', `${(48 + Math.sin(progress * Math.PI * 2.4) * 18).toFixed(2)}%`);
+      root.style.setProperty('--lens-y', `${(46 + Math.cos(progress * Math.PI * 1.8) * 14).toFixed(2)}%`);
+      const accent = accents[active] || accents[0];
+      root.style.setProperty('--accent-r', String(accent[0]));
+      root.style.setProperty('--accent-g', String(accent[1]));
+      root.style.setProperty('--accent-b', String(accent[2]));
+      root.style.setProperty('--hero-opacity', String(clamp(1 - progress * 1.2, 0, 1).toFixed(4)));
+      root.style.setProperty('--background-shift', `${(progress * -18).toFixed(2)}vh`);
+      root.style.setProperty('--text-depth', `${((sceneProgress - .5) * 46).toFixed(2)}px`);
+      root.dataset.activeScene = String(active);
+      phases.forEach((phase, index) => {
+        const distance = Math.abs(sceneFloat - index);
+        const visibility = clamp(1 - distance * 1.65, 0, 1);
+        phase.style.setProperty('--phase-visibility', visibility.toFixed(4));
+        phase.style.setProperty('--phase-offset', `${((index - sceneFloat) * 72).toFixed(2)}px`);
+        phase.style.setProperty('--phase-blur', `${((1 - visibility) * 14).toFixed(2)}px`);
+        phase.style.setProperty('--phase-scale', (0.975 + visibility * 0.025).toFixed(4));
+        phase.toggleAttribute('data-active', index === active);
+      });
+      if (label) label.textContent = phaseNames[active] || 'Atlas';
+      if (bar) bar.style.transform = `scaleX(${progress})`;
+      draw(progress);
+      if (Math.abs(progress - target) > .001 && !reduced) raf = requestAnimationFrame(render);
     }
 
-    sizeCanvas();
-    seedParticles();
-    updateNodes(.18);
-    wake();
-
-    atlas.addEventListener('wheel', onWheel, { passive: false });
-    atlas.addEventListener('touchstart', onTouchStart, { passive: true });
-    atlas.addEventListener('touchmove', onTouchMove, { passive: false });
-    nodeButtons.forEach((button) => button.addEventListener('click', onNodeClick));
-    subtopicButtons.forEach((button) => button.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      openTopicPanel(event.currentTarget);
-    }));
-    backToSubtopicsButtons.forEach((button) => button.addEventListener('click', (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      backToSubtopics();
-    }));
-    document.addEventListener('click', onDocumentClick);
-    window.addEventListener('keydown', onKeyDown);
-    window.addEventListener('resize', onResize, { passive: true });
-    focusClose?.addEventListener('click', () => closeSubmenu());
-    reduceQuery.addEventListener?.('change', (event) => {
-      reduce = event.matches;
-      lastTime = performance.now();
-      wake();
-    });
+    seed();
+    measure();
+    window.addEventListener('scroll', measure, { passive: true });
+    window.addEventListener('resize', () => { seed(); measure(); }, { passive: true });
+    reduceQuery.addEventListener?.('change', measure);
   });
 </script>
 
 <style>
-  .atlas {
-    --science-glow: .45;
-    --history-glow: .42;
-    --art-glow: .46;
-    --future-glow: .44;
-    --scroll-rotation: 0;
-    min-height: 100svh;
-    height: 100svh;
-    overflow: hidden;
-    overscroll-behavior: none;
-    touch-action: none;
-    background: #01030a;
-    color: #fff7df;
-  }
-
-  .atlas__sticky {
+  .cinema-atlas {
+    --scroll-progress: 0;
+    --scene-progress: 0;
+    --camera-x: 0vw;
+    --camera-y: 0vh;
+    --camera-scale: 1;
+    --stars-x: 0vw;
+    --stars-y: 0vh;
+    --map-x: 0vw;
+    --map-y: 0vh;
+    --accent-r: 239;
+    --accent-g: 202;
+    --accent-b: 128;
+    --object-tilt: 0deg;
+    --lens-x: 50%;
+    --lens-y: 45%;
+    --orb-rotation: 0deg;
+    --orb-rotation-reverse: 0deg;
+    --orb-rotation-slow: 0deg;
+    --axis-rotation: 0deg;
+    --hero-opacity: 1;
+    --background-shift: 0vh;
+    --text-depth: 0px;
     position: relative;
-    min-height: 100svh;
-    height: 100svh;
-    overflow: hidden;
-    isolation: isolate;
-    display: grid;
-    place-items: center;
+    min-height: 760svh;
+    color: #fff7df;
     background: #01030a;
   }
 
-  .atlas__canvas,
-  .atlas__sigils,
-  .atlas__shade,
-  .atlas__grain {
-    position: absolute;
-    inset: 0;
-  }
+  .cinema-atlas__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; perspective: 1400px; background: radial-gradient(circle at var(--lens-x) var(--lens-y), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .24), transparent 28%), radial-gradient(circle at 76% 18%, rgba(121, 215, 255, .12), transparent 34%), linear-gradient(135deg, #01030a 0%, #07101f 44%, #02040b 100%); }
+  .cinema-atlas__scroll-space { height: 1px; }
+  .cinema-atlas__canvas, .cinema-atlas__stars, .cinema-atlas__aurora, .cinema-atlas__vignette, .cinema-atlas__map { position: absolute; inset: 0; }
+  .cinema-atlas__canvas { z-index: -9; width: 100%; height: 100%; transform: translateY(var(--background-shift)) scale(1.08); }
+  .cinema-atlas__stars { z-index: -8; opacity: .22; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 88px 88px; mask-image: radial-gradient(circle, #000 0 56%, transparent 82%); transform: translate3d(var(--stars-x), var(--stars-y), 0); }
+  .cinema-atlas__aurora { z-index: -7; opacity: .82; background: conic-gradient(from var(--orb-rotation) at var(--lens-x) var(--lens-y), transparent 0 18%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .18), transparent 36% 58%, rgba(121,215,255,.12), transparent 78% 100%); filter: blur(46px) saturate(130%); transform: translate3d(var(--map-x), var(--map-y), 0) scale(1.18); }
+  .cinema-atlas__vignette { z-index: 79; pointer-events: none; background: radial-gradient(circle at var(--lens-x) var(--lens-y), transparent 0 24%, rgba(1,3,10,.12) 45%, rgba(1,3,10,.78) 82%, #01030a 100%), linear-gradient(90deg, rgba(1,3,10,.82), transparent 21%, transparent 68%, rgba(1,3,10,.72)), linear-gradient(180deg, rgba(1,3,10,.82), transparent 30%, rgba(1,3,10,.88)); }
+  .cinema-atlas__sticky::after { content: ""; position: absolute; inset: 0; z-index: 80; pointer-events: none; background: radial-gradient(circle at 50% 50%, transparent 0 46%, rgba(1,3,10,.42) 72%, rgba(1,3,10,.96)), linear-gradient(180deg, rgba(255,247,223,.04), transparent 18%, transparent 74%, rgba(1,3,10,.86)); }
+  .cinema-atlas__sticky::before { content: ""; position: absolute; inset: 0; z-index: 81; opacity: .12; pointer-events: none; mix-blend-mode: overlay; background-image: repeating-radial-gradient(circle at 30% 20%, rgba(255,255,255,.34) 0 1px, transparent 1px 4px); }
 
-  .atlas__canvas {
-    z-index: -4;
-    width: 100%;
-    height: 100%;
-  }
+  .cinema-atlas__map { z-index: -5; transform: translate3d(var(--map-x), var(--map-y), 0) scale(var(--camera-scale)); }
+  .cinema-atlas__arc { position: absolute; left: 50%; top: 50%; width: min(92vw, 1180px); aspect-ratio: 1; border: 1px solid rgba(239,202,128,.17); border-radius: 50%; transform: translate(-50%, -50%) rotateX(67deg) rotateZ(var(--orb-rotation)); box-shadow: 0 0 80px rgba(121,215,255,.08); }
+  .cinema-atlas__arc--two { width: min(70vw, 900px); border-color: rgba(121,215,255,.18); transform: translate(-50%, -50%) rotateX(58deg) rotateY(20deg) rotateZ(var(--orb-rotation-reverse)); }
+  .cinema-atlas__arc--three { width: min(54vw, 680px); border-style: dashed; border-color: rgba(255,255,255,.16); transform: translate(-50%, -50%) rotateX(72deg) rotateY(-24deg) rotateZ(var(--orb-rotation-slow)); }
+  .cinema-atlas__axis { position: absolute; left: 50%; top: 12%; bottom: 12%; width: 1px; background: linear-gradient(transparent, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .44), transparent); transform: rotate(var(--axis-rotation)); transform-origin: 50% 50%; }
+  .cinema-atlas__scanline { position: absolute; left: 50%; top: 50%; width: min(104vw, 1320px); height: 1px; background: linear-gradient(90deg, transparent, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .34), transparent); transform: translate(-50%, -50%) rotate(var(--axis-rotation)); box-shadow: 0 0 34px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .14); }
+  .cinema-atlas__scanline--two { transform: translate(-50%, -50%) rotate(var(--orb-rotation-slow)); opacity: .5; }
 
-  .atlas__sigils {
-    z-index: -3;
-    opacity: .82;
-    transform: scale(1.02);
-  }
+  .cinema-atlas__camera { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; transform: translate3d(var(--camera-x), var(--camera-y), 0) scale(var(--camera-scale)); transform-style: preserve-3d; will-change: transform; }
+  .cinema-atlas__object { position: relative; width: clamp(340px, 48vw, 760px); aspect-ratio: 1; transform: rotate(var(--orb-rotation)) rotateY(var(--object-tilt)); transform-style: preserve-3d; filter: drop-shadow(0 48px 120px rgba(0,0,0,.72)) drop-shadow(0 0 70px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .14)); }
+  .cinema-atlas__object::before, .cinema-atlas__object::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(255,247,223,.12); transform: rotateX(68deg) rotateZ(var(--orb-rotation-slow)); box-shadow: 0 0 120px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .12); }
+  .cinema-atlas__object::after { inset: 12%; border-style: dashed; opacity: .55; transform: rotateX(58deg) rotateY(26deg) rotateZ(var(--orb-rotation-reverse)); }
+  .cinema-atlas__orb { position: absolute; inset: 19%; border-radius: 50%; }
+  .cinema-atlas__orb--core { background: radial-gradient(circle at 36% 30%, #fff8d8, #d9a74f 12%, #27415a 38%, #07111f 64%, transparent 70%), conic-gradient(from var(--orb-rotation), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .86), rgba(121,215,255,.18), rgba(255,255,255,.06), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .86)); box-shadow: inset -20px -28px 50px rgba(0,0,0,.6), 0 0 130px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .30), 0 0 220px rgba(121,215,255,.14); }
+  .cinema-atlas__orb--halo { inset: 6%; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .34); background: radial-gradient(circle, transparent 55%, rgba(121,215,255,.08)); }
+  .cinema-atlas__orb--meridian { inset: 13%; border: 1px solid rgba(255,247,223,.18); transform: rotateX(72deg) rotateZ(var(--orb-rotation-reverse)); }
+  .cinema-atlas__orb--aperture { inset: 29%; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .48); background: radial-gradient(circle, rgba(255,247,223,.42), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .12) 38%, transparent 66%); box-shadow: 0 0 70px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .22); }
+  .cinema-atlas__glyph { position: absolute; left: 50%; color: rgba(255,247,223,.54); font-size: 10px; font-weight: 850; letter-spacing: .22em; text-transform: uppercase; transform: translateX(-50%) rotate(var(--orb-rotation-reverse)); }
+  .cinema-atlas__glyph--north { top: 3%; }
+  .cinema-atlas__glyph--south { bottom: 3%; }
+  .cinema-atlas__orb--crown { inset: 0; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .24); transform: rotateX(78deg) rotateZ(var(--axis-rotation)); box-shadow: inset 0 0 90px rgba(255,247,223,.05); }
+  .cinema-atlas__needle { position: absolute; left: 50%; top: 50%; width: 1px; height: 82%; background: linear-gradient(transparent, rgba(255,247,223,.58), transparent); transform-origin: center; box-shadow: 0 0 20px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .32); }
+  .cinema-atlas__needle--one { transform: translate(-50%, -50%) rotate(var(--axis-rotation)); }
+  .cinema-atlas__needle--two { transform: translate(-50%, -50%) rotate(var(--orb-rotation-slow)); opacity: .38; }
+  .cinema-atlas__satellite { position: absolute; left: 50%; top: 50%; width: 10px; aspect-ratio: 1; border-radius: 50%; background: #f0ca80; box-shadow: 0 0 24px rgba(240,202,128,.9); transform: rotate(var(--orb-rotation)) translateX(clamp(130px, 22vw, 330px)); }
+  .cinema-atlas__satellite--b { background: #9be3ff; transform: rotate(var(--orb-rotation-reverse)) rotate(110deg) translateX(clamp(105px, 17vw, 260px)); }
+  .cinema-atlas__satellite--c { width: 6px; transform: rotate(var(--orb-rotation-slow)) rotate(230deg) translateX(clamp(100px, 17vw, 270px)); opacity: .75; }
+  .cinema-atlas__satellite--d { width: 4px; background: #fff7df; transform: rotate(var(--orb-rotation-reverse)) rotate(292deg) translateX(clamp(150px, 27vw, 410px)); opacity: .66; }
 
-  .atlas__curve {
-    fill: none;
-    stroke: url(#atlasGold);
-    stroke-width: 1.25;
-    stroke-linecap: round;
-    stroke-dasharray: 9 18;
-    opacity: 0;
-  }
+  .cinema-atlas__copy { position: absolute; left: clamp(22px, 7vw, 118px); top: 49%; z-index: 90; width: min(900px, 64vw); transform: translateY(-50%); pointer-events: none; }
+  .cinema-atlas__phase { --phase-visibility: 0; --phase-offset: 42px; --phase-blur: 14px; --phase-scale: .975; position: absolute; inset: auto; opacity: var(--phase-visibility); transform: translate3d(0, calc(var(--phase-offset) + var(--text-depth)), 0) scale(var(--phase-scale)); transition: opacity 160ms linear; filter: blur(var(--phase-blur)); will-change: opacity, transform, filter; pointer-events: none; }
+  .cinema-atlas__phase[data-active] { pointer-events: auto; }
+  .cinema-atlas__eyebrow { margin: 0 0 16px; color: rgba(var(--accent-r), var(--accent-g), var(--accent-b), .82); font-size: clamp(11px, .8vw, 13px); font-weight: 850; letter-spacing: .28em; text-transform: uppercase; }
+  .cinema-atlas__title { max-width: 11ch; margin: 0; font-size: clamp(72px, 11.8vw, 190px); line-height: .74; letter-spacing: -.08em; text-wrap: balance; }
+  .cinema-atlas__text { max-width: 470px; margin: 30px 0 0; color: rgba(255,247,223,.68); font-size: clamp(15px, 1.18vw, 20px); line-height: 1.38; }
+  .cinema-atlas__phase-link { display: inline-flex; margin-top: 34px; padding: 15px 19px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .42); border-radius: 999px; background: rgba(255,255,255,.07); backdrop-filter: blur(18px); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
+  .cinema-atlas__phase-link:hover, .cinema-atlas__phase-link:focus-visible, .cinema-atlas__nav-link:hover, .cinema-atlas__nav-link:focus-visible { outline: none; border-color: rgba(239,202,128,.78); box-shadow: 0 0 0 4px rgba(239,202,128,.13), 0 24px 80px rgba(239,202,128,.16); }
 
-  .atlas__curve--science { opacity: calc(var(--science-glow) * .36); }
-  .atlas__curve--history { opacity: calc(var(--history-glow) * .34); }
-  .atlas__curve--art { opacity: calc(var(--art-glow) * .48); stroke-dasharray: 2 13; }
-  .atlas__curve--future { opacity: calc(var(--future-glow) * .58); stroke-dasharray: 1 10; }
+  .cinema-atlas__nav { position: absolute; right: clamp(20px, 5vw, 82px); top: 49%; z-index: 92; display: grid; gap: 12px; transform: translateY(-50%); }
+  .cinema-atlas__nav-link { display: flex; align-items: center; gap: 12px; min-width: 168px; padding: 12px 14px; color: rgba(255,247,223,.74); text-decoration: none; font-size: 12px; font-weight: 760; border: 1px solid rgba(255,247,223,.12); border-radius: 999px; background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); backdrop-filter: blur(18px); }
+  .cinema-atlas__nav-link span { color: #efca80; font-size: 10px; letter-spacing: .14em; }
+  .cinema-atlas__hud { position: absolute; left: clamp(18px, 4vw, 60px); right: clamp(18px, 4vw, 60px); bottom: clamp(18px, 4vw, 42px); z-index: 91; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; color: rgba(255,247,223,.56); font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+  .cinema-atlas__progress { height: 1px; background: rgba(255,247,223,.16); overflow: hidden; }
+  .cinema-atlas__progress i { display: block; width: 100%; height: 100%; background: linear-gradient(90deg, rgb(var(--accent-r), var(--accent-g), var(--accent-b)), #79d7ff); transform: scaleX(0); transform-origin: left; }
 
-  .atlas__shade {
-    z-index: 5;
-    pointer-events: none;
-    background:
-      radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(1,3,10,.34) 64%, rgba(1,3,10,.92) 100%),
-      linear-gradient(180deg, rgba(1,3,10,.64), transparent 24%, transparent 70%, rgba(1,3,10,.72));
-  }
-
-  .atlas__grain {
-    z-index: 6;
-    pointer-events: none;
-    opacity: .12;
-    mix-blend-mode: overlay;
-    background-image: repeating-radial-gradient(circle at 30% 20%, rgba(255,255,255,.22) 0 1px, transparent 1px 4px);
-  }
-
-  .atlas__core {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    z-index: 18;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    color: #fff7df;
-    font: inherit;
-    text-align: left;
-    text-decoration: none;
-    transform: translate3d(-50%, -50%, 0);
-  }
-
-  .atlas__core::before,
-  .atlas__core::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    border: 1px solid rgba(236, 196, 114, .22);
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate(-50%, -50%) rotateX(68deg) rotateZ(calc(var(--scroll-rotation) * 1deg));
-  }
-
-  .atlas__core::before { width: clamp(170px, 25vw, 330px); aspect-ratio: 1; }
-  .atlas__core::after { width: clamp(250px, 38vw, 520px); aspect-ratio: 1; opacity: .5; }
-
-  .atlas__nav {
-    position: absolute;
-    inset: 0;
-    z-index: 30;
-    pointer-events: none;
-    perspective: 1200px;
-  }
-
-  .atlas__node-shell {
-    --x: 0px;
-    --y: 0px;
-    --s: 1;
-    --o: 1;
-    --z: 20;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    z-index: var(--z);
-    opacity: var(--o);
-    pointer-events: none;
-    transform: translate(-50%, -50%) translate3d(var(--x), var(--y), 0) scale(var(--s));
-    transition: opacity .32s ease, filter .32s ease, transform .42s cubic-bezier(.2,.8,.2,1);
-    will-change: transform, opacity;
-  }
-
-  .atlas__node {
-    appearance: none;
-    display: inline-grid;
-    grid-template-columns: auto auto 1fr;
-    align-items: center;
-    gap: 10px;
-    min-width: clamp(138px, 15vw, 186px);
-    min-height: 58px;
-    padding: 11px 14px;
-    color: #fff7df;
-    font: inherit;
-    text-align: left;
-    border: 1px solid rgba(255, 247, 223, .15);
-    border-radius: 999px;
-    background: linear-gradient(135deg, rgba(255,255,255,.13), rgba(255,255,255,.045));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 24px 70px rgba(0,0,0,.32);
-    backdrop-filter: blur(24px) saturate(140%);
-    cursor: pointer;
-    pointer-events: auto;
-    transition: border-color .22s ease, background .22s ease, box-shadow .22s ease;
-  }
-
-  .atlas__node:hover,
-  .atlas__node:focus-visible {
-    border-color: rgba(239, 202, 128, .62);
-    background: linear-gradient(135deg, rgba(255,255,255,.22), rgba(255,255,255,.075));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 28px 90px rgba(222, 174, 82, .22);
-    outline: none;
-  }
-
-
-
-  .atlas[data-mode="focus"] .atlas__shade {
-    background:
-      radial-gradient(circle at 42% 50%, rgba(1,3,10,.04) 0 24%, rgba(1,3,10,.52) 62%, rgba(1,3,10,.95) 100%),
-      linear-gradient(180deg, rgba(1,3,10,.72), transparent 24%, transparent 70%, rgba(1,3,10,.8));
-  }
-
-  .atlas[data-mode="focus"] .atlas__sigils,
-  .atlas[data-mode="focus"] .atlas__core {
-    opacity: .55;
-    filter: saturate(.78) brightness(.82);
-  }
-
-  .atlas[data-mode="focus"] .atlas__nav {
-    transform: translate3d(calc(var(--focus-x) * -1px), calc(var(--focus-y) * -1px), 0) scale(var(--focus-scale));
-  }
-
-  .atlas__nav {
-    transform-origin: center center;
-    transition: transform 760ms cubic-bezier(.16, 1, .3, 1);
-    will-change: transform;
-  }
-
-  .atlas[data-mode="focus"] .atlas__node-shell:not([data-active="true"]) {
-    opacity: .26;
-    filter: saturate(.55) brightness(.62) blur(1.5px);
-  }
-
-  .atlas__node-shell[data-active="true"] {
-    opacity: 1;
-    filter: none;
-  }
-
-  .atlas__node-shell[data-active="true"] .atlas__node {
-    border-color: rgba(239, 202, 128, .76);
-    background: linear-gradient(135deg, rgba(255,255,255,.24), rgba(255,255,255,.08));
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.28), 0 30px 100px rgba(222, 174, 82, .3), 0 0 80px rgba(121,215,255,.14);
-  }
-
-  .atlas__focus-panel {
-    position: absolute;
-    right: clamp(32px, 7vw, 96px);
-    top: 50%;
-    z-index: 70;
-    width: min(390px, 36vw);
-    max-height: min(64svh, 560px);
-    pointer-events: none;
-    opacity: 0;
-    transform: translate3d(18px, -50%, 0) scale(.985);
-    transition: opacity 420ms ease 180ms, transform 720ms cubic-bezier(.16, 1, .3, 1) 180ms;
-  }
-
-  .atlas[data-mode="focus"] .atlas__focus-panel {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate3d(0, -50%, 0) scale(1);
-  }
-
-  .atlas__focus-connector {
-    position: absolute;
-    right: 100%;
-    top: 50%;
-    width: clamp(58px, 8vw, 132px);
-    height: 1px;
-    opacity: 0;
-    background: linear-gradient(90deg, rgba(239,202,128,0), rgba(239,202,128,.72), rgba(121,215,255,.32));
-    box-shadow: 0 0 18px rgba(239,202,128,.2);
-    transform: scaleX(.2);
-    transform-origin: right center;
-    transition: opacity 420ms ease 280ms, transform 760ms cubic-bezier(.16, 1, .3, 1) 280ms;
-  }
-
-  .atlas[data-mode="focus"] .atlas__focus-connector {
-    opacity: 1;
-    transform: scaleX(1);
-  }
-
-  .atlas__focus-chrome {
-    max-height: min(64svh, 560px);
-    overflow: hidden;
-    padding: 18px;
-    border: 1px solid rgba(239,202,128,.34);
-    border-radius: 28px;
-    background:
-      radial-gradient(circle at 18% 0, rgba(239,202,128,.16), transparent 38%),
-      linear-gradient(145deg, rgba(9,15,28,.84), rgba(3,7,16,.68));
-    box-shadow: 0 34px 120px rgba(0,0,0,.48), 0 0 70px rgba(92,178,223,.12), inset 0 1px 0 rgba(255,255,255,.16);
-    backdrop-filter: blur(28px) saturate(150%);
-  }
-
-  .atlas__focus-close {
-    appearance: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin: 0 0 16px;
-    padding: 8px 11px;
-    color: rgba(255,247,223,.7);
-    font: inherit;
-    font-size: 11px;
-    font-weight: 760;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    border: 1px solid rgba(255,247,223,.12);
-    border-radius: 999px;
-    background: rgba(255,255,255,.055);
-    cursor: pointer;
-  }
-
-  .atlas__focus-close:hover,
-  .atlas__focus-close:focus-visible,
-  .atlas__focus-subitem:focus-visible {
-    border-color: rgba(239,202,128,.68);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(239,202,128,.13);
-  }
-
-  .atlas__focus-section { display: none; }
-  .atlas__focus-section[data-active="true"] { display: block; }
-
-  .atlas__panel-stage {
-    position: relative;
-    min-height: min(52svh, 460px);
-    overflow: hidden;
-  }
-
-  .atlas__panel-view {
-    transition: opacity 420ms cubic-bezier(.16, 1, .3, 1), transform 420ms cubic-bezier(.16, 1, .3, 1);
-    will-change: opacity, transform;
-  }
-
-  .atlas__panel-view--topics {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    pointer-events: none;
-    transform: translate3d(26px, 0, 0);
-  }
-
-  .atlas__focus-section[data-panel-level="topics"] .atlas__panel-view--subtopics {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate3d(-22px, 0, 0);
-  }
-
-  .atlas__focus-section[data-panel-level="topics"] .atlas__panel-view--topics {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate3d(0, 0, 0);
-  }
-
-  .atlas__topic-set { display: none; }
-  .atlas__topic-set[data-active="true"] { display: block; }
-  .atlas__focus-kicker { margin: 0 0 5px; color: rgba(121,215,255,.68); font-size: 11px; font-weight: 760; letter-spacing: .18em; text-transform: uppercase; }
-  .atlas__focus-title { margin: 0 0 16px; color: #fff7df; font-size: clamp(26px, 3vw, 38px); line-height: .95; letter-spacing: -.045em; }
-
-  .atlas__focus-subitems,
-  .atlas__topic-cards {
-    display: grid;
-    gap: 10px;
-    max-height: min(52svh, 460px);
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    padding: 2px 6px 2px 2px;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(239, 202, 128, .45) rgba(255, 255, 255, .06);
-    touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
-    mask-image: linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
-  }
-
-  .atlas__focus-subitems::-webkit-scrollbar,
-  .atlas__topic-cards::-webkit-scrollbar { width: 6px; }
-  .atlas__focus-subitems::-webkit-scrollbar-track,
-  .atlas__topic-cards::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 999px; }
-  .atlas__focus-subitems::-webkit-scrollbar-thumb,
-  .atlas__topic-cards::-webkit-scrollbar-thumb { background: rgba(239,202,128,.42); border-radius: 999px; }
-
-  .atlas__focus-subitem,
-  .atlas__topic-card {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: start;
-    gap: 11px;
-    padding: 13px 14px;
-    width: 100%;
-    color: #fff7df;
-    font: inherit;
-    text-align: left;
-    text-decoration: none;
-    border: 1px solid rgba(255,247,223,.12);
-    border-radius: 18px;
-    background: linear-gradient(135deg, rgba(255,255,255,.115), rgba(255,255,255,.04));
-    cursor: pointer;
-    box-shadow: 0 18px 60px rgba(0,0,0,.25);
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 320ms ease, transform 520ms cubic-bezier(.16, 1, .3, 1), border-color .22s ease, box-shadow .22s ease;
-  }
-
-  .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem,
-  .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-card {
-    opacity: 1;
-    transform: translateY(0);
-    transition-delay: calc(300ms + var(--i) * 55ms);
-  }
-
-  .atlas__focus-subitem:hover,
-  .atlas__topic-card:hover { border-color: rgba(239,202,128,.62); box-shadow: 0 24px 70px rgba(222,174,82,.18); transform: translateY(-2px); }
-
-  .atlas__topic-card--active,
-  .atlas__topic-card[aria-current="page"] {
-    border-color: rgba(121, 215, 255, .82);
-    background:
-      radial-gradient(circle at 12% 0, rgba(121, 215, 255, .22), transparent 42%),
-      linear-gradient(135deg, rgba(239,202,128,.2), rgba(255,255,255,.07));
-    box-shadow: 0 24px 76px rgba(121,215,255,.2), inset 0 1px 0 rgba(255,255,255,.22);
-  }
-
-  .atlas__topic-card--active .atlas__focus-description,
-  .atlas__topic-card[aria-current="page"] .atlas__focus-description {
-    color: rgba(255,247,223,.78);
-  }
-
-  .atlas__topic-back {
-    appearance: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    margin: 0 0 12px;
-    padding: 7px 10px;
-    color: rgba(255,247,223,.72);
-    font: inherit;
-    font-size: 10px;
-    font-weight: 780;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    border: 1px solid rgba(255,247,223,.12);
-    border-radius: 999px;
-    background: rgba(255,255,255,.055);
-    cursor: pointer;
-  }
-
-  .atlas__topic-back:hover,
-  .atlas__topic-back:focus-visible,
-  .atlas__topic-card:focus-visible {
-    border-color: rgba(239,202,128,.68);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(239,202,128,.13);
-  }
-
-  .atlas__topic-breadcrumb { margin: 0 0 5px; color: rgba(121,215,255,.68); font-size: 10px; font-weight: 760; letter-spacing: .14em; text-transform: uppercase; }
-  .atlas__topic-title { margin: 0 0 7px; color: #fff7df; font-size: clamp(23px, 2.4vw, 32px); line-height: .98; letter-spacing: -.04em; }
-  .atlas__topic-description { margin: 0 0 14px; color: rgba(255,247,223,.62); font-size: 12px; line-height: 1.45; }
-  .atlas__focus-dot { width: 8px; aspect-ratio: 1; margin-top: 6px; border-radius: 999px; background: #efca80; box-shadow: 0 0 18px rgba(239,202,128,.62), 0 0 34px rgba(121,215,255,.16); }
-  .atlas__focus-copy { display: grid; gap: 4px; }
-  .atlas__focus-subtitle { font-size: 14px; font-weight: 800; letter-spacing: -.01em; }
-  .atlas__focus-description { color: rgba(255,247,223,.62); font-size: 11px; line-height: 1.4; }
-
-  .atlas__node-index {
-    color: rgba(237, 202, 128, .76);
-    font-size: 10px;
-    font-weight: 850;
-    letter-spacing: .18em;
-  }
-
-  .atlas__node-mark {
-    width: 9px;
-    aspect-ratio: 1;
-    border-radius: 999px;
-    background: #eac06c;
-    box-shadow: 0 0 20px rgba(234, 192, 108, .7);
-  }
-
-  .atlas__node-text { display: flex; min-width: 0; flex-direction: column; gap: 3px; }
-  .atlas__node-title { font-size: 15px; font-weight: 780; letter-spacing: -.01em; }
-  .atlas__node-kicker { color: rgba(255,247,223,.55); font-size: 11px; white-space: nowrap; }
-
-  .atlas__phase {
-    position: absolute;
-    left: clamp(18px, 4vw, 56px);
-    bottom: clamp(18px, 4vw, 44px);
-    z-index: 28;
-    margin: 0;
-    color: rgba(255,247,223,.66);
-    font-size: 11px;
-    font-weight: 750;
-    letter-spacing: .24em;
-    text-transform: uppercase;
-  }
-
-  @media (max-width: 900px) {
-    .atlas__node { min-width: 118px; min-height: 48px; padding: 10px 12px; gap: 8px; border-radius: 18px; }
-    .atlas__focus-panel { width: min(360px, 42vw); right: clamp(20px, 5vw, 54px); }
-    .atlas__focus-subitems, .atlas__topic-cards { max-height: min(52svh, 430px); }
-    .atlas__node-kicker { display: none; }
-    .atlas__node-title { font-size: 13px; }
-    .atlas__node-index { font-size: 9px; }
-    .atlas__phase { max-width: 220px; font-size: 10px; letter-spacing: .16em; }
-  }
-
-  @media (max-width: 700px) {
-    .atlas[data-mode="focus"] { touch-action: pan-y; }
-    .atlas[data-mode="focus"] .atlas__nav { transform: scale(var(--focus-scale)); }
-
-    .atlas__focus-panel {
-      position: fixed;
-      left: 14px;
-      right: 14px;
-      top: auto;
-      bottom: 14px;
-      z-index: 120;
-      width: calc(100vw - 28px);
-      max-height: 62svh;
-      transform: translate3d(0, 18px, 0) scale(.98);
-      overscroll-behavior: contain;
-    }
-
-    .atlas[data-mode="focus"] .atlas__focus-panel { transform: translate3d(0, 0, 0) scale(1); }
-    .atlas__focus-connector { display: none; }
-    .atlas__focus-chrome { max-height: 62svh; padding: 15px; border-radius: 24px; }
-    .atlas__panel-stage { min-height: min(45svh, 390px); }
-    .atlas__focus-subitems { max-height: min(45svh, 390px); padding: 2px 6px 2px 2px; }
-    .atlas__topic-cards { max-height: min(32svh, 300px); padding: 2px 6px 2px 2px; }
-    .atlas__focus-subitem, .atlas__topic-card { padding: 11px 12px; }
-    .atlas__focus-description { font-size: 10px; }
-  }
-
-  @media (max-width: 520px) {
-    .atlas__node { min-width: 104px; grid-template-columns: auto 1fr; }
-    .atlas__node-mark { display: none; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .atlas { touch-action: auto; }
-    .atlas__sigils { transform: scale(1.02); }
-    .atlas__core { transform: translate3d(-50%, -50%, 0); }
-    .atlas[data-mode="focus"] .atlas__nav { transform: none; }
-
-    /*
-      Reduced-motion is common on Windows machines even when the user still
-      expects this homepage to move. Keep the transform-driven atlas layout and
-      JS scroll response intact; only shorten CSS transitions here.
-    */
-    .atlas__node-shell { transition: opacity .12s ease, filter .12s ease; }
-
-    .atlas__node,
-    .atlas__focus-panel,
-    .atlas__focus-subitem,
-    .atlas__topic-card,
-    .atlas__panel-view,
-    .atlas__focus-connector { transition: opacity .12s ease; }
-    .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"] .atlas__focus-subitem,
-    .atlas[data-mode="focus"] .atlas__focus-section[data-active="true"][data-panel-level="topics"] .atlas__topic-set[data-active="true"] .atlas__topic-card { transition-delay: 0ms; }
-  }
+  @media (max-width: 900px) { .cinema-atlas__copy { width: min(720px, 78vw); } .cinema-atlas__title { font-size: clamp(64px, 14vw, 126px); } .cinema-atlas__nav { top: auto; right: auto; left: 18px; bottom: 70px; grid-template-columns: repeat(5, auto); max-width: calc(100vw - 36px); overflow-x: auto; transform: none; } .cinema-atlas__nav-link { min-width: auto; white-space: nowrap; } }
+  @media (max-width: 640px) { .cinema-atlas { min-height: 700svh; } .cinema-atlas__copy { left: 18px; right: 18px; top: 11%; width: auto; transform: none; } .cinema-atlas__eyebrow { margin-bottom: 12px; font-size: 10px; letter-spacing: .22em; } .cinema-atlas__title { max-width: 9ch; font-size: clamp(54px, 18vw, 92px); line-height: .78; } .cinema-atlas__text { max-width: 82vw; margin-top: 18px; font-size: 14px; } .cinema-atlas__phase-link { margin-top: 20px; padding: 12px 14px; font-size: 10px; } .cinema-atlas__object { width: min(104vw, 500px); transform: translateY(20vh) rotate(var(--orb-rotation)); } .cinema-atlas__glyph { display: none; } .cinema-atlas__hud { grid-template-columns: 1fr; gap: 9px; font-size: 9px; bottom: 18px; } .cinema-atlas__nav { left: 14px; bottom: 84px; max-width: calc(100vw - 28px); gap: 8px; } .cinema-atlas__nav-link { padding: 10px 12px; font-size: 11px; } }
+  @media (prefers-reduced-motion: reduce) { .cinema-atlas { min-height: 100svh; } .cinema-atlas__sticky { position: relative; } .cinema-atlas__phase, .cinema-atlas__camera, .cinema-atlas__map, .cinema-atlas__stars { transition: none; transform: none; } .cinema-atlas__phase { position: relative; display: none; filter: none; } .cinema-atlas__phase[data-active] { display: block; } }
 </style>
