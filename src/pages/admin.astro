@@ -1,8 +1,8 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import SiteLayout from "../components/SiteLayout.astro";
 ---
 
-<Layout title="Admin | Duplicate Remove" description="Admin tools for credit row maintenance.">
+<SiteLayout title="Admin | Duplicate Remove" description="Admin tools for credit row maintenance.">
   <section class="admin-shell" aria-labelledby="admin-title">
     <div class="admin-card">
       <p class="eyebrow">Admin Tools</p>
@@ -22,7 +22,7 @@ import Layout from "../layouts/Layout.astro";
       </div>
     </div>
   </section>
-</Layout>
+</SiteLayout>
 
 <script>
   const duplicateArea = document.querySelector("[data-duplicate-remove]");

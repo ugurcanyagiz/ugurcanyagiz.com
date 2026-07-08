@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import SiteLayout from "../components/SiteLayout.astro";
 import FilterBar from "../components/FilterBar.astro";
 
 const cards = [
@@ -191,7 +191,7 @@ import AtlasBackground from "../components/AtlasBackground.astro";
 import SectionHeader from "../components/SectionHeader.astro";
 import ScrollReveal from "../components/ScrollReveal.astro";
 ---
-<Layout title="History — Ugurcan" description="A surreal timeline of civilization, power, memory, institutions, and patterns that keep returning.">
+<SiteLayout title="History — Ugurcan" description="A surreal timeline of civilization, power, memory, institutions, and patterns that keep returning.">
   <FilterBar slot="subnav" filters={filters} cardSelector=".history-card" queryKey="topic" defaultFilter="ALL" />
   <main class="atlas-page history-atlas">
     <AtlasBackground variant="history" id="history-scene" />
@@ -227,4 +227,4 @@ import ScrollReveal from "../components/ScrollReveal.astro";
     </div>
     <ScrollReveal />
   </main>
-</Layout>
+</SiteLayout>

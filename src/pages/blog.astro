@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import SiteLayout from "../components/SiteLayout.astro";
 import AtlasBackground from "../components/AtlasBackground.astro";
 import ScrollReveal from "../components/ScrollReveal.astro";
 
@@ -51,7 +51,7 @@ const posts = [
 const filters = ["ALL", "LIFE", "THOUGHT", "BELIEF" ];
 ---
 
-<Layout title="JLOG! — Ugurcan">
+<SiteLayout title="JLOG! — Ugurcan">
   <main class="atlas-page jlog-atlas">
     <AtlasBackground variant="jlog" id="jlog-atlas-scene" />
     <div class="atlas-content jlog-content">
@@ -565,4 +565,4 @@ const filters = ["ALL", "LIFE", "THOUGHT", "BELIEF" ];
     pills.forEach(p => p.addEventListener("click", () => apply(p.dataset.filter)));
     apply("ALL");
   </script>
-</Layout>
+</SiteLayout>

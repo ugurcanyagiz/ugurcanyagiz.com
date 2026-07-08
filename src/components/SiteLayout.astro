@@ -1,0 +1,35 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CinematicBackground from "./CinematicBackground.astro";
+import PageHeader from "./PageHeader.astro";
+import SiteNav from "./SiteNav.astro";
+
+const {
+  pageLabel,
+  title = "UGURCAN YAGIZ",
+  subtitle = "",
+  description = "",
+  activeSection = "",
+  backgroundVariant = "atlas",
+  sectionIndex = "",
+  showHeader = true,
+} = Astro.props;
+
+const firstSegment = Astro.url.pathname.split("/").filter(Boolean)[0] || "home";
+const resolvedActive = activeSection || (firstSegment === "jlog" ? "blog" : firstSegment);
+const inferredLabel = pageLabel || (resolvedActive ? resolvedActive.toUpperCase() : "ATLAS");
+---
+<Layout title={title} description={description || subtitle} theme="dark">
+  <SiteNav slot="subnav" activeSection={resolvedActive} />
+  <div class="site-page">
+    <CinematicBackground variant={backgroundVariant} />
+    <div class="site-page__inner">
+      {showHeader && (
+        <PageHeader pageLabel={inferredLabel} title={title} subtitle={subtitle} description={description} sectionIndex={sectionIndex} />
+      )}
+      <div class="site-page__content">
+        <slot />
+      </div>
+    </div>
+  </div>
+</Layout>

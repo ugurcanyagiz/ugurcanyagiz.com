@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import SiteLayout from "../components/SiteLayout.astro";
 import FilterBar from "../components/FilterBar.astro";
 
 /**
@@ -81,7 +81,7 @@ import AtlasBackground from "../components/AtlasBackground.astro";
 import SectionHeader from "../components/SectionHeader.astro";
 import ScrollReveal from "../components/ScrollReveal.astro";
 ---
-<Layout title="Future — Ugurcan" description="Signals dashboard for AI, biotech, space, energy, computing, society, and robotics — thoughtful, not hype-driven.">
+<SiteLayout title="Future — Ugurcan" description="Signals dashboard for AI, biotech, space, energy, computing, society, and robotics — thoughtful, not hype-driven.">
   <FilterBar slot="subnav" filters={filters} cardSelector=".future-card" queryKey="topic" defaultFilter="ALL" />
   <main class="atlas-page future-atlas">
     <AtlasBackground variant="future" id="future-scene" />
@@ -117,4 +117,4 @@ import ScrollReveal from "../components/ScrollReveal.astro";
     </div>
     <ScrollReveal />
   </main>
-</Layout>
+</SiteLayout>

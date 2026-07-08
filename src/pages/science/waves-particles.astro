@@ -1,11 +1,11 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import SiteLayout from "../../components/SiteLayout.astro";
 
 const title = "Wave–Particle Duality — Science";
 const updated = "Updated: 2026";
 ---
 
-<Layout title={title}>
+<SiteLayout title={title}>
   <article class="page">
     <header>
       <div class="hero-top">
@@ -77,4 +77,4 @@ const updated = "Updated: 2026";
   @media (max-width: 640px){ h1{ font-size: 34px; } .footnav{ flex-direction: column; } }
 </style>
 
-</Layout>
+</SiteLayout>
