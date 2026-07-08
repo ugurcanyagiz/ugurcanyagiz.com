@@ -15,11 +15,12 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
 
 <section class="cinema-atlas" data-cinema-atlas aria-label="Scroll reactive Cosmic Knowledge Atlas homepage">
   <div class="cinema-atlas__sticky">
-    <canvas class="cinema-atlas__canvas" data-atlas-canvas aria-hidden="true"></canvas>
-    <div class="cinema-atlas__stars" aria-hidden="true"></div>
-    <div class="cinema-atlas__aurora" aria-hidden="true"></div>
-    <div class="cinema-atlas__vignette" aria-hidden="true"></div>
-    <div class="cinema-atlas__map" aria-hidden="true">
+    <div class="cinema-atlas__scene atlas-scene" aria-hidden="true">
+      <canvas class="cinema-atlas__canvas" data-atlas-canvas aria-hidden="true"></canvas>
+      <div class="cinema-atlas__stars" aria-hidden="true"></div>
+      <div class="cinema-atlas__aurora" aria-hidden="true"></div>
+      <div class="cinema-atlas__vignette" aria-hidden="true"></div>
+      <div class="cinema-atlas__map" aria-hidden="true">
       <span class="cinema-atlas__arc cinema-atlas__arc--one"></span>
       <span class="cinema-atlas__arc cinema-atlas__arc--two"></span>
       <span class="cinema-atlas__arc cinema-atlas__arc--three"></span>
@@ -46,29 +47,35 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
       </div>
     </div>
 
-    <div class="cinema-atlas__copy" aria-live="polite">
-      {phases.map((phase, index) => (
-        <article class="cinema-atlas__phase" data-phase={index} data-phase-key={phase.key}>
-          <p class="cinema-atlas__eyebrow">{phase.eyebrow}</p>
-          <h1 class="cinema-atlas__title">{phase.title}</h1>
-          <p class="cinema-atlas__text">{phase.text}</p>
-          <a class="cinema-atlas__phase-link" href={phase.href}>{phase.accent}</a>
-        </article>
-      ))}
     </div>
 
-    <nav class="cinema-atlas__nav" aria-label="Atlas navigation">
-      {navItems.map((item) => (
-        <a class={`cinema-atlas__nav-link cinema-atlas__nav-link--${item.className}`} href={item.href}>
-          <span>{item.index}</span>{item.title}
-        </a>
-      ))}
-    </nav>
+    <div class="cinema-atlas__content-layer content-layer" aria-live="polite">
+      <div class="cinema-atlas__copy">
+        {phases.map((phase, index) => (
+          <article class="cinema-atlas__phase" data-phase={index} data-phase-key={phase.key}>
+            <p class="cinema-atlas__eyebrow">{phase.eyebrow}</p>
+            <h1 class="cinema-atlas__title">{phase.title}</h1>
+            <p class="cinema-atlas__text">{phase.text}</p>
+            <a class="cinema-atlas__phase-link" href={phase.href}>{phase.accent}</a>
+          </article>
+        ))}
+      </div>
+    </div>
 
-    <div class="cinema-atlas__hud" aria-hidden="true">
-      <span data-active-label>Intro</span>
-      <span class="cinema-atlas__progress"><i data-progress-bar></i></span>
-      <span>Scroll controls the atlas</span>
+    <div class="cinema-atlas__ui-layer ui-layer">
+      <nav class="cinema-atlas__nav" aria-label="Atlas navigation">
+        {navItems.map((item) => (
+          <a class={`cinema-atlas__nav-link cinema-atlas__nav-link--${item.className}`} href={item.href}>
+            <span>{item.index}</span>{item.title}
+          </a>
+        ))}
+      </nav>
+
+      <div class="cinema-atlas__hud" aria-hidden="true">
+        <span data-active-label>Intro</span>
+        <span class="cinema-atlas__progress"><i data-progress-bar></i></span>
+        <span>Scroll controls the atlas</span>
+      </div>
     </div>
   </div>
   <div class="cinema-atlas__scroll-space" aria-hidden="true"></div>
@@ -104,7 +111,7 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     let stars = [];
 
     function seed() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       const rect = canvas.getBoundingClientRect();
       width = Math.max(1, Math.floor(rect.width * dpr));
       height = Math.max(1, Math.floor(rect.height * dpr));
@@ -196,16 +203,12 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
       root.style.setProperty('--accent-b', String(accent[2]));
       root.style.setProperty('--hero-opacity', String(clamp(1 - progress * 1.2, 0, 1).toFixed(4)));
       root.style.setProperty('--background-shift', `${(progress * -18).toFixed(2)}vh`);
-      root.style.setProperty('--text-depth', `${((sceneProgress - .5) * 46).toFixed(2)}px`);
       root.dataset.activeScene = String(active);
       phases.forEach((phase, index) => {
-        const distance = Math.abs(sceneFloat - index);
-        const visibility = clamp(1 - distance * 1.65, 0, 1);
-        phase.style.setProperty('--phase-visibility', visibility.toFixed(4));
-        phase.style.setProperty('--phase-offset', `${((index - sceneFloat) * 72).toFixed(2)}px`);
-        phase.style.setProperty('--phase-blur', `${((1 - visibility) * 14).toFixed(2)}px`);
-        phase.style.setProperty('--phase-scale', (0.975 + visibility * 0.025).toFixed(4));
+        const direction = index < active ? -1 : 1;
         phase.toggleAttribute('data-active', index === active);
+        phase.toggleAttribute('aria-hidden', index !== active);
+        phase.style.setProperty('--phase-offset', index === active ? '0px' : `${direction * 28}px`);
       });
       if (label) label.textContent = phaseNames[active] || 'Atlas';
       if (bar) bar.style.transform = `scaleX(${progress})`;
@@ -244,15 +247,18 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     --axis-rotation: 0deg;
     --hero-opacity: 1;
     --background-shift: 0vh;
-    --text-depth: 0px;
     position: relative;
     min-height: 760svh;
     color: #fff7df;
     background: #01030a;
   }
 
-  .cinema-atlas__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; perspective: 1400px; background: radial-gradient(circle at var(--lens-x) var(--lens-y), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .24), transparent 28%), radial-gradient(circle at 76% 18%, rgba(121, 215, 255, .12), transparent 34%), linear-gradient(135deg, #01030a 0%, #07101f 44%, #02040b 100%); }
+  .cinema-atlas__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; perspective: 1400px; background: radial-gradient(circle at var(--lens-x) var(--lens-y), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .24), transparent 28%), radial-gradient(circle at 76% 18%, rgba(121, 215, 255, .12), transparent 34%), linear-gradient(135deg, #01030a 0%, #07101f 44%, #02040b 100%); contain: layout paint; }
   .cinema-atlas__scroll-space { height: 1px; }
+  .cinema-atlas__scene { position: absolute; inset: 0; z-index: 0; pointer-events: none; isolation: isolate; }
+  .cinema-atlas__content-layer,
+  .cinema-atlas__ui-layer { position: absolute; inset: 0; z-index: 2; isolation: isolate; pointer-events: none; }
+  .cinema-atlas__ui-layer { z-index: 3; }
   .cinema-atlas__canvas, .cinema-atlas__stars, .cinema-atlas__aurora, .cinema-atlas__vignette, .cinema-atlas__map { position: absolute; inset: 0; }
   .cinema-atlas__canvas { z-index: -9; width: 100%; height: 100%; transform: translateY(var(--background-shift)) scale(1.08); }
   .cinema-atlas__stars { z-index: -8; opacity: .22; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 88px 88px; mask-image: radial-gradient(circle, #000 0 56%, transparent 82%); transform: translate3d(var(--stars-x), var(--stars-y), 0); }
@@ -291,16 +297,27 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
   .cinema-atlas__satellite--d { width: 4px; background: #fff7df; transform: rotate(var(--orb-rotation-reverse)) rotate(292deg) translateX(clamp(150px, 27vw, 410px)); opacity: .66; }
 
   .cinema-atlas__copy { position: absolute; left: clamp(22px, 7vw, 118px); top: 49%; z-index: 90; width: min(900px, 64vw); transform: translateY(-50%); pointer-events: none; }
-  .cinema-atlas__phase { --phase-visibility: 0; --phase-offset: 42px; --phase-blur: 14px; --phase-scale: .975; position: absolute; inset: auto; opacity: var(--phase-visibility); transform: translate3d(0, calc(var(--phase-offset) + var(--text-depth)), 0) scale(var(--phase-scale)); transition: opacity 160ms linear; filter: blur(var(--phase-blur)); will-change: opacity, transform, filter; pointer-events: none; }
-  .cinema-atlas__phase[data-active] { pointer-events: auto; }
+  .cinema-atlas__phase {
+    --phase-offset: 28px;
+    position: absolute;
+    inset: auto;
+    opacity: 0;
+    transform: translateY(var(--phase-offset));
+    transition: opacity 420ms cubic-bezier(.22,1,.36,1), transform 520ms cubic-bezier(.22,1,.36,1);
+    filter: none;
+    pointer-events: none;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  .cinema-atlas__phase[data-active] { opacity: 1; transform: translateY(0); pointer-events: auto; }
   .cinema-atlas__eyebrow { margin: 0 0 16px; color: rgba(var(--accent-r), var(--accent-g), var(--accent-b), .82); font-size: clamp(11px, .8vw, 13px); font-weight: 850; letter-spacing: .28em; text-transform: uppercase; }
-  .cinema-atlas__title { max-width: 11ch; margin: 0; font-size: clamp(72px, 11.8vw, 190px); line-height: .74; letter-spacing: -.08em; text-wrap: balance; }
+  .cinema-atlas__title { max-width: 11ch; margin: 0; font-size: clamp(72px, 11.8vw, 190px); line-height: .82; letter-spacing: -.075em; text-wrap: balance; filter: none; backface-visibility: hidden; }
   .cinema-atlas__text { max-width: 470px; margin: 30px 0 0; color: rgba(255,247,223,.68); font-size: clamp(15px, 1.18vw, 20px); line-height: 1.38; }
-  .cinema-atlas__phase-link { display: inline-flex; margin-top: 34px; padding: 15px 19px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .42); border-radius: 999px; background: rgba(255,255,255,.07); backdrop-filter: blur(18px); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
+  .cinema-atlas__phase-link { display: inline-flex; margin-top: 34px; padding: 15px 19px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .42); border-radius: 999px; background: rgba(255,255,255,.07); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
   .cinema-atlas__phase-link:hover, .cinema-atlas__phase-link:focus-visible, .cinema-atlas__nav-link:hover, .cinema-atlas__nav-link:focus-visible { outline: none; border-color: rgba(239,202,128,.78); box-shadow: 0 0 0 4px rgba(239,202,128,.13), 0 24px 80px rgba(239,202,128,.16); }
 
   .cinema-atlas__nav { position: absolute; right: clamp(20px, 5vw, 82px); top: 49%; z-index: 92; display: grid; gap: 12px; transform: translateY(-50%); }
-  .cinema-atlas__nav-link { display: flex; align-items: center; gap: 12px; min-width: 168px; padding: 12px 14px; color: rgba(255,247,223,.74); text-decoration: none; font-size: 12px; font-weight: 760; border: 1px solid rgba(255,247,223,.12); border-radius: 999px; background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); backdrop-filter: blur(18px); }
+  .cinema-atlas__nav-link { display: flex; align-items: center; gap: 12px; min-width: 168px; padding: 12px 14px; color: rgba(255,247,223,.74); text-decoration: none; font-size: 12px; font-weight: 760; border: 1px solid rgba(255,247,223,.12); border-radius: 999px; background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); pointer-events: auto; }
   .cinema-atlas__nav-link span { color: #efca80; font-size: 10px; letter-spacing: .14em; }
   .cinema-atlas__hud { position: absolute; left: clamp(18px, 4vw, 60px); right: clamp(18px, 4vw, 60px); bottom: clamp(18px, 4vw, 42px); z-index: 91; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; color: rgba(255,247,223,.56); font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
   .cinema-atlas__progress { height: 1px; background: rgba(255,247,223,.16); overflow: hidden; }
