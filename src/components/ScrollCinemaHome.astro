@@ -22,12 +22,18 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
       <span class="cinema-atlas__arc cinema-atlas__arc--two"></span>
       <span class="cinema-atlas__arc cinema-atlas__arc--three"></span>
       <span class="cinema-atlas__axis"></span>
+      <span class="cinema-atlas__scanline cinema-atlas__scanline--one"></span>
+      <span class="cinema-atlas__scanline cinema-atlas__scanline--two"></span>
     </div>
 
     <div class="cinema-atlas__camera">
       <div class="cinema-atlas__object" aria-hidden="true">
         <span class="cinema-atlas__orb cinema-atlas__orb--core"></span>
         <span class="cinema-atlas__orb cinema-atlas__orb--halo"></span>
+        <span class="cinema-atlas__orb cinema-atlas__orb--meridian"></span>
+        <span class="cinema-atlas__orb cinema-atlas__orb--aperture"></span>
+        <span class="cinema-atlas__glyph cinema-atlas__glyph--north">ATLAS</span>
+        <span class="cinema-atlas__glyph cinema-atlas__glyph--south">SCROLL FIELD</span>
         <span class="cinema-atlas__satellite cinema-atlas__satellite--a"></span>
         <span class="cinema-atlas__satellite cinema-atlas__satellite--b"></span>
         <span class="cinema-atlas__satellite cinema-atlas__satellite--c"></span>
@@ -73,6 +79,14 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     const bar = root.querySelector('[data-progress-bar]');
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     const phaseNames = ['Intro', 'Science', 'History', 'Art', 'Future', 'Explore'];
+    const accents = [
+      [239, 202, 128],
+      [121, 215, 255],
+      [221, 169, 101],
+      [237, 141, 191],
+      [139, 255, 214],
+      [255, 247, 223],
+    ];
     const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
     const lerp = (a, b, t) => a + (b - a) * t;
     let progress = 0;
@@ -152,16 +166,33 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
       root.style.setProperty('--scene-progress', sceneProgress.toFixed(4));
       root.style.setProperty('--camera-x', `${cameraX.toFixed(3)}vw`);
       root.style.setProperty('--camera-y', `${cameraY.toFixed(3)}vh`);
+      root.style.setProperty('--stars-x', `${(cameraX * -.35).toFixed(3)}vw`);
+      root.style.setProperty('--stars-y', `${(cameraY * -.45).toFixed(3)}vh`);
+      root.style.setProperty('--map-x', `${(cameraX * -.65).toFixed(3)}vw`);
+      root.style.setProperty('--map-y', `${(cameraY * -.55).toFixed(3)}vh`);
       root.style.setProperty('--camera-scale', cameraScale.toFixed(4));
       root.style.setProperty('--orb-rotation', `${(progress * 980).toFixed(2)}deg`);
       root.style.setProperty('--orb-rotation-reverse', `${(progress * -760).toFixed(2)}deg`);
       root.style.setProperty('--orb-rotation-slow', `${(progress * 430).toFixed(2)}deg`);
       root.style.setProperty('--axis-rotation', `${(progress * 42).toFixed(2)}deg`);
+      root.style.setProperty('--object-tilt', `${(Math.sin(progress * Math.PI * 2) * 10).toFixed(2)}deg`);
+      const accent = accents[active] || accents[0];
+      root.style.setProperty('--accent-r', String(accent[0]));
+      root.style.setProperty('--accent-g', String(accent[1]));
+      root.style.setProperty('--accent-b', String(accent[2]));
       root.style.setProperty('--hero-opacity', String(clamp(1 - progress * 1.2, 0, 1).toFixed(4)));
       root.style.setProperty('--background-shift', `${(progress * -18).toFixed(2)}vh`);
       root.style.setProperty('--text-depth', `${((sceneProgress - .5) * 46).toFixed(2)}px`);
       root.dataset.activeScene = String(active);
-      phases.forEach((phase, index) => phase.toggleAttribute('data-active', index === active));
+      phases.forEach((phase, index) => {
+        const distance = Math.abs(sceneFloat - index);
+        const visibility = clamp(1 - distance * 1.65, 0, 1);
+        phase.style.setProperty('--phase-visibility', visibility.toFixed(4));
+        phase.style.setProperty('--phase-offset', `${((index - sceneFloat) * 42).toFixed(2)}px`);
+        phase.style.setProperty('--phase-blur', `${((1 - visibility) * 14).toFixed(2)}px`);
+        phase.style.setProperty('--phase-scale', (0.975 + visibility * 0.025).toFixed(4));
+        phase.toggleAttribute('data-active', index === active);
+      });
       if (label) label.textContent = phaseNames[active] || 'Atlas';
       if (bar) bar.style.transform = `scaleX(${progress})`;
       draw(progress);
@@ -183,6 +214,14 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     --camera-x: 0vw;
     --camera-y: 0vh;
     --camera-scale: 1;
+    --stars-x: 0vw;
+    --stars-y: 0vh;
+    --map-x: 0vw;
+    --map-y: 0vh;
+    --accent-r: 239;
+    --accent-g: 202;
+    --accent-b: 128;
+    --object-tilt: 0deg;
     --orb-rotation: 0deg;
     --orb-rotation-reverse: 0deg;
     --orb-rotation-slow: 0deg;
@@ -196,36 +235,43 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     background: #01030a;
   }
 
-  .cinema-atlas__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 50% 40%, #101a2a, #030711 55%, #01030a 100%); }
+  .cinema-atlas__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 50% 40%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .13), #030711 54%, #01030a 100%); }
   .cinema-atlas__scroll-space { height: 1px; }
   .cinema-atlas__canvas, .cinema-atlas__stars, .cinema-atlas__map { position: absolute; inset: 0; }
   .cinema-atlas__canvas { z-index: -7; width: 100%; height: 100%; transform: translateY(var(--background-shift)) scale(1.08); }
-  .cinema-atlas__stars { z-index: -6; opacity: .22; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 88px 88px; mask-image: radial-gradient(circle, #000 0 56%, transparent 82%); transform: translate3d(calc(var(--camera-x) * -.35), calc(var(--camera-y) * -.45), 0); }
+  .cinema-atlas__stars { z-index: -6; opacity: .22; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 88px 88px; mask-image: radial-gradient(circle, #000 0 56%, transparent 82%); transform: translate3d(var(--stars-x), var(--stars-y), 0); }
   .cinema-atlas__sticky::after { content: ""; position: absolute; inset: 0; z-index: 80; pointer-events: none; background: radial-gradient(circle at 50% 50%, transparent 0 42%, rgba(1,3,10,.46) 72%, rgba(1,3,10,.93)), linear-gradient(180deg, rgba(1,3,10,.76), transparent 24%, transparent 72%, rgba(1,3,10,.82)); }
   .cinema-atlas__sticky::before { content: ""; position: absolute; inset: 0; z-index: 81; opacity: .12; pointer-events: none; mix-blend-mode: overlay; background-image: repeating-radial-gradient(circle at 30% 20%, rgba(255,255,255,.34) 0 1px, transparent 1px 4px); }
 
-  .cinema-atlas__map { z-index: -4; transform: translate3d(calc(var(--camera-x) * -.65), calc(var(--camera-y) * -.55), 0) scale(var(--camera-scale)); }
+  .cinema-atlas__map { z-index: -4; transform: translate3d(var(--map-x), var(--map-y), 0) scale(var(--camera-scale)); }
   .cinema-atlas__arc { position: absolute; left: 50%; top: 50%; width: min(78vw, 920px); aspect-ratio: 1; border: 1px solid rgba(239,202,128,.17); border-radius: 50%; transform: translate(-50%, -50%) rotateX(67deg) rotateZ(var(--orb-rotation)); box-shadow: 0 0 80px rgba(121,215,255,.08); }
   .cinema-atlas__arc--two { width: min(58vw, 680px); border-color: rgba(121,215,255,.18); transform: translate(-50%, -50%) rotateX(58deg) rotateY(20deg) rotateZ(var(--orb-rotation-reverse)); }
   .cinema-atlas__arc--three { width: min(42vw, 500px); border-style: dashed; border-color: rgba(255,255,255,.16); transform: translate(-50%, -50%) rotateX(72deg) rotateY(-24deg) rotateZ(var(--orb-rotation-slow)); }
-  .cinema-atlas__axis { position: absolute; left: 50%; top: 12%; bottom: 12%; width: 1px; background: linear-gradient(transparent, rgba(239,202,128,.38), transparent); transform: rotate(var(--axis-rotation)); transform-origin: 50% 50%; }
+  .cinema-atlas__axis { position: absolute; left: 50%; top: 12%; bottom: 12%; width: 1px; background: linear-gradient(transparent, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .44), transparent); transform: rotate(var(--axis-rotation)); transform-origin: 50% 50%; }
+  .cinema-atlas__scanline { position: absolute; left: 50%; top: 50%; width: min(86vw, 1040px); height: 1px; background: linear-gradient(90deg, transparent, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .34), transparent); transform: translate(-50%, -50%) rotate(var(--axis-rotation)); box-shadow: 0 0 34px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .14); }
+  .cinema-atlas__scanline--two { transform: translate(-50%, -50%) rotate(var(--orb-rotation-slow)); opacity: .5; }
 
   .cinema-atlas__camera { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; transform: translate3d(var(--camera-x), var(--camera-y), 0) scale(var(--camera-scale)); will-change: transform; }
-  .cinema-atlas__object { position: relative; width: clamp(220px, 34vw, 520px); aspect-ratio: 1; transform: rotate(var(--orb-rotation)); filter: drop-shadow(0 35px 90px rgba(0,0,0,.55)); }
+  .cinema-atlas__object { position: relative; width: clamp(260px, 39vw, 610px); aspect-ratio: 1; transform: rotate(var(--orb-rotation)) rotateY(var(--object-tilt)); transform-style: preserve-3d; filter: drop-shadow(0 35px 90px rgba(0,0,0,.55)); }
   .cinema-atlas__orb { position: absolute; inset: 19%; border-radius: 50%; }
-  .cinema-atlas__orb--core { background: radial-gradient(circle at 36% 30%, #fff8d8, #d9a74f 12%, #27415a 38%, #07111f 64%, transparent 70%), conic-gradient(from var(--orb-rotation), rgba(239,202,128,.8), rgba(121,215,255,.18), rgba(255,255,255,.06), rgba(239,202,128,.8)); box-shadow: inset -20px -28px 50px rgba(0,0,0,.6), 0 0 120px rgba(239,202,128,.24), 0 0 180px rgba(121,215,255,.12); }
-  .cinema-atlas__orb--halo { inset: 8%; border: 1px solid rgba(239,202,128,.24); background: radial-gradient(circle, transparent 55%, rgba(121,215,255,.08)); }
+  .cinema-atlas__orb--core { background: radial-gradient(circle at 36% 30%, #fff8d8, #d9a74f 12%, #27415a 38%, #07111f 64%, transparent 70%), conic-gradient(from var(--orb-rotation), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .86), rgba(121,215,255,.18), rgba(255,255,255,.06), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .86)); box-shadow: inset -20px -28px 50px rgba(0,0,0,.6), 0 0 130px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .30), 0 0 220px rgba(121,215,255,.14); }
+  .cinema-atlas__orb--halo { inset: 6%; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .34); background: radial-gradient(circle, transparent 55%, rgba(121,215,255,.08)); }
+  .cinema-atlas__orb--meridian { inset: 13%; border: 1px solid rgba(255,247,223,.18); transform: rotateX(72deg) rotateZ(var(--orb-rotation-reverse)); }
+  .cinema-atlas__orb--aperture { inset: 31%; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .48); background: radial-gradient(circle, rgba(255,247,223,.42), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .12) 38%, transparent 66%); box-shadow: 0 0 70px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .22); }
+  .cinema-atlas__glyph { position: absolute; left: 50%; color: rgba(255,247,223,.54); font-size: 10px; font-weight: 850; letter-spacing: .22em; text-transform: uppercase; transform: translateX(-50%) rotate(var(--orb-rotation-reverse)); }
+  .cinema-atlas__glyph--north { top: 3%; }
+  .cinema-atlas__glyph--south { bottom: 3%; }
   .cinema-atlas__satellite { position: absolute; left: 50%; top: 50%; width: 10px; aspect-ratio: 1; border-radius: 50%; background: #f0ca80; box-shadow: 0 0 24px rgba(240,202,128,.9); transform: rotate(var(--orb-rotation)) translateX(clamp(130px, 22vw, 330px)); }
   .cinema-atlas__satellite--b { background: #9be3ff; transform: rotate(var(--orb-rotation-reverse)) rotate(110deg) translateX(clamp(105px, 17vw, 260px)); }
   .cinema-atlas__satellite--c { width: 6px; transform: rotate(var(--orb-rotation-slow)) rotate(230deg) translateX(clamp(80px, 14vw, 210px)); opacity: .75; }
 
   .cinema-atlas__copy { position: absolute; left: clamp(20px, 6vw, 90px); top: 50%; z-index: 90; width: min(760px, 58vw); transform: translateY(-50%); pointer-events: none; }
-  .cinema-atlas__phase { position: absolute; inset: auto; opacity: 0; transform: translate3d(0, calc(34px + var(--text-depth)), 0) scale(.98); transition: opacity 560ms ease, transform 760ms cubic-bezier(.16,1,.3,1), filter 560ms ease; filter: blur(10px); }
-  .cinema-atlas__phase[data-active] { opacity: 1; transform: translate3d(0, var(--text-depth), 0) scale(1); filter: blur(0); pointer-events: auto; }
-  .cinema-atlas__eyebrow { margin: 0 0 16px; color: rgba(121,215,255,.74); font-size: 12px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
+  .cinema-atlas__phase { --phase-visibility: 0; --phase-offset: 42px; --phase-blur: 14px; --phase-scale: .975; position: absolute; inset: auto; opacity: var(--phase-visibility); transform: translate3d(0, calc(var(--phase-offset) + var(--text-depth)), 0) scale(var(--phase-scale)); transition: opacity 160ms linear; filter: blur(var(--phase-blur)); will-change: opacity, transform, filter; pointer-events: none; }
+  .cinema-atlas__phase[data-active] { pointer-events: auto; }
+  .cinema-atlas__eyebrow { margin: 0 0 16px; color: rgba(var(--accent-r), var(--accent-g), var(--accent-b), .82); font-size: 12px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
   .cinema-atlas__title { max-width: 11ch; margin: 0; font-size: clamp(54px, 9vw, 148px); line-height: .78; letter-spacing: -.08em; text-wrap: balance; }
   .cinema-atlas__text { max-width: 520px; margin: 24px 0 0; color: rgba(255,247,223,.68); font-size: clamp(16px, 1.35vw, 21px); line-height: 1.45; }
-  .cinema-atlas__phase-link { display: inline-flex; margin-top: 28px; padding: 13px 17px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(239,202,128,.38); border-radius: 999px; background: rgba(255,255,255,.07); backdrop-filter: blur(18px); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
+  .cinema-atlas__phase-link { display: inline-flex; margin-top: 28px; padding: 13px 17px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .42); border-radius: 999px; background: rgba(255,255,255,.07); backdrop-filter: blur(18px); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
   .cinema-atlas__phase-link:hover, .cinema-atlas__phase-link:focus-visible, .cinema-atlas__nav-link:hover, .cinema-atlas__nav-link:focus-visible { outline: none; border-color: rgba(239,202,128,.78); box-shadow: 0 0 0 4px rgba(239,202,128,.13), 0 24px 80px rgba(239,202,128,.16); }
 
   .cinema-atlas__nav { position: absolute; right: clamp(18px, 4vw, 60px); top: 50%; z-index: 92; display: grid; gap: 12px; transform: translateY(-50%); }
@@ -233,9 +279,9 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
   .cinema-atlas__nav-link span { color: #efca80; font-size: 10px; letter-spacing: .14em; }
   .cinema-atlas__hud { position: absolute; left: clamp(18px, 4vw, 60px); right: clamp(18px, 4vw, 60px); bottom: clamp(18px, 4vw, 42px); z-index: 91; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; color: rgba(255,247,223,.56); font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
   .cinema-atlas__progress { height: 1px; background: rgba(255,247,223,.16); overflow: hidden; }
-  .cinema-atlas__progress i { display: block; width: 100%; height: 100%; background: linear-gradient(90deg, #efca80, #79d7ff); transform: scaleX(0); transform-origin: left; }
+  .cinema-atlas__progress i { display: block; width: 100%; height: 100%; background: linear-gradient(90deg, rgb(var(--accent-r), var(--accent-g), var(--accent-b)), #79d7ff); transform: scaleX(0); transform-origin: left; }
 
   @media (max-width: 900px) { .cinema-atlas__copy { width: min(680px, 74vw); } .cinema-atlas__title { font-size: clamp(50px, 12vw, 104px); } .cinema-atlas__nav { top: auto; right: auto; left: 18px; bottom: 70px; grid-template-columns: repeat(5, auto); max-width: calc(100vw - 36px); overflow-x: auto; transform: none; } .cinema-atlas__nav-link { min-width: auto; white-space: nowrap; } }
-  @media (max-width: 640px) { .cinema-atlas { min-height: 680svh; } .cinema-atlas__copy { left: 18px; right: 18px; top: 18%; width: auto; transform: none; } .cinema-atlas__title { max-width: 10ch; font-size: clamp(46px, 16vw, 76px); } .cinema-atlas__text { max-width: 92vw; font-size: 15px; } .cinema-atlas__object { width: min(78vw, 360px); transform: translateY(14vh) rotate(var(--orb-rotation)); } .cinema-atlas__hud { grid-template-columns: 1fr; gap: 9px; font-size: 9px; } .cinema-atlas__nav { bottom: 92px; } }
+  @media (max-width: 640px) { .cinema-atlas { min-height: 680svh; } .cinema-atlas__copy { left: 18px; right: 18px; top: 18%; width: auto; transform: none; } .cinema-atlas__title { max-width: 10ch; font-size: clamp(46px, 16vw, 76px); } .cinema-atlas__text { max-width: 92vw; font-size: 15px; } .cinema-atlas__object { width: min(86vw, 420px); transform: translateY(17vh) rotate(var(--orb-rotation)); } .cinema-atlas__hud { grid-template-columns: 1fr; gap: 9px; font-size: 9px; } .cinema-atlas__nav { bottom: 92px; } }
   @media (prefers-reduced-motion: reduce) { .cinema-atlas { min-height: 100svh; } .cinema-atlas__sticky { position: relative; } .cinema-atlas__phase, .cinema-atlas__camera, .cinema-atlas__map, .cinema-atlas__stars { transition: none; transform: none; } .cinema-atlas__phase { position: relative; display: none; filter: none; } .cinema-atlas__phase[data-active] { display: block; } }
 </style>
