@@ -151,7 +151,8 @@ const mailtoUrl = `mailto:${email}`;
       }
 
       :global(body.is-immersive){
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
         background: #01030a;
       }
 
@@ -173,7 +174,7 @@ const mailtoUrl = `mailto:${email}`;
 
       :global(body.is-immersive) .main{
         min-height: 100svh;
-        overflow: hidden;
+        overflow: visible;
       }
 
       @media (max-width: 520px){
