@@ -1,11 +1,7 @@
 ---
-const categories = [
-  { key: 'jlog', title: 'JLOG', href: '/blog' },
-  { key: 'science', title: 'Science', href: '/science' },
-  { key: 'history', title: 'History', href: '/history' },
-  { key: 'art', title: 'Art', href: '/art' },
-  { key: 'future', title: 'Future', href: '/future' },
-];
+
+import { NAV_ITEMS } from '../lib/navigation';
+const categories = NAV_ITEMS.map((item) => ({ key: item.sectionId, title: item.label, href: item.href }));
 ---
 
 <section class="circle-hub" data-circle-hub aria-label="Primary orbit navigation">

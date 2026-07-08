@@ -479,3 +479,19 @@ body:has(.site-page) .icon-btn{ border-color:var(--border-soft); background:rgba
   .cinematic-background__orbit{ width:118vw; height:72vw; opacity:.48; }
 }
 @media (prefers-reduced-motion:reduce){ .site-page__content{ animation:none; } }
+
+.menu-button{position:relative;display:flex;align-items:center;gap:1rem;min-width:clamp(180px,15vw,260px);min-height:48px;padding:.95rem 1.25rem;border-radius:999px;border:1px solid rgba(244,239,227,.18);background:rgba(255,255,255,.055);color:rgba(244,239,227,.92);font-weight:700;letter-spacing:.01em;text-decoration:none;transition:background .35s ease,border-color .35s ease,color .35s ease,transform .35s ease,box-shadow .35s ease;backdrop-filter:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+.menu-button:hover,.menu-button:focus-visible{outline:none;background:rgba(255,255,255,.095);border-color:rgba(217,189,114,.45);color:#fff7e7;transform:translateX(-4px);box-shadow:0 0 0 3px rgba(217,189,114,.10),inset 0 1px 0 rgba(255,255,255,.10);}
+.menu-button.is-active{background:rgba(217,189,114,.13);border-color:rgba(217,189,114,.55);color:#fff7e7;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+.menu-button__index{color:#d9bd72;font-size:.82rem;font-weight:800;letter-spacing:.12em;white-space:nowrap;}
+.menu-button__text{display:grid;gap:.18rem;min-width:0;}
+.menu-button__label{font-size:clamp(.95rem,1vw,1.08rem);font-weight:700;line-height:1;}
+.menu-button__subtitle{max-width:18rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:rgba(244,239,227,.58);font-size:.68rem;font-weight:650;letter-spacing:.02em;line-height:1.15;}
+.menu-button__indicator{margin-left:auto;width:6px;height:6px;border-radius:999px;background:rgba(244,239,227,.32);transition:background .35s ease,transform .35s ease;}
+.menu-button.is-active .menu-button__indicator{background:#d9bd72;}
+.menu-button--compact{min-width:auto;min-height:38px;padding:.62rem .86rem;gap:.55rem;}
+.menu-button--compact .menu-button__subtitle,.site-navigation__button .menu-button__indicator{display:none;}
+.site-navigation{display:flex;align-items:center;justify-content:center;gap:8px;min-height:50px;overflow-x:auto;scrollbar-width:none;}
+.site-navigation::-webkit-scrollbar{display:none;}
+.site-navigation__me{flex:0 0 auto;}
+@media (max-width:760px){.site-navigation{justify-content:flex-start;padding:8px 0}.menu-button--compact{padding:.72rem .9rem}.menu-button:hover,.menu-button:focus-visible{transform:translateY(-2px)}}

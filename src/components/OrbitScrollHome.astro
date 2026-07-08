@@ -1,11 +1,7 @@
 ---
-const nodes = [
-  { title: "Science", href: "/science", index: "01", className: "science" },
-  { title: "History", href: "/history", index: "02", className: "history" },
-  { title: "Art", href: "/art", index: "03", className: "art" },
-  { title: "Future", href: "/future", index: "04", className: "future" },
-  { title: "JLOG", href: "/blog", index: "05", className: "jlog" },
-];
+
+import { NAV_ITEMS } from '../lib/navigation';
+const nodes = NAV_ITEMS.map((item) => ({ title: item.label, href: item.href, index: item.index, className: item.sectionId }));
 ---
 
 <section class="orbit-scroll-home" data-orbit-scroll-home aria-label="UGURCAN homepage orbit scene">

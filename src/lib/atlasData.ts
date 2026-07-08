@@ -1,3 +1,5 @@
+import { NAV_ITEMS } from './navigation';
+
 type RawPageMap = Record<string, string>;
 
 export type AtlasTopic = {
@@ -31,13 +33,18 @@ type CardMeta = AtlasTopic & { category?: string; order: number };
 const categoryPages = import.meta.glob<string>("../pages/*.{astro,md,mdx}", { query: "?raw", import: "default", eager: true }) as RawPageMap;
 const routedPages = import.meta.glob<string>("../pages/**/*.{astro,md,mdx}", { query: "?raw", import: "default", eager: true }) as RawPageMap;
 
-const CATEGORY_META: Record<string, Pick<AtlasCategory, "title" | "index" | "kicker" | "className" | "order">> = {
-  science: { title: "Science", index: "01", kicker: "Matter & mind", className: "science", order: 1 },
-  history: { title: "History", index: "02", kicker: "Time & society", className: "history", order: 2 },
-  art: { title: "Art", index: "03", kicker: "Form & feeling", className: "art", order: 3 },
-  future: { title: "Future", index: "04", kicker: "Signals ahead", className: "future", order: 4 },
-  blog: { title: "JLOG", index: "05", kicker: "Field notes", className: "jlog", order: 5 },
-};
+const CATEGORY_META: Record<string, Pick<AtlasCategory, "title" | "index" | "kicker" | "className" | "order">> = Object.fromEntries(
+  NAV_ITEMS.map((item, order) => [
+    item.key,
+    {
+      title: item.label,
+      index: item.index,
+      kicker: item.subtitle.split('→').slice(0, 2).join('&').replace(/\s+/g, ' ').trim() || item.description,
+      className: item.sectionId,
+      order: order + 1,
+    },
+  ]),
+);
 
 const EXCLUDED_ROUTE_SEGMENTS = new Set(["admin", "index", "me"]);
 

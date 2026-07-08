@@ -1,0 +1,12 @@
+---
+import MenuButton from './MenuButton.astro';
+import { NAV_ITEMS } from '../lib/navigation';
+
+const { activeSection = '', includeMe = true } = Astro.props;
+---
+<nav class="site-nav site-navigation" aria-label="Primary navigation">
+  {NAV_ITEMS.map((item) => (
+    <MenuButton item={item} active={activeSection === item.key || activeSection === item.sectionId} className="menu-button--compact site-navigation__button" />
+  ))}
+  {includeMe && <a class:list={["site-nav__link", "site-navigation__me", activeSection === 'me' && 'is-active']} href="/me" aria-current={activeSection === 'me' ? 'page' : undefined}>Me</a>}
+</nav>

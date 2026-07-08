@@ -1,18 +1,5 @@
 ---
-const { activeSection = "" } = Astro.props;
-const items = [
-  { href: "/science", label: "Science", key: "science" },
-  { href: "/history", label: "History", key: "history" },
-  { href: "/art", label: "Art", key: "art" },
-  { href: "/future", label: "Future", key: "future" },
-  { href: "/blog", label: "JLOG", key: "blog" },
-  { href: "/me", label: "Me", key: "me" },
-];
+import SiteNavigation from './SiteNavigation.astro';
+const { activeSection = '' } = Astro.props;
 ---
-<nav class="site-nav" aria-label="Primary navigation">
-  {items.map((item) => (
-    <a class:list={["site-nav__link", activeSection === item.key && "is-active"]} href={item.href} aria-current={activeSection === item.key ? "page" : undefined}>
-      {item.label}
-    </a>
-  ))}
-</nav>
+<SiteNavigation activeSection={activeSection} />
