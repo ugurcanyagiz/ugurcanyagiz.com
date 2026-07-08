@@ -2,12 +2,12 @@
 import { atlasData } from "../lib/atlasData";
 
 const phases = [
-  { key: "intro", eyebrow: "Cosmic Knowledge Atlas", title: "A personal atlas of science, art, history, and the future.", text: "Enter a cinematic field of ideas — mapped by curiosity, memory, beauty, and orbit.", accent: "Identity", href: "/me" },
-  { key: "science", eyebrow: "01 / Science", title: "Where curiosity becomes structure.", text: "Matter, mind, language, life, uncertainty — arranged as signals in a living instrument.", accent: "Observe", href: "/science" },
-  { key: "history", eyebrow: "02 / History", title: "Memory behaves like gravity.", text: "Empires, institutions, revolutions, roads, printing presses — old forces bending the present.", accent: "Remember", href: "/history" },
-  { key: "art", eyebrow: "03 / Art", title: "Form gives feeling a coordinate system.", text: "Composition, sound, color, architecture, cinema — the human layer of the atlas.", accent: "Feel", href: "/art" },
-  { key: "future", eyebrow: "04 / Astrophysics & Future", title: "The horizon is an instrument.", text: "Black holes, intelligence, space economies, longevity, fusion, robots — signals from tomorrow.", accent: "Project", href: "/future" },
-  { key: "explore", eyebrow: "05 / Explore", title: "Science. Memory. Art. Orbit.", text: "Navigate the archive through constellations instead of menus. Follow the field that pulls you.", accent: "Navigate", href: "/blog" },
+  { key: "intro", eyebrow: "Cosmic Knowledge Atlas", title: "A cinematic archive of ideas.", text: "Science, memory, art, and the future — held in orbit.", accent: "Enter", href: "/me" },
+  { key: "science", eyebrow: "01 / Science", title: "Curiosity becomes structure.", text: "Matter. Mind. Life. Uncertainty.", accent: "Observe", href: "/science" },
+  { key: "history", eyebrow: "02 / History", title: "Memory bends the present.", text: "Old forces. New consequences.", accent: "Remember", href: "/history" },
+  { key: "art", eyebrow: "03 / Art", title: "Feeling finds form.", text: "Color, sound, space, cinema.", accent: "Feel", href: "/art" },
+  { key: "future", eyebrow: "04 / Astrophysics & Future", title: "The horizon is alive.", text: "Signals from intelligence, space, energy, and time.", accent: "Project", href: "/future" },
+  { key: "explore", eyebrow: "05 / Explore", title: "Science. Memory. Art. Orbit.", text: "Choose a constellation.", accent: "Navigate", href: "/blog" },
 ];
 
 const navItems = atlasData.filter((item) => item.href).slice(0, 5);
@@ -17,6 +17,8 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
   <div class="cinema-atlas__sticky">
     <canvas class="cinema-atlas__canvas" data-atlas-canvas aria-hidden="true"></canvas>
     <div class="cinema-atlas__stars" aria-hidden="true"></div>
+    <div class="cinema-atlas__aurora" aria-hidden="true"></div>
+    <div class="cinema-atlas__vignette" aria-hidden="true"></div>
     <div class="cinema-atlas__map" aria-hidden="true">
       <span class="cinema-atlas__arc cinema-atlas__arc--one"></span>
       <span class="cinema-atlas__arc cinema-atlas__arc--two"></span>
@@ -32,11 +34,15 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
         <span class="cinema-atlas__orb cinema-atlas__orb--halo"></span>
         <span class="cinema-atlas__orb cinema-atlas__orb--meridian"></span>
         <span class="cinema-atlas__orb cinema-atlas__orb--aperture"></span>
+        <span class="cinema-atlas__orb cinema-atlas__orb--crown"></span>
+        <span class="cinema-atlas__needle cinema-atlas__needle--one"></span>
+        <span class="cinema-atlas__needle cinema-atlas__needle--two"></span>
         <span class="cinema-atlas__glyph cinema-atlas__glyph--north">ATLAS</span>
         <span class="cinema-atlas__glyph cinema-atlas__glyph--south">SCROLL FIELD</span>
         <span class="cinema-atlas__satellite cinema-atlas__satellite--a"></span>
         <span class="cinema-atlas__satellite cinema-atlas__satellite--b"></span>
         <span class="cinema-atlas__satellite cinema-atlas__satellite--c"></span>
+        <span class="cinema-atlas__satellite cinema-atlas__satellite--d"></span>
       </div>
     </div>
 
@@ -62,7 +68,7 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     <div class="cinema-atlas__hud" aria-hidden="true">
       <span data-active-label>Intro</span>
       <span class="cinema-atlas__progress"><i data-progress-bar></i></span>
-      <span>Scroll to steer</span>
+      <span>Scroll controls the atlas</span>
     </div>
   </div>
   <div class="cinema-atlas__scroll-space" aria-hidden="true"></div>
@@ -104,12 +110,13 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
       height = Math.max(1, Math.floor(rect.height * dpr));
       canvas.width = width;
       canvas.height = height;
-      const count = window.innerWidth < 700 ? 90 : 170;
+      const count = window.innerWidth < 700 ? 120 : 240;
       stars = Array.from({ length: count }, (_, i) => ({
         x: ((i * 47) % 101) / 100,
         y: ((i * 83) % 97) / 96,
         r: .35 + ((i * 17) % 100) / 95,
         z: .25 + ((i * 29) % 100) / 100,
+        drift: i % 2 ? 1 : -1,
       }));
     }
 
@@ -123,24 +130,29 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     function draw(p) {
       if (!ctx) return;
       ctx.clearRect(0, 0, width, height);
-      const cx = width * (.5 + (p - .5) * .08);
-      const cy = height * (.48 + Math.sin(p * Math.PI * 2) * .035);
+      const cx = width * (.54 + Math.sin(p * Math.PI * 2) * .08);
+      const cy = height * (.48 + Math.cos(p * Math.PI * 1.4) * .055);
       const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(width, height) * .75);
-      g.addColorStop(0, `rgba(239, 202, 128, ${.16 + p * .08})`);
-      g.addColorStop(.25, `rgba(59, 111, 152, ${.18 + Math.sin(p * 9) * .04})`);
+      g.addColorStop(0, `rgba(255, 241, 198, ${.20 + p * .10})`);
+      g.addColorStop(.22, `rgba(59, 111, 152, ${.26 + Math.sin(p * 9) * .06})`);
+      g.addColorStop(.52, `rgba(117, 74, 151, ${.10 + Math.cos(p * 7) * .04})`);
       g.addColorStop(1, 'rgba(1, 3, 10, 0)');
       ctx.fillStyle = g;
       ctx.fillRect(0, 0, width, height);
       stars.forEach((s) => {
-        const x = ((s.x + p * s.z * .16) % 1) * width;
-        const y = ((s.y + p * s.z * .08) % 1) * height;
+        const x = ((s.x + p * s.z * .26 * s.drift + 1) % 1) * width;
+        const y = ((s.y + p * s.z * .14) % 1) * height;
         ctx.globalAlpha = .18 + s.z * .55;
         ctx.fillStyle = s.z > .8 ? '#f0ca80' : '#d8efff';
         ctx.beginPath();
         ctx.arc(x, y, s.r * dpr, 0, Math.PI * 2);
         ctx.fill();
+        if (s.z > .86) {
+          ctx.globalAlpha *= .28;
+          ctx.fillRect(x - s.r * dpr * 7, y, s.r * dpr * 14, Math.max(1, .35 * dpr));
+        }
       });
-      ctx.globalAlpha = .16;
+      ctx.globalAlpha = .20;
       ctx.strokeStyle = '#bcdff2';
       ctx.lineWidth = dpr;
       for (let i = 0; i < 9; i++) {
@@ -159,9 +171,9 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
       const sceneFloat = progress * (sceneCount - 1);
       const active = clamp(Math.round(sceneFloat), 0, sceneCount - 1);
       const sceneProgress = sceneFloat - Math.floor(sceneFloat);
-      const cameraX = Math.sin(progress * Math.PI * 2) * 7;
-      const cameraY = Math.cos(progress * Math.PI * 1.7) * 4;
-      const cameraScale = 1 + progress * .28 + Math.sin(progress * Math.PI * 3) * .045;
+      const cameraX = Math.sin(progress * Math.PI * 2.1) * 13;
+      const cameraY = Math.cos(progress * Math.PI * 1.55) * 8;
+      const cameraScale = 1.04 + progress * .46 + Math.sin(progress * Math.PI * 3) * .07;
       root.style.setProperty('--scroll-progress', progress.toFixed(4));
       root.style.setProperty('--scene-progress', sceneProgress.toFixed(4));
       root.style.setProperty('--camera-x', `${cameraX.toFixed(3)}vw`);
@@ -175,7 +187,9 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
       root.style.setProperty('--orb-rotation-reverse', `${(progress * -760).toFixed(2)}deg`);
       root.style.setProperty('--orb-rotation-slow', `${(progress * 430).toFixed(2)}deg`);
       root.style.setProperty('--axis-rotation', `${(progress * 42).toFixed(2)}deg`);
-      root.style.setProperty('--object-tilt', `${(Math.sin(progress * Math.PI * 2) * 10).toFixed(2)}deg`);
+      root.style.setProperty('--object-tilt', `${(Math.sin(progress * Math.PI * 2) * 18).toFixed(2)}deg`);
+      root.style.setProperty('--lens-x', `${(48 + Math.sin(progress * Math.PI * 2.4) * 18).toFixed(2)}%`);
+      root.style.setProperty('--lens-y', `${(46 + Math.cos(progress * Math.PI * 1.8) * 14).toFixed(2)}%`);
       const accent = accents[active] || accents[0];
       root.style.setProperty('--accent-r', String(accent[0]));
       root.style.setProperty('--accent-g', String(accent[1]));
@@ -188,7 +202,7 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
         const distance = Math.abs(sceneFloat - index);
         const visibility = clamp(1 - distance * 1.65, 0, 1);
         phase.style.setProperty('--phase-visibility', visibility.toFixed(4));
-        phase.style.setProperty('--phase-offset', `${((index - sceneFloat) * 42).toFixed(2)}px`);
+        phase.style.setProperty('--phase-offset', `${((index - sceneFloat) * 72).toFixed(2)}px`);
         phase.style.setProperty('--phase-blur', `${((1 - visibility) * 14).toFixed(2)}px`);
         phase.style.setProperty('--phase-scale', (0.975 + visibility * 0.025).toFixed(4));
         phase.toggleAttribute('data-active', index === active);
@@ -222,6 +236,8 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     --accent-g: 202;
     --accent-b: 128;
     --object-tilt: 0deg;
+    --lens-x: 50%;
+    --lens-y: 45%;
     --orb-rotation: 0deg;
     --orb-rotation-reverse: 0deg;
     --orb-rotation-slow: 0deg;
@@ -230,58 +246,67 @@ const navItems = atlasData.filter((item) => item.href).slice(0, 5);
     --background-shift: 0vh;
     --text-depth: 0px;
     position: relative;
-    min-height: 720svh;
+    min-height: 760svh;
     color: #fff7df;
     background: #01030a;
   }
 
-  .cinema-atlas__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 50% 40%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .13), #030711 54%, #01030a 100%); }
+  .cinema-atlas__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; perspective: 1400px; background: radial-gradient(circle at var(--lens-x) var(--lens-y), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .24), transparent 28%), radial-gradient(circle at 76% 18%, rgba(121, 215, 255, .12), transparent 34%), linear-gradient(135deg, #01030a 0%, #07101f 44%, #02040b 100%); }
   .cinema-atlas__scroll-space { height: 1px; }
-  .cinema-atlas__canvas, .cinema-atlas__stars, .cinema-atlas__map { position: absolute; inset: 0; }
-  .cinema-atlas__canvas { z-index: -7; width: 100%; height: 100%; transform: translateY(var(--background-shift)) scale(1.08); }
-  .cinema-atlas__stars { z-index: -6; opacity: .22; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 88px 88px; mask-image: radial-gradient(circle, #000 0 56%, transparent 82%); transform: translate3d(var(--stars-x), var(--stars-y), 0); }
-  .cinema-atlas__sticky::after { content: ""; position: absolute; inset: 0; z-index: 80; pointer-events: none; background: radial-gradient(circle at 50% 50%, transparent 0 42%, rgba(1,3,10,.46) 72%, rgba(1,3,10,.93)), linear-gradient(180deg, rgba(1,3,10,.76), transparent 24%, transparent 72%, rgba(1,3,10,.82)); }
+  .cinema-atlas__canvas, .cinema-atlas__stars, .cinema-atlas__aurora, .cinema-atlas__vignette, .cinema-atlas__map { position: absolute; inset: 0; }
+  .cinema-atlas__canvas { z-index: -9; width: 100%; height: 100%; transform: translateY(var(--background-shift)) scale(1.08); }
+  .cinema-atlas__stars { z-index: -8; opacity: .22; background-image: linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 88px 88px; mask-image: radial-gradient(circle, #000 0 56%, transparent 82%); transform: translate3d(var(--stars-x), var(--stars-y), 0); }
+  .cinema-atlas__aurora { z-index: -7; opacity: .82; background: conic-gradient(from var(--orb-rotation) at var(--lens-x) var(--lens-y), transparent 0 18%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .18), transparent 36% 58%, rgba(121,215,255,.12), transparent 78% 100%); filter: blur(46px) saturate(130%); transform: translate3d(var(--map-x), var(--map-y), 0) scale(1.18); }
+  .cinema-atlas__vignette { z-index: 79; pointer-events: none; background: radial-gradient(circle at var(--lens-x) var(--lens-y), transparent 0 24%, rgba(1,3,10,.12) 45%, rgba(1,3,10,.78) 82%, #01030a 100%), linear-gradient(90deg, rgba(1,3,10,.82), transparent 21%, transparent 68%, rgba(1,3,10,.72)), linear-gradient(180deg, rgba(1,3,10,.82), transparent 30%, rgba(1,3,10,.88)); }
+  .cinema-atlas__sticky::after { content: ""; position: absolute; inset: 0; z-index: 80; pointer-events: none; background: radial-gradient(circle at 50% 50%, transparent 0 46%, rgba(1,3,10,.42) 72%, rgba(1,3,10,.96)), linear-gradient(180deg, rgba(255,247,223,.04), transparent 18%, transparent 74%, rgba(1,3,10,.86)); }
   .cinema-atlas__sticky::before { content: ""; position: absolute; inset: 0; z-index: 81; opacity: .12; pointer-events: none; mix-blend-mode: overlay; background-image: repeating-radial-gradient(circle at 30% 20%, rgba(255,255,255,.34) 0 1px, transparent 1px 4px); }
 
-  .cinema-atlas__map { z-index: -4; transform: translate3d(var(--map-x), var(--map-y), 0) scale(var(--camera-scale)); }
-  .cinema-atlas__arc { position: absolute; left: 50%; top: 50%; width: min(78vw, 920px); aspect-ratio: 1; border: 1px solid rgba(239,202,128,.17); border-radius: 50%; transform: translate(-50%, -50%) rotateX(67deg) rotateZ(var(--orb-rotation)); box-shadow: 0 0 80px rgba(121,215,255,.08); }
-  .cinema-atlas__arc--two { width: min(58vw, 680px); border-color: rgba(121,215,255,.18); transform: translate(-50%, -50%) rotateX(58deg) rotateY(20deg) rotateZ(var(--orb-rotation-reverse)); }
-  .cinema-atlas__arc--three { width: min(42vw, 500px); border-style: dashed; border-color: rgba(255,255,255,.16); transform: translate(-50%, -50%) rotateX(72deg) rotateY(-24deg) rotateZ(var(--orb-rotation-slow)); }
+  .cinema-atlas__map { z-index: -5; transform: translate3d(var(--map-x), var(--map-y), 0) scale(var(--camera-scale)); }
+  .cinema-atlas__arc { position: absolute; left: 50%; top: 50%; width: min(92vw, 1180px); aspect-ratio: 1; border: 1px solid rgba(239,202,128,.17); border-radius: 50%; transform: translate(-50%, -50%) rotateX(67deg) rotateZ(var(--orb-rotation)); box-shadow: 0 0 80px rgba(121,215,255,.08); }
+  .cinema-atlas__arc--two { width: min(70vw, 900px); border-color: rgba(121,215,255,.18); transform: translate(-50%, -50%) rotateX(58deg) rotateY(20deg) rotateZ(var(--orb-rotation-reverse)); }
+  .cinema-atlas__arc--three { width: min(54vw, 680px); border-style: dashed; border-color: rgba(255,255,255,.16); transform: translate(-50%, -50%) rotateX(72deg) rotateY(-24deg) rotateZ(var(--orb-rotation-slow)); }
   .cinema-atlas__axis { position: absolute; left: 50%; top: 12%; bottom: 12%; width: 1px; background: linear-gradient(transparent, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .44), transparent); transform: rotate(var(--axis-rotation)); transform-origin: 50% 50%; }
-  .cinema-atlas__scanline { position: absolute; left: 50%; top: 50%; width: min(86vw, 1040px); height: 1px; background: linear-gradient(90deg, transparent, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .34), transparent); transform: translate(-50%, -50%) rotate(var(--axis-rotation)); box-shadow: 0 0 34px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .14); }
+  .cinema-atlas__scanline { position: absolute; left: 50%; top: 50%; width: min(104vw, 1320px); height: 1px; background: linear-gradient(90deg, transparent, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .34), transparent); transform: translate(-50%, -50%) rotate(var(--axis-rotation)); box-shadow: 0 0 34px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .14); }
   .cinema-atlas__scanline--two { transform: translate(-50%, -50%) rotate(var(--orb-rotation-slow)); opacity: .5; }
 
-  .cinema-atlas__camera { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; transform: translate3d(var(--camera-x), var(--camera-y), 0) scale(var(--camera-scale)); will-change: transform; }
-  .cinema-atlas__object { position: relative; width: clamp(260px, 39vw, 610px); aspect-ratio: 1; transform: rotate(var(--orb-rotation)) rotateY(var(--object-tilt)); transform-style: preserve-3d; filter: drop-shadow(0 35px 90px rgba(0,0,0,.55)); }
+  .cinema-atlas__camera { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; transform: translate3d(var(--camera-x), var(--camera-y), 0) scale(var(--camera-scale)); transform-style: preserve-3d; will-change: transform; }
+  .cinema-atlas__object { position: relative; width: clamp(340px, 48vw, 760px); aspect-ratio: 1; transform: rotate(var(--orb-rotation)) rotateY(var(--object-tilt)); transform-style: preserve-3d; filter: drop-shadow(0 48px 120px rgba(0,0,0,.72)) drop-shadow(0 0 70px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .14)); }
+  .cinema-atlas__object::before, .cinema-atlas__object::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 1px solid rgba(255,247,223,.12); transform: rotateX(68deg) rotateZ(var(--orb-rotation-slow)); box-shadow: 0 0 120px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .12); }
+  .cinema-atlas__object::after { inset: 12%; border-style: dashed; opacity: .55; transform: rotateX(58deg) rotateY(26deg) rotateZ(var(--orb-rotation-reverse)); }
   .cinema-atlas__orb { position: absolute; inset: 19%; border-radius: 50%; }
   .cinema-atlas__orb--core { background: radial-gradient(circle at 36% 30%, #fff8d8, #d9a74f 12%, #27415a 38%, #07111f 64%, transparent 70%), conic-gradient(from var(--orb-rotation), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .86), rgba(121,215,255,.18), rgba(255,255,255,.06), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .86)); box-shadow: inset -20px -28px 50px rgba(0,0,0,.6), 0 0 130px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .30), 0 0 220px rgba(121,215,255,.14); }
   .cinema-atlas__orb--halo { inset: 6%; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .34); background: radial-gradient(circle, transparent 55%, rgba(121,215,255,.08)); }
   .cinema-atlas__orb--meridian { inset: 13%; border: 1px solid rgba(255,247,223,.18); transform: rotateX(72deg) rotateZ(var(--orb-rotation-reverse)); }
-  .cinema-atlas__orb--aperture { inset: 31%; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .48); background: radial-gradient(circle, rgba(255,247,223,.42), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .12) 38%, transparent 66%); box-shadow: 0 0 70px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .22); }
+  .cinema-atlas__orb--aperture { inset: 29%; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .48); background: radial-gradient(circle, rgba(255,247,223,.42), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .12) 38%, transparent 66%); box-shadow: 0 0 70px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .22); }
   .cinema-atlas__glyph { position: absolute; left: 50%; color: rgba(255,247,223,.54); font-size: 10px; font-weight: 850; letter-spacing: .22em; text-transform: uppercase; transform: translateX(-50%) rotate(var(--orb-rotation-reverse)); }
   .cinema-atlas__glyph--north { top: 3%; }
   .cinema-atlas__glyph--south { bottom: 3%; }
+  .cinema-atlas__orb--crown { inset: 0; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .24); transform: rotateX(78deg) rotateZ(var(--axis-rotation)); box-shadow: inset 0 0 90px rgba(255,247,223,.05); }
+  .cinema-atlas__needle { position: absolute; left: 50%; top: 50%; width: 1px; height: 82%; background: linear-gradient(transparent, rgba(255,247,223,.58), transparent); transform-origin: center; box-shadow: 0 0 20px rgba(var(--accent-r), var(--accent-g), var(--accent-b), .32); }
+  .cinema-atlas__needle--one { transform: translate(-50%, -50%) rotate(var(--axis-rotation)); }
+  .cinema-atlas__needle--two { transform: translate(-50%, -50%) rotate(var(--orb-rotation-slow)); opacity: .38; }
   .cinema-atlas__satellite { position: absolute; left: 50%; top: 50%; width: 10px; aspect-ratio: 1; border-radius: 50%; background: #f0ca80; box-shadow: 0 0 24px rgba(240,202,128,.9); transform: rotate(var(--orb-rotation)) translateX(clamp(130px, 22vw, 330px)); }
   .cinema-atlas__satellite--b { background: #9be3ff; transform: rotate(var(--orb-rotation-reverse)) rotate(110deg) translateX(clamp(105px, 17vw, 260px)); }
-  .cinema-atlas__satellite--c { width: 6px; transform: rotate(var(--orb-rotation-slow)) rotate(230deg) translateX(clamp(80px, 14vw, 210px)); opacity: .75; }
+  .cinema-atlas__satellite--c { width: 6px; transform: rotate(var(--orb-rotation-slow)) rotate(230deg) translateX(clamp(100px, 17vw, 270px)); opacity: .75; }
+  .cinema-atlas__satellite--d { width: 4px; background: #fff7df; transform: rotate(var(--orb-rotation-reverse)) rotate(292deg) translateX(clamp(150px, 27vw, 410px)); opacity: .66; }
 
-  .cinema-atlas__copy { position: absolute; left: clamp(20px, 6vw, 90px); top: 50%; z-index: 90; width: min(760px, 58vw); transform: translateY(-50%); pointer-events: none; }
+  .cinema-atlas__copy { position: absolute; left: clamp(22px, 7vw, 118px); top: 49%; z-index: 90; width: min(900px, 64vw); transform: translateY(-50%); pointer-events: none; }
   .cinema-atlas__phase { --phase-visibility: 0; --phase-offset: 42px; --phase-blur: 14px; --phase-scale: .975; position: absolute; inset: auto; opacity: var(--phase-visibility); transform: translate3d(0, calc(var(--phase-offset) + var(--text-depth)), 0) scale(var(--phase-scale)); transition: opacity 160ms linear; filter: blur(var(--phase-blur)); will-change: opacity, transform, filter; pointer-events: none; }
   .cinema-atlas__phase[data-active] { pointer-events: auto; }
-  .cinema-atlas__eyebrow { margin: 0 0 16px; color: rgba(var(--accent-r), var(--accent-g), var(--accent-b), .82); font-size: 12px; font-weight: 800; letter-spacing: .22em; text-transform: uppercase; }
-  .cinema-atlas__title { max-width: 11ch; margin: 0; font-size: clamp(54px, 9vw, 148px); line-height: .78; letter-spacing: -.08em; text-wrap: balance; }
-  .cinema-atlas__text { max-width: 520px; margin: 24px 0 0; color: rgba(255,247,223,.68); font-size: clamp(16px, 1.35vw, 21px); line-height: 1.45; }
-  .cinema-atlas__phase-link { display: inline-flex; margin-top: 28px; padding: 13px 17px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .42); border-radius: 999px; background: rgba(255,255,255,.07); backdrop-filter: blur(18px); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
+  .cinema-atlas__eyebrow { margin: 0 0 16px; color: rgba(var(--accent-r), var(--accent-g), var(--accent-b), .82); font-size: clamp(11px, .8vw, 13px); font-weight: 850; letter-spacing: .28em; text-transform: uppercase; }
+  .cinema-atlas__title { max-width: 11ch; margin: 0; font-size: clamp(72px, 11.8vw, 190px); line-height: .74; letter-spacing: -.08em; text-wrap: balance; }
+  .cinema-atlas__text { max-width: 470px; margin: 30px 0 0; color: rgba(255,247,223,.68); font-size: clamp(15px, 1.18vw, 20px); line-height: 1.38; }
+  .cinema-atlas__phase-link { display: inline-flex; margin-top: 34px; padding: 15px 19px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .42); border-radius: 999px; background: rgba(255,255,255,.07); backdrop-filter: blur(18px); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
   .cinema-atlas__phase-link:hover, .cinema-atlas__phase-link:focus-visible, .cinema-atlas__nav-link:hover, .cinema-atlas__nav-link:focus-visible { outline: none; border-color: rgba(239,202,128,.78); box-shadow: 0 0 0 4px rgba(239,202,128,.13), 0 24px 80px rgba(239,202,128,.16); }
 
-  .cinema-atlas__nav { position: absolute; right: clamp(18px, 4vw, 60px); top: 50%; z-index: 92; display: grid; gap: 12px; transform: translateY(-50%); }
-  .cinema-atlas__nav-link { display: flex; align-items: center; gap: 12px; min-width: 150px; padding: 11px 13px; color: rgba(255,247,223,.74); text-decoration: none; font-size: 12px; font-weight: 760; border: 1px solid rgba(255,247,223,.12); border-radius: 999px; background: rgba(255,255,255,.045); backdrop-filter: blur(18px); }
+  .cinema-atlas__nav { position: absolute; right: clamp(20px, 5vw, 82px); top: 49%; z-index: 92; display: grid; gap: 12px; transform: translateY(-50%); }
+  .cinema-atlas__nav-link { display: flex; align-items: center; gap: 12px; min-width: 168px; padding: 12px 14px; color: rgba(255,247,223,.74); text-decoration: none; font-size: 12px; font-weight: 760; border: 1px solid rgba(255,247,223,.12); border-radius: 999px; background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); backdrop-filter: blur(18px); }
   .cinema-atlas__nav-link span { color: #efca80; font-size: 10px; letter-spacing: .14em; }
   .cinema-atlas__hud { position: absolute; left: clamp(18px, 4vw, 60px); right: clamp(18px, 4vw, 60px); bottom: clamp(18px, 4vw, 42px); z-index: 91; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; color: rgba(255,247,223,.56); font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
   .cinema-atlas__progress { height: 1px; background: rgba(255,247,223,.16); overflow: hidden; }
   .cinema-atlas__progress i { display: block; width: 100%; height: 100%; background: linear-gradient(90deg, rgb(var(--accent-r), var(--accent-g), var(--accent-b)), #79d7ff); transform: scaleX(0); transform-origin: left; }
 
-  @media (max-width: 900px) { .cinema-atlas__copy { width: min(680px, 74vw); } .cinema-atlas__title { font-size: clamp(50px, 12vw, 104px); } .cinema-atlas__nav { top: auto; right: auto; left: 18px; bottom: 70px; grid-template-columns: repeat(5, auto); max-width: calc(100vw - 36px); overflow-x: auto; transform: none; } .cinema-atlas__nav-link { min-width: auto; white-space: nowrap; } }
-  @media (max-width: 640px) { .cinema-atlas { min-height: 680svh; } .cinema-atlas__copy { left: 18px; right: 18px; top: 18%; width: auto; transform: none; } .cinema-atlas__title { max-width: 10ch; font-size: clamp(46px, 16vw, 76px); } .cinema-atlas__text { max-width: 92vw; font-size: 15px; } .cinema-atlas__object { width: min(86vw, 420px); transform: translateY(17vh) rotate(var(--orb-rotation)); } .cinema-atlas__hud { grid-template-columns: 1fr; gap: 9px; font-size: 9px; } .cinema-atlas__nav { bottom: 92px; } }
+  @media (max-width: 900px) { .cinema-atlas__copy { width: min(720px, 78vw); } .cinema-atlas__title { font-size: clamp(64px, 14vw, 126px); } .cinema-atlas__nav { top: auto; right: auto; left: 18px; bottom: 70px; grid-template-columns: repeat(5, auto); max-width: calc(100vw - 36px); overflow-x: auto; transform: none; } .cinema-atlas__nav-link { min-width: auto; white-space: nowrap; } }
+  @media (max-width: 640px) { .cinema-atlas { min-height: 700svh; } .cinema-atlas__copy { left: 18px; right: 18px; top: 11%; width: auto; transform: none; } .cinema-atlas__eyebrow { margin-bottom: 12px; font-size: 10px; letter-spacing: .22em; } .cinema-atlas__title { max-width: 9ch; font-size: clamp(54px, 18vw, 92px); line-height: .78; } .cinema-atlas__text { max-width: 82vw; margin-top: 18px; font-size: 14px; } .cinema-atlas__phase-link { margin-top: 20px; padding: 12px 14px; font-size: 10px; } .cinema-atlas__object { width: min(104vw, 500px); transform: translateY(20vh) rotate(var(--orb-rotation)); } .cinema-atlas__glyph { display: none; } .cinema-atlas__hud { grid-template-columns: 1fr; gap: 9px; font-size: 9px; bottom: 18px; } .cinema-atlas__nav { left: 14px; bottom: 84px; max-width: calc(100vw - 28px); gap: 8px; } .cinema-atlas__nav-link { padding: 10px 12px; font-size: 11px; } }
   @media (prefers-reduced-motion: reduce) { .cinema-atlas { min-height: 100svh; } .cinema-atlas__sticky { position: relative; } .cinema-atlas__phase, .cinema-atlas__camera, .cinema-atlas__map, .cinema-atlas__stars { transition: none; transform: none; } .cinema-atlas__phase { position: relative; display: none; filter: none; } .cinema-atlas__phase[data-active] { display: block; } }
 </style>
