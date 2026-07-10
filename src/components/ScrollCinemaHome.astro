@@ -159,6 +159,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     let height = 1;
     let dpr = 1;
     let stars = [];
+    let meteors = [];
     let currentScene = 0;
     let sceneLocked = false;
     let unlockTimer = 0;
@@ -170,11 +171,11 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     let touchStartY = 0;
     let touchTracking = false;
 
-    const SCENE_TRANSITION_MS = 760;
-    const WHEEL_COOLDOWN_MS = 920;
-    const WHEEL_IDLE_MS = 220;
-    const WHEEL_THRESHOLD = 72;
-    const SWIPE_THRESHOLD = 44;
+    const SCENE_TRANSITION_MS = 520;
+    const WHEEL_COOLDOWN_MS = 560;
+    const WHEEL_IDLE_MS = 120;
+    const WHEEL_THRESHOLD = 34;
+    const SWIPE_THRESHOLD = 30;
 
     function sceneScrollTop(index) {
       const rect = root.getBoundingClientRect();
@@ -281,12 +282,23 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
       canvas.width = width;
       canvas.height = height;
       const count = window.innerWidth < 700 ? 120 : 240;
+      const meteorCount = window.innerWidth < 700 ? 7 : 12;
       stars = Array.from({ length: count }, (_, i) => ({
         x: ((i * 47) % 101) / 100,
         y: ((i * 83) % 97) / 96,
         r: .35 + ((i * 17) % 100) / 95,
         z: .25 + ((i * 29) % 100) / 100,
         drift: i % 2 ? 1 : -1,
+      }));
+      meteors = Array.from({ length: meteorCount }, (_, i) => ({
+        x: (((i * 31) % 113) / 100) - .18,
+        y: (((i * 53) % 107) / 100) - .08,
+        length: .10 + ((i * 19) % 80) / 520,
+        thickness: .55 + ((i * 13) % 70) / 95,
+        speed: .030 + ((i * 23) % 90) / 1250,
+        delay: ((i * 41) % 100) / 100,
+        alpha: .08 + ((i * 29) % 90) / 600,
+        hue: i % 3 === 0 ? 'warm' : 'ice',
       }));
     }
 
@@ -322,6 +334,33 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
           ctx.fillRect(x - s.r * dpr * 7, y, s.r * dpr * 14, Math.max(1, .35 * dpr));
         }
       });
+      meteors.forEach((m) => {
+        const cycle = (p * m.speed * 7.5 + m.delay) % 1;
+        const ease = cycle < .82 ? cycle / .82 : 1 - ((cycle - .82) / .18);
+        const x = (m.x + cycle * 1.34) * width;
+        const y = (m.y + cycle * .55) * height;
+        const tail = m.length * Math.min(width, height);
+        const tx = x - tail;
+        const ty = y - tail * .42;
+        const meteorGradient = ctx.createLinearGradient(tx, ty, x, y);
+        const color = m.hue === 'warm' ? '240, 202, 128' : '188, 223, 242';
+        meteorGradient.addColorStop(0, `rgba(${color}, 0)`);
+        meteorGradient.addColorStop(.72, `rgba(${color}, ${m.alpha * ease})`);
+        meteorGradient.addColorStop(1, `rgba(255, 248, 220, ${Math.min(.38, m.alpha * 2.2) * ease})`);
+        ctx.globalAlpha = .92;
+        ctx.strokeStyle = meteorGradient;
+        ctx.lineWidth = Math.max(1, m.thickness * dpr);
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.globalAlpha = .10 * ease;
+        ctx.fillStyle = '#fff8dc';
+        ctx.beginPath();
+        ctx.arc(x, y, Math.max(1.1, m.thickness * 1.8) * dpr, 0, Math.PI * 2);
+        ctx.fill();
+      });
       ctx.globalAlpha = .20;
       ctx.strokeStyle = '#bcdff2';
       ctx.lineWidth = dpr;
@@ -336,7 +375,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     function render() {
       raf = 0;
       const reduced = reduceQuery.matches;
-      progress = reduced ? target : lerp(progress, target, .09);
+      progress = reduced ? target : lerp(progress, target, .18);
       const sceneCount = phases.length;
       const sceneFloat = progress * (sceneCount - 1);
       const active = clamp(Math.round(sceneFloat), 0, sceneCount - 1);
@@ -485,7 +524,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     inset: auto;
     opacity: 0;
     transform: translateY(var(--phase-offset));
-    transition: opacity 420ms cubic-bezier(.22,1,.36,1), transform 520ms cubic-bezier(.22,1,.36,1);
+    transition: opacity 260ms cubic-bezier(.22,1,.36,1), transform 320ms cubic-bezier(.22,1,.36,1);
     filter: none;
     pointer-events: none;
     backface-visibility: hidden;
@@ -500,7 +539,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
 
   .cinema-atlas__nav { position: absolute; right: clamp(20px, 4vw, 68px); top: 49%; z-index: 92; display: grid; gap: 10px; padding: 14px; transform: translateY(-50%); isolation: isolate; border: 1px solid rgba(255,247,223,.16); border-radius: 28px; background: linear-gradient(145deg, rgba(3,7,16,.88), rgba(3,7,16,.68)); box-shadow: 0 28px 90px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(24px) saturate(1.18); touch-action: pan-x; }
   .cinema-atlas__nav::before { content: "Explore"; display: block; padding: 2px 5px 6px; color: rgba(239,202,128,.78); font-size: 9px; font-weight: 850; letter-spacing: .24em; text-transform: uppercase; pointer-events: none; }
-  .section-nav-button { position: relative; display: flex; align-items: center; gap: 14px; min-width: clamp(210px, 17vw, 276px); min-height: 54px; padding: 13px 15px 13px 17px; overflow: hidden; color: rgba(255,250,238,.96); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .012em; border: 1px solid rgba(255,247,223,.24); border-radius: 16px; background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.045)); box-shadow: 0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.10); backdrop-filter: blur(12px) saturate(1.12); pointer-events: auto; cursor: pointer; transition: background .35s ease, border-color .35s ease, color .35s ease, transform .35s ease, box-shadow .35s ease; }
+  .section-nav-button { position: relative; display: flex; align-items: center; gap: 14px; min-width: clamp(210px, 17vw, 276px); min-height: 54px; padding: 13px 15px 13px 17px; overflow: hidden; color: rgba(255,250,238,.96); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .012em; border: 1px solid rgba(255,247,223,.24); border-radius: 16px; background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.045)); box-shadow: 0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.10); backdrop-filter: blur(12px) saturate(1.12); pointer-events: auto; cursor: pointer; transition: background .22s ease, border-color .22s ease, color .22s ease, transform .22s ease, box-shadow .22s ease; }
   .section-nav-button::before { content: ""; position: absolute; inset: 0; opacity: 0; background: linear-gradient(90deg, rgba(239,202,128,.16), rgba(255,255,255,.045) 48%, transparent); transition: opacity .35s ease; pointer-events: none; }
   .section-nav-button .menu-button__index { position: relative; color: #efca80; font-size: 10px; font-weight: 850; letter-spacing: .14em; line-height: 1; text-shadow: 0 0 18px rgba(224,189,111,.24); }
   .section-nav-button .menu-button__text { position: relative; flex: 1; gap: .3rem; }
