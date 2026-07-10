@@ -16,4 +16,10 @@ const { index, label, href, active = false, className = "", sectionId = label.to
 const item: NavItem = { index, label, href: href.startsWith('#') ? `/${sectionId === 'jlog' ? 'blog' : sectionId}` : href, key: (sectionId === 'jlog' ? 'blog' : sectionId) as NavItem['key'], sectionId, subtitle, description: subtitle };
 ---
 
-<MenuButton item={item} href={href} active={active} className={className} ariaCurrent={active ? 'location' : false} />
+<MenuButton
+  item={item}
+  href={href}
+  active={active}
+  className={`section-nav-button ${className}`.trim()}
+  ariaCurrent={active ? 'location' : false}
+/>

@@ -1,6 +1,6 @@
 ---
 import MenuButton from './MenuButton.astro';
-import { NAV_ITEMS } from '../lib/navigation';
+import { ME_NAV_ITEM, NAV_ITEMS } from '../lib/navigation';
 
 const { activeSection = '', includeMe = true } = Astro.props;
 ---
@@ -8,5 +8,11 @@ const { activeSection = '', includeMe = true } = Astro.props;
   {NAV_ITEMS.map((item) => (
     <MenuButton item={item} active={activeSection === item.key || activeSection === item.sectionId} className="menu-button--compact site-navigation__button" />
   ))}
-  {includeMe && <a class:list={["site-nav__link", "site-navigation__me", activeSection === 'me' && 'is-active']} href="/me" aria-current={activeSection === 'me' ? 'page' : undefined}>Me</a>}
+  {includeMe && (
+    <MenuButton
+      item={ME_NAV_ITEM}
+      active={activeSection === 'me'}
+      className="menu-button--compact site-navigation__button site-navigation__me"
+    />
+  )}
 </nav>

@@ -108,7 +108,7 @@ import AtlasBackground from "../components/AtlasBackground.astro";
 import SectionHeader from "../components/SectionHeader.astro";
 import ScrollReveal from "../components/ScrollReveal.astro";
 ---
-<SiteLayout title="Art — Ugurcan" description="A digital gallery about perception and craft — music, painting, architecture, film, design, and photography.">
+<SiteLayout title="Art — Ugurcan" description="A digital gallery about perception and craft — music, painting, architecture, film, design, and photography." fullBleed showBackground={false}>
   <FilterBar slot="subnav" filters={filters} cardSelector=".art-card" queryKey="topic" defaultFilter="ALL" />
   <main class="atlas-page art-atlas">
     <AtlasBackground variant="art" id="art-scene" />

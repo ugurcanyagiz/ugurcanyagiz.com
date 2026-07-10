@@ -12,7 +12,9 @@ const {
   activeSection = "",
   backgroundVariant = "atlas",
   sectionIndex = "",
-  showHeader = true,
+  showHeader = false,
+  showBackground = true,
+  fullBleed = false,
 } = Astro.props;
 
 const firstSegment = Astro.url.pathname.split("/").filter(Boolean)[0] || "home";
@@ -20,9 +22,12 @@ const resolvedActive = activeSection || (firstSegment === "jlog" ? "blog" : firs
 const inferredLabel = pageLabel || (resolvedActive ? resolvedActive.toUpperCase() : "ATLAS");
 ---
 <Layout title={title} description={description || subtitle} theme="dark">
-  <SiteNav slot="subnav" activeSection={resolvedActive} />
-  <div class="site-page">
-    <CinematicBackground variant={backgroundVariant} />
+  <div slot="subnav" class="site-shell-nav">
+    <SiteNav activeSection={resolvedActive} />
+    <slot name="subnav" />
+  </div>
+  <div class:list={["site-page", fullBleed && "site-page--full-bleed"]}>
+    {showBackground && <CinematicBackground variant={backgroundVariant} />}
     <div class="site-page__inner">
       {showHeader && (
         <PageHeader pageLabel={inferredLabel} title={title} subtitle={subtitle} description={description} sectionIndex={sectionIndex} />

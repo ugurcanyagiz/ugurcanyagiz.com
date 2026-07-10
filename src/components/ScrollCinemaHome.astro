@@ -15,9 +15,10 @@ const phases = [
 ];
 
 const navItems = NAV_ITEMS;
+const scrollHeight = 100 + (phases.length - 1) * 88;
 ---
 
-<section class="cinema-atlas" data-cinema-atlas aria-label="Scroll reactive Cosmic Knowledge Atlas homepage">
+<section class="cinema-atlas" data-cinema-atlas aria-label="Scroll reactive Cosmic Knowledge Atlas homepage" style={`--atlas-scroll-height:${scrollHeight}svh`}>
   <div class="cinema-atlas__sticky">
     <div class="cinema-atlas__scene atlas-scene" aria-hidden="true">
       <canvas class="cinema-atlas__canvas" data-atlas-canvas aria-hidden="true"></canvas>
@@ -56,7 +57,13 @@ const navItems = NAV_ITEMS;
     <div class="cinema-atlas__content-layer content-layer" aria-live="polite">
       <div class="cinema-atlas__copy">
         {phases.map((phase, index) => (
-          <article class="cinema-atlas__phase" data-phase={index} data-phase-key={phase.key}>
+          <article
+            class="cinema-atlas__phase"
+            data-phase={index}
+            data-phase-key={phase.key}
+            data-active={index === 0 ? true : undefined}
+            aria-hidden={index === 0 ? "false" : "true"}
+          >
             <p class="cinema-atlas__eyebrow">{phase.eyebrow}</p>
             <h1 class="cinema-atlas__title">{phase.title}</h1>
             <p class="cinema-atlas__text">{phase.text}</p>
@@ -72,7 +79,7 @@ const navItems = NAV_ITEMS;
           <SectionNavButton
             index={item.index}
             label={item.label}
-            href={`#${item.sectionId}`}
+            href={item.href}
             sectionId={item.sectionId}
             subtitle={item.subtitle}
             className={`section-nav-button--${item.sectionId}`}
@@ -119,19 +126,6 @@ const navItems = NAV_ITEMS;
     let height = 1;
     let dpr = 1;
     let stars = [];
-
-    navButtons.forEach((button, index) => {
-      button.addEventListener('click', (event) => {
-        const href = button.getAttribute('href') || '';
-        if (!href.startsWith('#')) return;
-        event.preventDefault();
-        const max = root.offsetHeight - window.innerHeight;
-        const phaseIndex = index + 1;
-        const nextProgress = phaseIndex / Math.max(1, phases.length - 1);
-        window.scrollTo({ top: window.scrollY + root.getBoundingClientRect().top + max * nextProgress, behavior: reduced ? 'auto' : 'smooth' });
-        history.replaceState(null, '', href);
-      });
-    });
 
     function seed() {
       dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -280,7 +274,7 @@ const navItems = NAV_ITEMS;
     --hero-opacity: 1;
     --background-shift: 0vh;
     position: relative;
-    min-height: 760svh;
+    min-height: var(--atlas-scroll-height, 540svh);
     color: #fff7df;
     background: #01030a;
   }
@@ -348,24 +342,27 @@ const navItems = NAV_ITEMS;
   .cinema-atlas__phase-link { display: inline-flex; margin-top: 34px; padding: 15px 19px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .42); border-radius: 999px; background: rgba(255,255,255,.07); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
   .cinema-atlas__phase-link:hover, .cinema-atlas__phase-link:focus-visible { outline: none; border-color: rgba(239,202,128,.78); box-shadow: 0 0 0 4px rgba(239,202,128,.13), 0 24px 80px rgba(239,202,128,.16); }
 
-  .cinema-atlas__nav { position: absolute; right: clamp(20px, 5vw, 82px); top: 49%; z-index: 92; display: grid; gap: 13px; transform: translateY(-50%); isolation: isolate; }
-  .cinema-atlas__nav::before { content: ""; position: absolute; inset: -28px -26px; z-index: -1; border-radius: 34px; background: radial-gradient(circle at 50% 50%, rgba(1,3,10,.66), rgba(1,3,10,.22) 52%, transparent 76%); pointer-events: none; }
-  .section-nav-button { position: relative; display: flex; align-items: center; gap: 14px; min-width: clamp(184px, 15vw, 248px); min-height: 48px; padding: 13px 15px 13px 17px; overflow: hidden; color: rgba(248,242,228,.92); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .012em; border: 1px solid rgba(244,239,227,.20); border-radius: 999px; background: linear-gradient(135deg, rgba(255,255,255,.092), rgba(255,255,255,.038)); box-shadow: 0 18px 54px rgba(0,0,0,.30), inset 0 1px 0 rgba(255,255,255,.085); backdrop-filter: blur(10px) saturate(1.08); pointer-events: auto; cursor: pointer; transition: background .35s ease, border-color .35s ease, color .35s ease, transform .35s ease, box-shadow .35s ease; }
+  .cinema-atlas__nav { position: absolute; right: clamp(20px, 4vw, 68px); top: 49%; z-index: 92; display: grid; gap: 10px; padding: 14px; transform: translateY(-50%); isolation: isolate; border: 1px solid rgba(255,247,223,.16); border-radius: 28px; background: linear-gradient(145deg, rgba(3,7,16,.88), rgba(3,7,16,.68)); box-shadow: 0 28px 90px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(24px) saturate(1.18); }
+  .cinema-atlas__nav::before { content: "Explore"; display: block; padding: 2px 5px 6px; color: rgba(239,202,128,.78); font-size: 9px; font-weight: 850; letter-spacing: .24em; text-transform: uppercase; pointer-events: none; }
+  .section-nav-button { position: relative; display: flex; align-items: center; gap: 14px; min-width: clamp(210px, 17vw, 276px); min-height: 54px; padding: 13px 15px 13px 17px; overflow: hidden; color: rgba(255,250,238,.96); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .012em; border: 1px solid rgba(255,247,223,.24); border-radius: 16px; background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.045)); box-shadow: 0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.10); backdrop-filter: blur(12px) saturate(1.12); pointer-events: auto; cursor: pointer; transition: background .35s ease, border-color .35s ease, color .35s ease, transform .35s ease, box-shadow .35s ease; }
   .section-nav-button::before { content: ""; position: absolute; inset: 0; opacity: 0; background: linear-gradient(90deg, rgba(239,202,128,.16), rgba(255,255,255,.045) 48%, transparent); transition: opacity .35s ease; pointer-events: none; }
-  .section-nav-button__index { position: relative; color: #e0bd6f; font-size: 10px; font-weight: 850; letter-spacing: .14em; line-height: 1; text-shadow: 0 0 18px rgba(224,189,111,.20); }
-  .section-nav-button__label { position: relative; flex: 1; color: inherit; font-size: clamp(.88rem, .96vw, 1.02rem); font-weight: 750; line-height: 1; letter-spacing: .015em; text-shadow: 0 1px 18px rgba(0,0,0,.36); }
-  .section-nav-button__indicator { position: relative; width: 6px; height: 6px; border-radius: 999px; background: rgba(244,239,227,.34); box-shadow: 0 0 0 rgba(239,202,128,0); transition: background .35s ease, box-shadow .35s ease, transform .35s ease; }
+  .section-nav-button .menu-button__index { position: relative; color: #efca80; font-size: 10px; font-weight: 850; letter-spacing: .14em; line-height: 1; text-shadow: 0 0 18px rgba(224,189,111,.24); }
+  .section-nav-button .menu-button__text { position: relative; flex: 1; gap: .3rem; }
+  .section-nav-button .menu-button__label { color: inherit; font-size: clamp(.92rem, 1vw, 1.05rem); font-weight: 780; line-height: 1; letter-spacing: .015em; text-shadow: 0 1px 18px rgba(0,0,0,.36); }
+  .section-nav-button .menu-button__subtitle { max-width: 19rem; color: rgba(255,247,223,.66); font-size: .62rem; letter-spacing: .025em; }
+  .section-nav-button .menu-button__indicator { position: relative; width: 7px; height: 7px; flex: 0 0 auto; border-radius: 999px; background: rgba(244,239,227,.42); box-shadow: 0 0 0 rgba(239,202,128,0); transition: background .35s ease, box-shadow .35s ease, transform .35s ease; }
   .section-nav-button:hover, .section-nav-button:focus-visible { outline: none; color: #fff8ea; border-color: rgba(239,202,128,.55); background: linear-gradient(135deg, rgba(255,255,255,.13), rgba(239,202,128,.070)); box-shadow: 0 22px 66px rgba(0,0,0,.38), 0 0 0 4px rgba(239,202,128,.10), inset 0 1px 0 rgba(255,255,255,.13); transform: translateX(-4px); }
   .section-nav-button:hover::before, .section-nav-button:focus-visible::before, .section-nav-button.is-active::before { opacity: 1; }
-  .section-nav-button:hover .section-nav-button__indicator, .section-nav-button:focus-visible .section-nav-button__indicator { background: #f2cf84; box-shadow: 0 0 18px rgba(239,202,128,.42); transform: scale(1.08); }
+  .section-nav-button:hover .menu-button__indicator, .section-nav-button:focus-visible .menu-button__indicator { background: #f2cf84; box-shadow: 0 0 18px rgba(239,202,128,.42); transform: scale(1.08); }
   .section-nav-button.is-active { color: #fff7df; border-color: rgba(239,202,128,.68); background: linear-gradient(135deg, rgba(239,202,128,.17), rgba(255,255,255,.070)); box-shadow: 0 24px 72px rgba(0,0,0,.42), 0 0 34px rgba(239,202,128,.13), inset 0 1px 0 rgba(255,255,255,.15); }
-  .section-nav-button.is-active .section-nav-button__index { color: #f0ca80; }
-  .section-nav-button.is-active .section-nav-button__indicator { background: #f0ca80; box-shadow: 0 0 20px rgba(239,202,128,.52); }
+  .section-nav-button.is-active .menu-button__index { color: #f0ca80; }
+  .section-nav-button.is-active .menu-button__indicator { background: #f0ca80; box-shadow: 0 0 20px rgba(239,202,128,.52); }
   .cinema-atlas__hud { position: absolute; left: clamp(18px, 4vw, 60px); right: clamp(18px, 4vw, 60px); bottom: clamp(18px, 4vw, 42px); z-index: 91; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; color: rgba(255,247,223,.56); font-size: 11px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
   .cinema-atlas__progress { height: 1px; background: rgba(255,247,223,.16); overflow: hidden; }
   .cinema-atlas__progress i { display: block; width: 100%; height: 100%; background: linear-gradient(90deg, rgb(var(--accent-r), var(--accent-g), var(--accent-b)), #79d7ff); transform: scaleX(0); transform-origin: left; }
 
-  @media (max-width: 900px) { .cinema-atlas__copy { width: min(720px, 78vw); } .cinema-atlas__title { font-size: clamp(64px, 14vw, 126px); } .cinema-atlas__nav { top: auto; right: auto; left: 18px; bottom: 70px; grid-template-columns: repeat(5, auto); max-width: calc(100vw - 36px); overflow-x: auto; overflow-y: visible; transform: none; padding: 8px 2px; scrollbar-width: none; } .cinema-atlas__nav::-webkit-scrollbar { display: none; } .cinema-atlas__nav::before { inset: -12px -18px; background: linear-gradient(90deg, rgba(1,3,10,.78), rgba(1,3,10,.36), rgba(1,3,10,.70)); } .section-nav-button { min-width: auto; min-height: 44px; padding: 12px 14px; white-space: nowrap; } .section-nav-button:hover, .section-nav-button:focus-visible { transform: translateY(-2px); } }
-  @media (max-width: 640px) { .cinema-atlas { min-height: 700svh; } .cinema-atlas__copy { left: 18px; right: 18px; top: 11%; width: auto; transform: none; } .cinema-atlas__eyebrow { margin-bottom: 12px; font-size: 10px; letter-spacing: .22em; } .cinema-atlas__title { max-width: 9ch; font-size: clamp(54px, 18vw, 92px); line-height: .78; } .cinema-atlas__text { max-width: 82vw; margin-top: 18px; font-size: 14px; } .cinema-atlas__phase-link { margin-top: 20px; padding: 12px 14px; font-size: 10px; } .cinema-atlas__object { width: min(104vw, 500px); transform: translateY(20vh) rotate(var(--orb-rotation)); } .cinema-atlas__glyph { display: none; } .cinema-atlas__hud { grid-template-columns: 1fr; gap: 9px; font-size: 9px; bottom: 18px; } .cinema-atlas__nav { left: 14px; bottom: calc(76px + env(safe-area-inset-bottom)); max-width: calc(100vw - 28px); gap: 8px; } .section-nav-button { min-height: 42px; padding: 11px 13px; gap: 10px; backdrop-filter: blur(8px) saturate(1.06); } .section-nav-button__index { font-size: 9px; } .section-nav-button__label { font-size: 12px; letter-spacing: .02em; } .section-nav-button__indicator { display: none; } }
+  @media (min-width: 901px) and (max-width: 1180px) { .cinema-atlas__copy { left: 4vw; width: 54vw; } .cinema-atlas__title { font-size: clamp(62px, 9.6vw, 116px); } .cinema-atlas__nav { right: 22px; } .section-nav-button { min-width: 232px; } }
+  @media (max-width: 900px) { .cinema-atlas__copy { width: min(720px, 78vw); } .cinema-atlas__title { font-size: clamp(64px, 14vw, 126px); } .cinema-atlas__nav { top: auto; right: auto; left: 18px; bottom: 70px; grid-template-columns: repeat(5, auto); max-width: calc(100vw - 36px); overflow-x: auto; overflow-y: visible; transform: none; padding: 10px; border-radius: 20px; scrollbar-width: none; } .cinema-atlas__nav::-webkit-scrollbar { display: none; } .cinema-atlas__nav::before { display: none; } .section-nav-button { min-width: auto; min-height: 46px; padding: 12px 14px; border-radius: 13px; white-space: nowrap; } .section-nav-button .menu-button__subtitle { display: none; } .section-nav-button:hover, .section-nav-button:focus-visible { transform: translateY(-2px); } }
+  @media (max-width: 640px) { .cinema-atlas__copy { left: 18px; right: 18px; top: 11%; width: auto; transform: none; } .cinema-atlas__eyebrow { margin-bottom: 12px; font-size: 10px; letter-spacing: .22em; } .cinema-atlas__title { max-width: 9ch; font-size: clamp(54px, 18vw, 92px); line-height: .78; } .cinema-atlas__text { max-width: 82vw; margin-top: 18px; font-size: 14px; } .cinema-atlas__phase-link { margin-top: 20px; padding: 12px 14px; font-size: 10px; } .cinema-atlas__object { width: min(104vw, 500px); transform: translateY(20vh) rotate(var(--orb-rotation)); } .cinema-atlas__glyph { display: none; } .cinema-atlas__hud { grid-template-columns: 1fr; gap: 9px; font-size: 9px; bottom: 18px; } .cinema-atlas__nav { left: 14px; bottom: calc(76px + env(safe-area-inset-bottom)); max-width: calc(100vw - 28px); gap: 8px; } .section-nav-button { min-height: 42px; padding: 11px 13px; gap: 10px; backdrop-filter: blur(8px) saturate(1.06); } .section-nav-button .menu-button__index { font-size: 9px; } .section-nav-button .menu-button__label { font-size: 12px; letter-spacing: .02em; } .section-nav-button .menu-button__indicator { display: none; } }
   @media (prefers-reduced-motion: reduce) { .cinema-atlas { min-height: 100svh; } .cinema-atlas__sticky { position: relative; } .cinema-atlas__phase, .cinema-atlas__camera, .cinema-atlas__map, .cinema-atlas__stars { transition: none; transform: none; } .cinema-atlas__phase { position: relative; display: none; filter: none; } .cinema-atlas__phase[data-active] { display: block; } }
 </style>
