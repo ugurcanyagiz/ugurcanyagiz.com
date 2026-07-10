@@ -165,13 +165,15 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     let wheelIdleTimer = 0;
     let wheelDelta = 0;
     let wheelGestureTriggered = false;
+    let wheelUnlockAt = 0;
     let touchStartX = 0;
     let touchStartY = 0;
     let touchTracking = false;
 
     const SCENE_TRANSITION_MS = 760;
-    const WHEEL_IDLE_MS = 180;
-    const WHEEL_THRESHOLD = 24;
+    const WHEEL_COOLDOWN_MS = 920;
+    const WHEEL_IDLE_MS = 220;
+    const WHEEL_THRESHOLD = 72;
     const SWIPE_THRESHOLD = 44;
 
     function sceneScrollTop(index) {
@@ -189,6 +191,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
 
       currentScene = nextScene;
       sceneLocked = true;
+      wheelUnlockAt = Date.now() + WHEEL_COOLDOWN_MS;
       window.clearTimeout(unlockTimer);
       window.scrollTo({ top: sceneScrollTop(nextScene), behavior: 'smooth' });
       unlockTimer = window.setTimeout(() => {
@@ -209,13 +212,17 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
       wheelGestureTriggered = false;
     }
 
+    function isWheelCoolingDown() {
+      return Date.now() < wheelUnlockAt;
+    }
+
     function onWheel(event) {
       if (reduceQuery.matches || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       event.preventDefault();
 
       window.clearTimeout(wheelIdleTimer);
       wheelIdleTimer = window.setTimeout(resetWheelGesture, WHEEL_IDLE_MS);
-      if (wheelGestureTriggered || sceneLocked) return;
+      if (wheelGestureTriggered || sceneLocked || isWheelCoolingDown()) return;
 
       wheelDelta += normalizeWheelDelta(event);
       if (Math.abs(wheelDelta) < WHEEL_THRESHOLD) return;
