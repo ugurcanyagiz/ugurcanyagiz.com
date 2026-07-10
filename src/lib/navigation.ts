@@ -1,6 +1,6 @@
 export type NavItem = {
   index: string;
-  key: 'science' | 'history' | 'art' | 'future' | 'blog';
+  key: 'science' | 'history' | 'art' | 'future' | 'blog' | 'me';
   label: string;
   href: string;
   sectionId: string;
@@ -56,5 +56,15 @@ export const NAV_ITEMS: NavItem[] = [
   },
 ];
 
-export const NAV_ITEMS_BY_KEY = Object.fromEntries(NAV_ITEMS.map((item) => [item.key, item])) as Record<NavItem['key'], NavItem>;
+export const ME_NAV_ITEM: NavItem = {
+  index: '00',
+  key: 'me',
+  label: 'Me',
+  href: '/me',
+  sectionId: 'me',
+  subtitle: 'The Memory of Earth.',
+  description: 'A personal, interactive manifesto about science, civilization, time, and the future.',
+};
+
+export const NAV_ITEMS_BY_KEY = Object.fromEntries(NAV_ITEMS.map((item) => [item.key, item])) as Partial<Record<NavItem['key'], NavItem>>;
 export const NAV_ITEMS_BY_SECTION = Object.fromEntries(NAV_ITEMS.map((item) => [item.sectionId, item])) as Record<string, NavItem>;
