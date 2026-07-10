@@ -90,7 +90,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
       <div class="cinema-atlas__hud" aria-hidden="true">
         <span data-active-label>Intro</span>
         <span class="cinema-atlas__progress"><i data-progress-bar></i></span>
-        <span>Scroll controls the atlas</span>
+        <span>One gesture · one scene</span>
       </div>
     </div>
   </div>
@@ -126,6 +126,112 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     let height = 1;
     let dpr = 1;
     let stars = [];
+    let currentScene = 0;
+    let sceneLocked = false;
+    let unlockTimer = 0;
+    let wheelIdleTimer = 0;
+    let wheelDelta = 0;
+    let wheelGestureTriggered = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchTracking = false;
+
+    const SCENE_TRANSITION_MS = 760;
+    const WHEEL_IDLE_MS = 180;
+    const WHEEL_THRESHOLD = 24;
+    const SWIPE_THRESHOLD = 44;
+
+    function sceneScrollTop(index) {
+      const rect = root.getBoundingClientRect();
+      const rootTop = window.scrollY + rect.top;
+      const max = Math.max(0, root.offsetHeight - window.innerHeight);
+      const sceneProgress = phases.length > 1 ? index / (phases.length - 1) : 0;
+      return rootTop + max * sceneProgress;
+    }
+
+    function goToScene(index) {
+      if (reduceQuery.matches || sceneLocked) return false;
+      const nextScene = clamp(index, 0, phases.length - 1);
+      if (nextScene === currentScene) return false;
+
+      currentScene = nextScene;
+      sceneLocked = true;
+      window.clearTimeout(unlockTimer);
+      window.scrollTo({ top: sceneScrollTop(nextScene), behavior: 'smooth' });
+      unlockTimer = window.setTimeout(() => {
+        sceneLocked = false;
+        measure();
+      }, SCENE_TRANSITION_MS);
+      return true;
+    }
+
+    function normalizeWheelDelta(event) {
+      if (event.deltaMode === 1) return event.deltaY * 16;
+      if (event.deltaMode === 2) return event.deltaY * window.innerHeight;
+      return event.deltaY;
+    }
+
+    function resetWheelGesture() {
+      wheelDelta = 0;
+      wheelGestureTriggered = false;
+    }
+
+    function onWheel(event) {
+      if (reduceQuery.matches || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
+      event.preventDefault();
+
+      window.clearTimeout(wheelIdleTimer);
+      wheelIdleTimer = window.setTimeout(resetWheelGesture, WHEEL_IDLE_MS);
+      if (wheelGestureTriggered || sceneLocked) return;
+
+      wheelDelta += normalizeWheelDelta(event);
+      if (Math.abs(wheelDelta) < WHEEL_THRESHOLD) return;
+
+      wheelGestureTriggered = true;
+      goToScene(currentScene + Math.sign(wheelDelta));
+    }
+
+    function onTouchStart(event) {
+      if (reduceQuery.matches || event.touches.length !== 1) {
+        touchTracking = false;
+        return;
+      }
+      touchStartX = event.touches[0].clientX;
+      touchStartY = event.touches[0].clientY;
+      touchTracking = true;
+    }
+
+    function onTouchMove(event) {
+      if (!touchTracking || event.touches.length !== 1) return;
+      const deltaX = event.touches[0].clientX - touchStartX;
+      const deltaY = event.touches[0].clientY - touchStartY;
+      if (Math.abs(deltaY) > 10 && Math.abs(deltaY) > Math.abs(deltaX)) event.preventDefault();
+    }
+
+    function onTouchEnd(event) {
+      if (!touchTracking || event.changedTouches.length !== 1) return;
+      touchTracking = false;
+      const deltaX = event.changedTouches[0].clientX - touchStartX;
+      const deltaY = event.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(deltaY) < SWIPE_THRESHOLD || Math.abs(deltaY) <= Math.abs(deltaX)) return;
+      event.preventDefault();
+      goToScene(currentScene + (deltaY < 0 ? 1 : -1));
+    }
+
+    function onKeyDown(event) {
+      if (reduceQuery.matches || event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (event.target instanceof Element && event.target.closest('a, button, input, select, textarea, [contenteditable="true"]')) return;
+
+      let nextScene = null;
+      if (event.key === 'ArrowDown' || event.key === 'PageDown' || (event.key === ' ' && !event.shiftKey)) nextScene = currentScene + 1;
+      if (event.key === 'ArrowUp' || event.key === 'PageUp' || (event.key === ' ' && event.shiftKey)) nextScene = currentScene - 1;
+      if (event.key === 'Home') nextScene = 0;
+      if (event.key === 'End') nextScene = phases.length - 1;
+      if (nextScene === null) return;
+
+      event.preventDefault();
+      goToScene(nextScene);
+    }
 
     function seed() {
       dpr = Math.min(window.devicePixelRatio || 1, 1.5);
@@ -194,6 +300,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
       const sceneCount = phases.length;
       const sceneFloat = progress * (sceneCount - 1);
       const active = clamp(Math.round(sceneFloat), 0, sceneCount - 1);
+      if (!sceneLocked) currentScene = active;
       const sceneProgress = sceneFloat - Math.floor(sceneFloat);
       const cameraX = Math.sin(progress * Math.PI * 2.1) * 13;
       const cameraY = Math.cos(progress * Math.PI * 1.55) * 8;
@@ -244,6 +351,12 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
 
     seed();
     measure();
+    root.addEventListener('wheel', onWheel, { passive: false });
+    root.addEventListener('touchstart', onTouchStart, { passive: true });
+    root.addEventListener('touchmove', onTouchMove, { passive: false });
+    root.addEventListener('touchend', onTouchEnd, { passive: false });
+    root.addEventListener('touchcancel', () => { touchTracking = false; }, { passive: true });
+    window.addEventListener('keydown', onKeyDown);
     window.addEventListener('scroll', measure, { passive: true });
     window.addEventListener('resize', () => { seed(); measure(); }, { passive: true });
     reduceQuery.addEventListener?.('change', measure);
@@ -277,6 +390,8 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     min-height: var(--atlas-scroll-height, 540svh);
     color: #fff7df;
     background: #01030a;
+    overscroll-behavior: none;
+    touch-action: pan-x pinch-zoom;
   }
 
   .cinema-atlas__sticky { position: sticky; top: 0; height: 100svh; overflow: hidden; isolation: isolate; perspective: 1400px; background: radial-gradient(circle at var(--lens-x) var(--lens-y), rgba(var(--accent-r), var(--accent-g), var(--accent-b), .24), transparent 28%), radial-gradient(circle at 76% 18%, rgba(121, 215, 255, .12), transparent 34%), linear-gradient(135deg, #01030a 0%, #07101f 44%, #02040b 100%); contain: layout paint; }
@@ -342,7 +457,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
   .cinema-atlas__phase-link { display: inline-flex; margin-top: 34px; padding: 15px 19px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .42); border-radius: 999px; background: rgba(255,255,255,.07); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
   .cinema-atlas__phase-link:hover, .cinema-atlas__phase-link:focus-visible { outline: none; border-color: rgba(239,202,128,.78); box-shadow: 0 0 0 4px rgba(239,202,128,.13), 0 24px 80px rgba(239,202,128,.16); }
 
-  .cinema-atlas__nav { position: absolute; right: clamp(20px, 4vw, 68px); top: 49%; z-index: 92; display: grid; gap: 10px; padding: 14px; transform: translateY(-50%); isolation: isolate; border: 1px solid rgba(255,247,223,.16); border-radius: 28px; background: linear-gradient(145deg, rgba(3,7,16,.88), rgba(3,7,16,.68)); box-shadow: 0 28px 90px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(24px) saturate(1.18); }
+  .cinema-atlas__nav { position: absolute; right: clamp(20px, 4vw, 68px); top: 49%; z-index: 92; display: grid; gap: 10px; padding: 14px; transform: translateY(-50%); isolation: isolate; border: 1px solid rgba(255,247,223,.16); border-radius: 28px; background: linear-gradient(145deg, rgba(3,7,16,.88), rgba(3,7,16,.68)); box-shadow: 0 28px 90px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(24px) saturate(1.18); touch-action: pan-x; }
   .cinema-atlas__nav::before { content: "Explore"; display: block; padding: 2px 5px 6px; color: rgba(239,202,128,.78); font-size: 9px; font-weight: 850; letter-spacing: .24em; text-transform: uppercase; pointer-events: none; }
   .section-nav-button { position: relative; display: flex; align-items: center; gap: 14px; min-width: clamp(210px, 17vw, 276px); min-height: 54px; padding: 13px 15px 13px 17px; overflow: hidden; color: rgba(255,250,238,.96); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .012em; border: 1px solid rgba(255,247,223,.24); border-radius: 16px; background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.045)); box-shadow: 0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.10); backdrop-filter: blur(12px) saturate(1.12); pointer-events: auto; cursor: pointer; transition: background .35s ease, border-color .35s ease, color .35s ease, transform .35s ease, box-shadow .35s ease; }
   .section-nav-button::before { content: ""; position: absolute; inset: 0; opacity: 0; background: linear-gradient(90deg, rgba(239,202,128,.16), rgba(255,255,255,.045) 48%, transparent); transition: opacity .35s ease; pointer-events: none; }
@@ -364,5 +479,5 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
   @media (min-width: 901px) and (max-width: 1180px) { .cinema-atlas__copy { left: 4vw; width: 54vw; } .cinema-atlas__title { font-size: clamp(62px, 9.6vw, 116px); } .cinema-atlas__nav { right: 22px; } .section-nav-button { min-width: 232px; } }
   @media (max-width: 900px) { .cinema-atlas__copy { width: min(720px, 78vw); } .cinema-atlas__title { font-size: clamp(64px, 14vw, 126px); } .cinema-atlas__nav { top: auto; right: auto; left: 18px; bottom: 70px; grid-template-columns: repeat(5, auto); max-width: calc(100vw - 36px); overflow-x: auto; overflow-y: visible; transform: none; padding: 10px; border-radius: 20px; scrollbar-width: none; } .cinema-atlas__nav::-webkit-scrollbar { display: none; } .cinema-atlas__nav::before { display: none; } .section-nav-button { min-width: auto; min-height: 46px; padding: 12px 14px; border-radius: 13px; white-space: nowrap; } .section-nav-button .menu-button__subtitle { display: none; } .section-nav-button:hover, .section-nav-button:focus-visible { transform: translateY(-2px); } }
   @media (max-width: 640px) { .cinema-atlas__copy { left: 18px; right: 18px; top: 11%; width: auto; transform: none; } .cinema-atlas__eyebrow { margin-bottom: 12px; font-size: 10px; letter-spacing: .22em; } .cinema-atlas__title { max-width: 9ch; font-size: clamp(54px, 18vw, 92px); line-height: .78; } .cinema-atlas__text { max-width: 82vw; margin-top: 18px; font-size: 14px; } .cinema-atlas__phase-link { margin-top: 20px; padding: 12px 14px; font-size: 10px; } .cinema-atlas__object { width: min(104vw, 500px); transform: translateY(20vh) rotate(var(--orb-rotation)); } .cinema-atlas__glyph { display: none; } .cinema-atlas__hud { grid-template-columns: 1fr; gap: 9px; font-size: 9px; bottom: 18px; } .cinema-atlas__nav { left: 14px; bottom: calc(76px + env(safe-area-inset-bottom)); max-width: calc(100vw - 28px); gap: 8px; } .section-nav-button { min-height: 42px; padding: 11px 13px; gap: 10px; backdrop-filter: blur(8px) saturate(1.06); } .section-nav-button .menu-button__index { font-size: 9px; } .section-nav-button .menu-button__label { font-size: 12px; letter-spacing: .02em; } .section-nav-button .menu-button__indicator { display: none; } }
-  @media (prefers-reduced-motion: reduce) { .cinema-atlas { min-height: 100svh; } .cinema-atlas__sticky { position: relative; } .cinema-atlas__phase, .cinema-atlas__camera, .cinema-atlas__map, .cinema-atlas__stars { transition: none; transform: none; } .cinema-atlas__phase { position: relative; display: none; filter: none; } .cinema-atlas__phase[data-active] { display: block; } }
+  @media (prefers-reduced-motion: reduce) { .cinema-atlas { min-height: 100svh; touch-action: auto; } .cinema-atlas__sticky { position: relative; } .cinema-atlas__phase, .cinema-atlas__camera, .cinema-atlas__map, .cinema-atlas__stars { transition: none; transform: none; } .cinema-atlas__phase { position: relative; display: none; filter: none; } .cinema-atlas__phase[data-active] { display: block; } }
 </style>
