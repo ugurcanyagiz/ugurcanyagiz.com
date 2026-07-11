@@ -161,7 +161,12 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     let stars = [];
     let meteors = [];
     let currentScene = 0;
-    let sceneLocked = false;
+    let targetScene = 0;
+    let gestureDirection = 0;
+    let transitionState = 'idle';
+    let pendingDirection = 0;
+    let dragProgress = 0;
+    let velocity = 0;
     let transitionRaf = 0;
     let transitionStartedAt = 0;
     let transitionTargetTop = 0;
@@ -172,6 +177,9 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     let lastWheelAt = 0;
     let touchStartX = 0;
     let touchStartY = 0;
+    let touchStartAt = 0;
+    let touchLastY = 0;
+    let touchLastAt = 0;
     let touchTracking = false;
     let previousActive = -1;
     let disposed = false;
@@ -181,7 +189,9 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     const TRANSITION_FALLBACK_MS = 1600;
     const WHEEL_IDLE_MS = 180;
     const WHEEL_THRESHOLD = 34;
-    const SWIPE_THRESHOLD = 30;
+    const SWIPE_DISTANCE_THRESHOLD = 52;
+    const SWIPE_VELOCITY_THRESHOLD = 0.42;
+    const TOUCH_INTENT_THRESHOLD = 10;
 
     function sceneScrollTop(index) {
       const rect = root.getBoundingClientRect();
@@ -191,28 +201,87 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
       return rootTop + max * sceneProgress;
     }
 
-    function goToScene(index) {
-      if (reduceQuery.matches || sceneLocked) return false;
+    function isTransitioning() {
+      return transitionState === 'settling' || transitionState === 'queued';
+    }
+
+    function canMove(direction, fromScene = currentScene) {
+      const nextScene = clamp(fromScene + direction, 0, phases.length - 1);
+      return nextScene !== fromScene;
+    }
+
+    function startSceneTransition(index, direction = Math.sign(index - currentScene)) {
+      if (reduceQuery.matches) return false;
       const nextScene = clamp(index, 0, phases.length - 1);
       if (nextScene === currentScene) return false;
 
-      currentScene = nextScene;
-      sceneLocked = true;
+      targetScene = nextScene;
+      gestureDirection = direction || Math.sign(targetScene - currentScene);
+      transitionState = 'settling';
+      dragProgress = 0;
       settledFrames = 0;
       transitionStartedAt = performance.now();
-      transitionTargetTop = sceneScrollTop(nextScene);
+      transitionTargetTop = sceneScrollTop(targetScene);
+      root.dataset.transitionState = transitionState;
+      root.dataset.gestureDirection = String(gestureDirection);
+      root.removeAttribute('data-pending-direction');
       window.cancelAnimationFrame(transitionRaf);
       window.scrollTo({ top: transitionTargetTop, behavior: 'smooth' });
       transitionRaf = requestAnimationFrame(watchTransition);
       return true;
     }
 
+    function requestSceneNavigation(direction, { allowQueue = false } = {}) {
+      if (reduceQuery.matches || !direction) return false;
+      const normalizedDirection = direction > 0 ? 1 : -1;
+
+      if (isTransitioning()) {
+        if (!allowQueue || !canMove(normalizedDirection, targetScene)) return false;
+        pendingDirection = normalizedDirection;
+        transitionState = 'queued';
+        root.dataset.transitionState = transitionState;
+        root.dataset.pendingDirection = String(pendingDirection);
+        return true;
+      }
+
+      return startSceneTransition(currentScene + normalizedDirection, normalizedDirection);
+    }
+
+    function goToScene(index) {
+      if (reduceQuery.matches || isTransitioning()) return false;
+      const nextScene = clamp(index, 0, phases.length - 1);
+      if (nextScene === currentScene) return false;
+      return startSceneTransition(nextScene, Math.sign(nextScene - currentScene));
+    }
+
     function finishTransition() {
       window.cancelAnimationFrame(transitionRaf);
-      sceneLocked = false;
+      currentScene = targetScene;
       transitionRaf = 0;
       settledFrames = 0;
       measure();
+
+      const queuedDirection = pendingDirection;
+      pendingDirection = 0;
+      root.removeAttribute('data-pending-direction');
+
+      if (queuedDirection && canMove(queuedDirection, currentScene)) {
+        const startedQueuedTransition = startSceneTransition(currentScene + queuedDirection, queuedDirection);
+        if (startedQueuedTransition) {
+          if (Date.now() - lastWheelAt >= WHEEL_IDLE_MS) {
+            resetWheelGesture();
+          } else {
+            scheduleWheelIdleReset();
+          }
+          return;
+        }
+      }
+
+      transitionState = 'idle';
+      gestureDirection = 0;
+      root.dataset.transitionState = transitionState;
+      root.removeAttribute('data-gesture-direction');
+
       if (Date.now() - lastWheelAt >= WHEEL_IDLE_MS) {
         resetWheelGesture();
       } else {
@@ -251,7 +320,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     function scheduleWheelIdleReset() {
       window.clearTimeout(wheelIdleTimer);
       wheelIdleTimer = window.setTimeout(() => {
-        if (!sceneLocked && Date.now() - lastWheelAt >= WHEEL_IDLE_MS) resetWheelGesture();
+        if (!isTransitioning() && Date.now() - lastWheelAt >= WHEEL_IDLE_MS) resetWheelGesture();
       }, WHEEL_IDLE_MS);
     }
 
@@ -261,7 +330,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
 
       lastWheelAt = Date.now();
       scheduleWheelIdleReset();
-      if (wheelGestureTriggered || sceneLocked) return;
+      if (wheelGestureTriggered || isTransitioning()) return;
 
       wheelDelta += normalizeWheelDelta(event);
       if (Math.abs(wheelDelta) < WHEEL_THRESHOLD) return;
@@ -275,26 +344,51 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
         touchTracking = false;
         return;
       }
-      touchStartX = event.touches[0].clientX;
-      touchStartY = event.touches[0].clientY;
+      const touch = event.touches[0];
+      const now = performance.now();
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      touchStartAt = now;
+      touchLastY = touchStartY;
+      touchLastAt = now;
+      dragProgress = 0;
+      velocity = 0;
       touchTracking = true;
     }
 
     function onTouchMove(event) {
       if (!touchTracking || event.touches.length !== 1) return;
-      const deltaX = event.touches[0].clientX - touchStartX;
-      const deltaY = event.touches[0].clientY - touchStartY;
-      if (Math.abs(deltaY) > 10 && Math.abs(deltaY) > Math.abs(deltaX)) event.preventDefault();
+      const touch = event.touches[0];
+      const now = performance.now();
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const elapsed = Math.max(1, now - touchLastAt);
+      velocity = (touch.clientY - touchLastY) / elapsed;
+      dragProgress = clamp(deltaY / Math.max(1, window.innerHeight), -1, 1);
+      touchLastY = touch.clientY;
+      touchLastAt = now;
+      if (Math.abs(deltaY) > TOUCH_INTENT_THRESHOLD && Math.abs(deltaY) > Math.abs(deltaX)) event.preventDefault();
     }
 
     function onTouchEnd(event) {
       if (!touchTracking || event.changedTouches.length !== 1) return;
       touchTracking = false;
-      const deltaX = event.changedTouches[0].clientX - touchStartX;
-      const deltaY = event.changedTouches[0].clientY - touchStartY;
-      if (Math.abs(deltaY) < SWIPE_THRESHOLD || Math.abs(deltaY) <= Math.abs(deltaX)) return;
+      const touch = event.changedTouches[0];
+      const now = performance.now();
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const totalElapsed = Math.max(1, now - touchStartAt);
+      const releaseVelocity = (touch.clientY - touchLastY) / Math.max(1, now - touchLastAt);
+      velocity = Math.abs(releaseVelocity) > Math.abs(deltaY / totalElapsed) ? releaseVelocity : deltaY / totalElapsed;
+      dragProgress = clamp(deltaY / Math.max(1, window.innerHeight), -1, 1);
+
+      const isVertical = Math.abs(deltaY) > Math.abs(deltaX);
+      const hasDistance = Math.abs(deltaY) >= SWIPE_DISTANCE_THRESHOLD;
+      const hasVelocity = Math.abs(velocity) >= SWIPE_VELOCITY_THRESHOLD && Math.abs(deltaY) >= TOUCH_INTENT_THRESHOLD;
+      if (!isVertical || (!hasDistance && !hasVelocity)) return;
+
       event.preventDefault();
-      goToScene(currentScene + (deltaY < 0 ? 1 : -1));
+      requestSceneNavigation(deltaY < 0 ? 1 : -1, { allowQueue: true });
     }
 
     function onKeyDown(event) {
@@ -417,7 +511,10 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
       const sceneCount = phases.length;
       const sceneFloat = progress * (sceneCount - 1);
       const active = clamp(Math.round(sceneFloat), 0, sceneCount - 1);
-      if (!sceneLocked) currentScene = active;
+      if (!isTransitioning()) {
+        currentScene = active;
+        targetScene = active;
+      }
       const sceneProgress = sceneFloat - Math.floor(sceneFloat);
       const cameraX = Math.sin(progress * Math.PI * 2.1) * 13;
       const cameraY = Math.cos(progress * Math.PI * 1.55) * 8;
@@ -472,15 +569,18 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
 
     function onResize() {
       seed();
+      if (isTransitioning()) transitionTargetTop = sceneScrollTop(targetScene);
       measure();
     }
 
     function onTouchCancel() {
       touchTracking = false;
+      dragProgress = 0;
+      velocity = 0;
     }
 
     function onReduceChange() {
-      if (sceneLocked) finishTransition();
+      if (isTransitioning()) finishTransition();
       measure();
     }
 
@@ -563,6 +663,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
   .cinema-atlas__vignette { z-index: 79; pointer-events: none; background: radial-gradient(circle at var(--lens-x) var(--lens-y), transparent 0 24%, rgba(1,3,10,.12) 45%, rgba(1,3,10,.78) 82%, #01030a 100%), linear-gradient(90deg, rgba(1,3,10,.82), transparent 21%, transparent 68%, rgba(1,3,10,.72)), linear-gradient(180deg, rgba(1,3,10,.82), transparent 30%, rgba(1,3,10,.88)); }
   .cinema-atlas__sticky::after { content: ""; position: absolute; inset: 0; z-index: 80; pointer-events: none; background: radial-gradient(circle at 50% 50%, transparent 0 46%, rgba(1,3,10,.42) 72%, rgba(1,3,10,.96)), linear-gradient(180deg, rgba(255,247,223,.04), transparent 18%, transparent 74%, rgba(1,3,10,.86)); }
   .cinema-atlas__sticky::before { content: ""; position: absolute; inset: 0; z-index: 81; opacity: .12; pointer-events: none; mix-blend-mode: overlay; background-image: repeating-radial-gradient(circle at 30% 20%, rgba(255,255,255,.34) 0 1px, transparent 1px 4px); }
+  .cinema-atlas[data-transition-state="queued"] .cinema-atlas__sticky::after { background: radial-gradient(circle at 50% 50%, rgba(var(--accent-r), var(--accent-g), var(--accent-b), .10), transparent 0 47%, rgba(1,3,10,.42) 72%, rgba(1,3,10,.96)), linear-gradient(180deg, rgba(255,247,223,.055), transparent 18%, transparent 74%, rgba(1,3,10,.86)); }
 
   .cinema-atlas__map { z-index: -5; transform: translate3d(var(--map-x), var(--map-y), 0) scale(var(--camera-scale)); }
   .cinema-atlas__arc { position: absolute; left: 50%; top: 50%; width: min(92vw, 1180px); aspect-ratio: 1; border: 1px solid rgba(239,202,128,.17); border-radius: 50%; transform: translate(-50%, -50%) rotateX(67deg) rotateZ(var(--orb-rotation)); box-shadow: 0 0 80px rgba(121,215,255,.08); }
