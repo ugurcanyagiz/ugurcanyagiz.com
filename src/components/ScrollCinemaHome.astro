@@ -162,18 +162,24 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     let meteors = [];
     let currentScene = 0;
     let sceneLocked = false;
-    let unlockTimer = 0;
+    let transitionRaf = 0;
+    let transitionStartedAt = 0;
+    let transitionTargetTop = 0;
+    let settledFrames = 0;
     let wheelIdleTimer = 0;
     let wheelDelta = 0;
     let wheelGestureTriggered = false;
-    let wheelUnlockAt = 0;
+    let lastWheelAt = 0;
     let touchStartX = 0;
     let touchStartY = 0;
     let touchTracking = false;
+    let previousActive = -1;
+    let disposed = false;
 
-    const SCENE_TRANSITION_MS = 520;
-    const WHEEL_COOLDOWN_MS = 560;
-    const WHEEL_IDLE_MS = 120;
+    const TRANSITION_SETTLE_EPSILON = 2;
+    const TRANSITION_SETTLE_FRAMES = 3;
+    const TRANSITION_FALLBACK_MS = 1600;
+    const WHEEL_IDLE_MS = 180;
     const WHEEL_THRESHOLD = 34;
     const SWIPE_THRESHOLD = 30;
 
@@ -192,14 +198,43 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
 
       currentScene = nextScene;
       sceneLocked = true;
-      wheelUnlockAt = Date.now() + WHEEL_COOLDOWN_MS;
-      window.clearTimeout(unlockTimer);
-      window.scrollTo({ top: sceneScrollTop(nextScene), behavior: 'smooth' });
-      unlockTimer = window.setTimeout(() => {
-        sceneLocked = false;
-        measure();
-      }, SCENE_TRANSITION_MS);
+      settledFrames = 0;
+      transitionStartedAt = performance.now();
+      transitionTargetTop = sceneScrollTop(nextScene);
+      window.cancelAnimationFrame(transitionRaf);
+      window.scrollTo({ top: transitionTargetTop, behavior: 'smooth' });
+      transitionRaf = requestAnimationFrame(watchTransition);
       return true;
+    }
+
+    function finishTransition() {
+      window.cancelAnimationFrame(transitionRaf);
+      sceneLocked = false;
+      transitionRaf = 0;
+      settledFrames = 0;
+      measure();
+      if (Date.now() - lastWheelAt >= WHEEL_IDLE_MS) {
+        resetWheelGesture();
+      } else {
+        scheduleWheelIdleReset();
+      }
+    }
+
+    function watchTransition(now) {
+      if (disposed) return;
+      const distance = Math.abs(window.scrollY - transitionTargetTop);
+      if (distance <= TRANSITION_SETTLE_EPSILON) {
+        settledFrames += 1;
+      } else {
+        settledFrames = 0;
+      }
+
+      if (settledFrames >= TRANSITION_SETTLE_FRAMES || now - transitionStartedAt > TRANSITION_FALLBACK_MS) {
+        finishTransition();
+        return;
+      }
+
+      transitionRaf = requestAnimationFrame(watchTransition);
     }
 
     function normalizeWheelDelta(event) {
@@ -213,17 +248,20 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
       wheelGestureTriggered = false;
     }
 
-    function isWheelCoolingDown() {
-      return Date.now() < wheelUnlockAt;
+    function scheduleWheelIdleReset() {
+      window.clearTimeout(wheelIdleTimer);
+      wheelIdleTimer = window.setTimeout(() => {
+        if (!sceneLocked && Date.now() - lastWheelAt >= WHEEL_IDLE_MS) resetWheelGesture();
+      }, WHEEL_IDLE_MS);
     }
 
     function onWheel(event) {
       if (reduceQuery.matches || Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
       event.preventDefault();
 
-      window.clearTimeout(wheelIdleTimer);
-      wheelIdleTimer = window.setTimeout(resetWheelGesture, WHEEL_IDLE_MS);
-      if (wheelGestureTriggered || sceneLocked || isWheelCoolingDown()) return;
+      lastWheelAt = Date.now();
+      scheduleWheelIdleReset();
+      if (wheelGestureTriggered || sceneLocked) return;
 
       wheelDelta += normalizeWheelDelta(event);
       if (Math.abs(wheelDelta) < WHEEL_THRESHOLD) return;
@@ -407,25 +445,61 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
       root.style.setProperty('--hero-opacity', String(clamp(1 - progress * 1.2, 0, 1).toFixed(4)));
       root.style.setProperty('--background-shift', `${(progress * -18).toFixed(2)}vh`);
       root.dataset.activeScene = String(active);
-      phases.forEach((phase, index) => {
-        const direction = index < active ? -1 : 1;
-        phase.toggleAttribute('data-active', index === active);
-        phase.toggleAttribute('aria-hidden', index !== active);
-        phase.style.setProperty('--phase-offset', index === active ? '0px' : `${direction * 28}px`);
-      });
-      navButtons.forEach((button, index) => {
-        const isActive = active === index + 1 || (active === 5 && index === 4);
-        button.classList.toggle('is-active', isActive);
-        if (isActive) {
-          button.setAttribute('aria-current', 'location');
-        } else {
-          button.removeAttribute('aria-current');
-        }
-      });
-      if (label) label.textContent = phaseNames[active] || 'Atlas';
+      if (active !== previousActive) {
+        previousActive = active;
+        phases.forEach((phase, index) => {
+          const direction = index < active ? -1 : 1;
+          const isActive = index === active;
+          phase.toggleAttribute('data-active', isActive);
+          phase.setAttribute('aria-hidden', isActive ? 'false' : 'true');
+          phase.style.setProperty('--phase-offset', isActive ? '0px' : `${direction * 28}px`);
+        });
+        navButtons.forEach((button, index) => {
+          const isActive = active === index + 1 || (active === 5 && index === 4);
+          button.classList.toggle('is-active', isActive);
+          if (isActive) {
+            button.setAttribute('aria-current', 'location');
+          } else {
+            button.removeAttribute('aria-current');
+          }
+        });
+        if (label) label.textContent = phaseNames[active] || 'Atlas';
+      }
       if (bar) bar.style.transform = `scaleX(${progress})`;
       draw(progress);
       if (Math.abs(progress - target) > .001 && !reduced) raf = requestAnimationFrame(render);
+    }
+
+    function onResize() {
+      seed();
+      measure();
+    }
+
+    function onTouchCancel() {
+      touchTracking = false;
+    }
+
+    function onReduceChange() {
+      if (sceneLocked) finishTransition();
+      measure();
+    }
+
+    function cleanup() {
+      disposed = true;
+      window.clearTimeout(wheelIdleTimer);
+      window.cancelAnimationFrame(raf);
+      window.cancelAnimationFrame(transitionRaf);
+      root.removeEventListener('wheel', onWheel);
+      root.removeEventListener('touchstart', onTouchStart);
+      root.removeEventListener('touchmove', onTouchMove);
+      root.removeEventListener('touchend', onTouchEnd);
+      root.removeEventListener('touchcancel', onTouchCancel);
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('scroll', measure);
+      window.removeEventListener('resize', onResize);
+      reduceQuery.removeEventListener?.('change', onReduceChange);
+      document.removeEventListener('astro:before-swap', cleanup);
+      window.removeEventListener('pagehide', cleanup);
     }
 
     seed();
@@ -434,11 +508,13 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     root.addEventListener('touchstart', onTouchStart, { passive: true });
     root.addEventListener('touchmove', onTouchMove, { passive: false });
     root.addEventListener('touchend', onTouchEnd, { passive: false });
-    root.addEventListener('touchcancel', () => { touchTracking = false; }, { passive: true });
+    root.addEventListener('touchcancel', onTouchCancel, { passive: true });
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('scroll', measure, { passive: true });
-    window.addEventListener('resize', () => { seed(); measure(); }, { passive: true });
-    reduceQuery.addEventListener?.('change', measure);
+    window.addEventListener('resize', onResize, { passive: true });
+    reduceQuery.addEventListener?.('change', onReduceChange);
+    document.addEventListener('astro:before-swap', cleanup);
+    window.addEventListener('pagehide', cleanup);
   });
 </script>
 
@@ -537,7 +613,8 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
   .cinema-atlas__phase-link { display: inline-flex; margin-top: 28px; padding: 15px 19px; color: #fff7df; text-decoration: none; font-size: 12px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; border: 1px solid rgba(var(--accent-r), var(--accent-g), var(--accent-b), .42); border-radius: 999px; background: rgba(255,255,255,.07); box-shadow: inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
   .cinema-atlas__phase-link:hover, .cinema-atlas__phase-link:focus-visible { outline: none; border-color: rgba(239,202,128,.78); box-shadow: 0 0 0 4px rgba(239,202,128,.13), 0 24px 80px rgba(239,202,128,.16); }
 
-  .cinema-atlas__nav { position: absolute; right: clamp(20px, 4vw, 68px); top: 49%; z-index: 92; display: grid; gap: 10px; padding: 14px; transform: translateY(-50%); isolation: isolate; border: 1px solid rgba(255,247,223,.16); border-radius: 28px; background: linear-gradient(145deg, rgba(3,7,16,.88), rgba(3,7,16,.68)); box-shadow: 0 28px 90px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(24px) saturate(1.18); touch-action: pan-x; }
+  .cinema-atlas__nav { position: absolute; right: clamp(20px, 4vw, 68px); top: 49%; z-index: 92; display: grid; gap: 10px; padding: 14px; transform: translate3d(0, -50%, 0); isolation: isolate; contain: paint; border: 1px solid rgba(255,247,223,.16); border-radius: 28px; background: linear-gradient(145deg, rgba(3,7,16,.92), rgba(3,7,16,.76)); box-shadow: 0 28px 90px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(18px) saturate(1.08); touch-action: pan-x; }
+  .cinema-atlas__nav::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: rgba(3,7,16,.42); pointer-events: none; }
   .cinema-atlas__nav::before { content: "Explore"; display: block; padding: 2px 5px 6px; color: rgba(239,202,128,.78); font-size: 9px; font-weight: 850; letter-spacing: .24em; text-transform: uppercase; pointer-events: none; }
   .section-nav-button { position: relative; display: flex; align-items: center; gap: 14px; min-width: clamp(210px, 17vw, 276px); min-height: 54px; padding: 13px 15px 13px 17px; overflow: hidden; color: rgba(255,250,238,.96); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .012em; border: 1px solid rgba(255,247,223,.24); border-radius: 16px; background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.045)); box-shadow: 0 14px 36px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.10); backdrop-filter: blur(12px) saturate(1.12); pointer-events: auto; cursor: pointer; transition: background .22s ease, border-color .22s ease, color .22s ease, transform .22s ease, box-shadow .22s ease; }
   .section-nav-button::before { content: ""; position: absolute; inset: 0; opacity: 0; background: linear-gradient(90deg, rgba(239,202,128,.16), rgba(255,255,255,.045) 48%, transparent); transition: opacity .35s ease; pointer-events: none; }
@@ -559,5 +636,5 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
   @media (min-width: 901px) and (max-width: 1180px) { .cinema-atlas__copy { left: 4vw; width: 54vw; } .cinema-atlas__quote { max-width: 13ch; font-size: clamp(44px, 6.8vw, 82px); } .cinema-atlas__nav { right: 22px; } .section-nav-button { min-width: 232px; } }
   @media (max-width: 900px) { .cinema-atlas__copy { width: min(720px, 78vw); } .cinema-atlas__quote { max-width: 14ch; font-size: clamp(42px, 9vw, 76px); } .cinema-atlas__nav { top: auto; right: auto; left: 18px; bottom: 70px; grid-template-columns: repeat(5, auto); max-width: calc(100vw - 36px); overflow-x: auto; overflow-y: visible; transform: none; padding: 10px; border-radius: 20px; scrollbar-width: none; } .cinema-atlas__nav::-webkit-scrollbar { display: none; } .cinema-atlas__nav::before { display: none; } .section-nav-button { min-width: auto; min-height: 46px; padding: 12px 14px; border-radius: 13px; white-space: nowrap; } .section-nav-button .menu-button__subtitle { display: none; } .section-nav-button:hover, .section-nav-button:focus-visible { transform: translateY(-2px); } }
   @media (max-width: 640px) { .cinema-atlas__copy { left: 18px; right: 18px; top: 11%; width: auto; transform: none; } .cinema-atlas__eyebrow { margin-bottom: 12px; font-size: 10px; letter-spacing: .22em; } .cinema-atlas__quote { max-width: 13ch; font-size: clamp(34px, 9.5vw, 52px); line-height: .94; } .cinema-atlas__author { margin-top: 16px; font-size: 10px; } .cinema-atlas__phase-link { margin-top: 18px; padding: 12px 14px; font-size: 10px; } .cinema-atlas__object { width: min(104vw, 500px); transform: translateY(20vh) rotate(var(--orb-rotation)); } .cinema-atlas__glyph { display: none; } .cinema-atlas__hud { grid-template-columns: 1fr; gap: 9px; font-size: 9px; bottom: 18px; } .cinema-atlas__nav { left: 14px; bottom: calc(76px + env(safe-area-inset-bottom)); max-width: calc(100vw - 28px); gap: 8px; } .section-nav-button { min-height: 42px; padding: 11px 13px; gap: 10px; backdrop-filter: blur(8px) saturate(1.06); } .section-nav-button .menu-button__index { font-size: 9px; } .section-nav-button .menu-button__label { font-size: 12px; letter-spacing: .02em; } .section-nav-button .menu-button__indicator { display: none; } }
-  @media (prefers-reduced-motion: reduce) { .cinema-atlas { min-height: 100svh; touch-action: auto; } .cinema-atlas__sticky { position: relative; } .cinema-atlas__phase, .cinema-atlas__camera, .cinema-atlas__map, .cinema-atlas__stars { transition: none; transform: none; } .cinema-atlas__phase { position: relative; display: none; filter: none; } .cinema-atlas__phase[data-active] { display: block; } }
+  @media (prefers-reduced-motion: reduce) { .cinema-atlas { min-height: 100svh; touch-action: auto; } .cinema-atlas__sticky { position: relative; min-height: 100svh; height: auto; overflow: visible; } .cinema-atlas__content-layer, .cinema-atlas__ui-layer { position: relative; inset: auto; min-height: auto; } .cinema-atlas__copy { position: relative; left: auto; top: auto; width: min(900px, calc(100% - 36px)); margin: 0 auto; padding: 110px 0 28px; transform: none; display: grid; gap: 24px; } .cinema-atlas__phase, .cinema-atlas__camera, .cinema-atlas__map, .cinema-atlas__stars { transition: none; transform: none; } .cinema-atlas__phase { position: relative; display: block; opacity: 1; filter: none; transform: none; padding-block: 14px; } .cinema-atlas__phase[aria-hidden="true"] { opacity: 1; } .cinema-atlas__quote { font-size: clamp(32px, 8vw, 72px); } .cinema-atlas__nav { position: relative; inset: auto; width: min(900px, calc(100% - 36px)); margin: 0 auto 80px; transform: none; } .cinema-atlas__hud { display: none; } }
 </style>
