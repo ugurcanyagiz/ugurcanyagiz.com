@@ -1,0 +1,359 @@
+---
+import SectionNavButton from "./SectionNavButton.astro";
+import { NAV_ITEMS } from "../lib/navigation";
+
+const navItems = NAV_ITEMS;
+---
+
+<section class="homepage-scene" data-homepage-scene aria-label="Cosmic Knowledge Atlas homepage">
+  <h1 class="homepage-scene__sr-only">Cosmic Knowledge Atlas</h1>
+
+  <div class="homepage-scene__loading" data-scene-loader aria-hidden="true"></div>
+  <canvas class="homepage-scene__canvas" data-scene-canvas aria-hidden="true"></canvas>
+
+  <div class="homepage-scene__layer homepage-scene__stars" aria-hidden="true"></div>
+  <div class="homepage-scene__layer homepage-scene__nebula homepage-scene__nebula--cyan" aria-hidden="true"></div>
+  <div class="homepage-scene__layer homepage-scene__nebula homepage-scene__nebula--violet" aria-hidden="true"></div>
+  <div class="homepage-scene__layer homepage-scene__nebula homepage-scene__nebula--rose" aria-hidden="true"></div>
+
+  <div class="homepage-scene__planet homepage-scene__planet--archive" aria-hidden="true"><span></span></div>
+  <div class="homepage-scene__planet homepage-scene__planet--future" aria-hidden="true"><span></span></div>
+  <div class="homepage-scene__planet homepage-scene__planet--moon" aria-hidden="true"><span></span></div>
+  <div class="homepage-scene__foreground-planet" aria-hidden="true"></div>
+
+  <div class="homepage-scene__terrain" aria-hidden="true">
+    <span class="homepage-scene__ridge homepage-scene__ridge--far"></span>
+    <span class="homepage-scene__ridge homepage-scene__ridge--near"></span>
+    <span class="homepage-scene__crater homepage-scene__crater--one"></span>
+    <span class="homepage-scene__crater homepage-scene__crater--two"></span>
+    <span class="homepage-scene__crystal homepage-scene__crystal--one"></span>
+    <span class="homepage-scene__crystal homepage-scene__crystal--two"></span>
+  </div>
+
+  <div class="astronaut" aria-hidden="true">
+    <div class="astronaut__shadow"></div>
+    <div class="astronaut__body">
+      <span class="astronaut__backpack"></span>
+      <span class="astronaut__helmet"><i></i></span>
+      <span class="astronaut__torso"><i></i></span>
+      <span class="astronaut__arm astronaut__arm--left"><i></i></span>
+      <span class="astronaut__arm astronaut__arm--right"><i></i></span>
+      <span class="astronaut__leg astronaut__leg--left"><i></i></span>
+      <span class="astronaut__leg astronaut__leg--right"><i></i></span>
+    </div>
+  </div>
+
+  <div class="homepage-scene__shade" aria-hidden="true"></div>
+  <div class="homepage-scene__vignette" aria-hidden="true"></div>
+
+  <div class="homepage-scene__content">
+    <div class="homepage-scene__intro">
+      <p class="homepage-scene__eyebrow">Cosmic Knowledge Atlas</p>
+      <blockquote class="homepage-scene__quote">“I don't want to believe. I want to know.”</blockquote>
+      <cite class="homepage-scene__author">Carl Sagan</cite>
+      <a class="homepage-scene__enter" href="/me">Enter</a>
+    </div>
+
+    <nav class="homepage-scene__nav" aria-label="Atlas navigation">
+      {navItems.map((item) => (
+        <SectionNavButton
+          index={item.index}
+          label={item.label}
+          href={item.href}
+          sectionId={item.sectionId}
+          subtitle={item.subtitle}
+          className={`section-nav-button--${item.sectionId}`}
+        />
+      ))}
+    </nav>
+  </div>
+</section>
+
+<script>
+  const roots = document.querySelectorAll('[data-homepage-scene]');
+
+  roots.forEach((root) => {
+    const canvas = root.querySelector('[data-scene-canvas]');
+    const loader = root.querySelector('[data-scene-loader]');
+    const ctx = canvas?.getContext('2d', { alpha: true, desynchronized: true });
+    const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const coarseQuery = window.matchMedia('(pointer: coarse)');
+    let width = 1;
+    let height = 1;
+    let dpr = 1;
+    let raf = 0;
+    let last = 0;
+    let elapsed = 0;
+    let reduce = reduceQuery.matches;
+    let pointerX = 0;
+    let pointerY = 0;
+    let currentX = 0;
+    let currentY = 0;
+    let stars = [];
+    let dust = [];
+    let disposed = false;
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+    const rand = (index, seed) => {
+      const x = Math.sin(index * 999 + seed * 101) * 10000;
+      return x - Math.floor(x);
+    };
+
+    function seed() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, width < 700 ? 1.25 : 1.65);
+
+      if (canvas && ctx) {
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      const starCount = width < 700 ? 110 : width < 1200 ? 170 : 240;
+      const dustCount = width < 700 ? 38 : width < 1200 ? 58 : 82;
+      stars = Array.from({ length: starCount }, (_, index) => ({
+        x: rand(index, 2) * width,
+        y: rand(index, 7) * height,
+        r: 0.45 + rand(index, 11) * 1.35,
+        a: 0.18 + rand(index, 13) * 0.62,
+        z: 0.25 + rand(index, 17) * 0.9,
+        twinkle: rand(index, 19) * Math.PI * 2,
+      }));
+      dust = Array.from({ length: dustCount }, (_, index) => ({
+        x: rand(index, 23) * width,
+        y: rand(index, 29) * height,
+        r: 0.6 + rand(index, 31) * 2.2,
+        a: 0.05 + rand(index, 37) * 0.16,
+        vx: -0.015 + rand(index, 41) * 0.03,
+        vy: -0.018 - rand(index, 43) * 0.036,
+        hue: rand(index, 47) > 0.5 ? '252, 145, 214' : '118, 225, 255',
+      }));
+    }
+
+    function draw(time, delta) {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, width, height);
+      ctx.globalCompositeOperation = 'lighter';
+
+      const driftX = reduce ? 0 : currentX * 10;
+      const driftY = reduce ? 0 : currentY * 7;
+      stars.forEach((star) => {
+        const pulse = reduce ? 0.85 : 0.68 + Math.sin(time * 0.0012 + star.twinkle) * 0.32;
+        const x = (star.x + driftX * star.z + width) % width;
+        const y = (star.y + driftY * star.z + height) % height;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(226, 246, 255, ${star.a * pulse})`;
+        ctx.arc(x, y, star.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      dust.forEach((particle) => {
+        if (!reduce) {
+          particle.x += particle.vx * delta * 0.06 + currentX * 0.012;
+          particle.y += particle.vy * delta * 0.06;
+          if (particle.y < -12) particle.y = height + 12;
+          if (particle.x < -12) particle.x = width + 12;
+          if (particle.x > width + 12) particle.x = -12;
+        }
+        const glow = reduce ? 0.72 : 0.58 + Math.sin(time * 0.0009 + particle.x) * 0.22;
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(${particle.hue}, ${particle.a * glow})`;
+        ctx.arc(particle.x, particle.y, particle.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    function animate(now = 0) {
+      if (disposed) return;
+      const delta = Math.min(48, now - last || 16.7);
+      last = now;
+      if (!reduce) elapsed += delta;
+
+      if (!reduce && !coarseQuery.matches) {
+        currentX += (pointerX - currentX) * 0.055;
+        currentY += (pointerY - currentY) * 0.055;
+      } else {
+        currentX += (0 - currentX) * 0.08;
+        currentY += (0 - currentY) * 0.08;
+      }
+
+      root.style.setProperty('--scene-time', (elapsed / 1000).toFixed(3));
+      root.style.setProperty('--parallax-x', currentX.toFixed(4));
+      root.style.setProperty('--parallax-y', currentY.toFixed(4));
+      draw(now, delta);
+      raf = requestAnimationFrame(animate);
+    }
+
+    function onPointerMove(event) {
+      if (reduce || coarseQuery.matches) return;
+      pointerX = clamp((event.clientX / window.innerWidth - 0.5) * 2, -1, 1);
+      pointerY = clamp((event.clientY / window.innerHeight - 0.5) * 2, -1, 1);
+    }
+
+    function onDeviceOrientation(event) {
+      if (reduce || !coarseQuery.matches || typeof event.gamma !== 'number' || typeof event.beta !== 'number') return;
+      pointerX = clamp(event.gamma / 28, -0.7, 0.7);
+      pointerY = clamp((event.beta - 45) / 38, -0.7, 0.7);
+    }
+
+    function onResize() {
+      seed();
+      draw(performance.now(), 16.7);
+    }
+
+    function onReduceChange(event) {
+      reduce = event.matches;
+      root.toggleAttribute('data-reduced-motion', reduce);
+    }
+
+    function cleanup() {
+      disposed = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', onResize);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('deviceorientation', onDeviceOrientation);
+      reduceQuery.removeEventListener?.('change', onReduceChange);
+      document.removeEventListener('astro:before-swap', cleanup);
+      window.removeEventListener('pagehide', cleanup);
+    }
+
+    root.toggleAttribute('data-reduced-motion', reduce);
+    seed();
+    draw(0, 16.7);
+    requestAnimationFrame(() => loader?.setAttribute('data-loaded', 'true'));
+    raf = requestAnimationFrame(animate);
+    window.addEventListener('resize', onResize, { passive: true });
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('deviceorientation', onDeviceOrientation, { passive: true });
+    reduceQuery.addEventListener?.('change', onReduceChange);
+    document.addEventListener('astro:before-swap', cleanup);
+    window.addEventListener('pagehide', cleanup);
+  });
+</script>
+
+<style>
+  .homepage-scene {
+    --scene-time: 0;
+    --parallax-x: 0;
+    --parallax-y: 0;
+    position: relative;
+    width: 100vw;
+    min-height: 100svh;
+    height: 100svh;
+    overflow: clip;
+    isolation: isolate;
+    color: #fff7df;
+    background:
+      radial-gradient(circle at 52% 48%, rgba(43, 180, 255, .12), transparent 30%),
+      radial-gradient(circle at 75% 23%, rgba(255, 114, 205, .14), transparent 28%),
+      linear-gradient(180deg, #02030b 0%, #07152a 48%, #160d22 74%, #07040b 100%);
+    touch-action: pan-x pinch-zoom;
+  }
+
+  .homepage-scene__sr-only { position:absolute; width:1px; height:1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .homepage-scene__loading { position:absolute; inset:0; z-index:40; pointer-events:none; background:radial-gradient(circle at 52% 54%, rgba(111,224,255,.22), transparent 34%), radial-gradient(circle at 70% 24%, rgba(255,121,203,.16), transparent 30%), linear-gradient(135deg, #03040e, #101230 50%, #1b0e24); opacity:1; transition:opacity 900ms ease; }
+  .homepage-scene__loading[data-loaded="true"] { opacity:0; }
+  .homepage-scene__canvas, .homepage-scene__layer, .homepage-scene__shade, .homepage-scene__vignette { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .homepage-scene__canvas { z-index:1; }
+  .homepage-scene__stars { z-index:0; opacity:.42; background-image:radial-gradient(circle at 20% 25%, rgba(255,255,255,.8) 0 1px, transparent 1.2px), radial-gradient(circle at 72% 60%, rgba(122,226,255,.7) 0 1px, transparent 1.4px); background-size:5px 5px, 9px 9px; transform:translate3d(calc(var(--parallax-x) * -10px), calc(var(--parallax-y) * -8px), 0); }
+  .homepage-scene__nebula { mix-blend-mode:screen; filter:blur(34px) saturate(1.18); will-change:transform; }
+  .homepage-scene__nebula--cyan { z-index:2; background:radial-gradient(ellipse at 23% 34%, rgba(42,224,255,.25), transparent 32%), radial-gradient(ellipse at 64% 56%, rgba(105,145,255,.16), transparent 38%); transform:translate3d(calc(var(--parallax-x) * -22px), calc(var(--parallax-y) * -14px), 0) rotate(calc(var(--scene-time) * .25deg)); }
+  .homepage-scene__nebula--violet { z-index:3; background:conic-gradient(from 120deg at 54% 42%, transparent 0 16%, rgba(179,89,255,.20), transparent 38% 58%, rgba(58,211,255,.14), transparent 82% 100%); transform:translate3d(calc(var(--parallax-x) * -34px), calc(var(--parallax-y) * -24px), 0) scale(1.13) rotate(calc(var(--scene-time) * -.18deg)); }
+  .homepage-scene__nebula--rose { z-index:4; background:radial-gradient(ellipse at 82% 18%, rgba(255,117,189,.24), transparent 31%), radial-gradient(ellipse at 14% 78%, rgba(255,150,74,.13), transparent 34%); transform:translate3d(calc(var(--parallax-x) * -18px), calc(var(--parallax-y) * -30px), 0); }
+
+  .homepage-scene__planet { position:absolute; z-index:6; pointer-events:none; border-radius:50%; transform:translate3d(calc(var(--parallax-x) * var(--depth-x)), calc(var(--parallax-y) * var(--depth-y)), 0); will-change:transform; }
+  .homepage-scene__planet span { position:absolute; inset:0; border-radius:inherit; overflow:hidden; }
+  .homepage-scene__planet span::before, .homepage-scene__planet span::after { content:""; position:absolute; inset:-18%; border-radius:inherit; }
+  .homepage-scene__planet--archive { --depth-x:-42px; --depth-y:-22px; width:clamp(82px, 8vw, 138px); aspect-ratio:1; left:9%; top:18%; box-shadow:0 0 46px rgba(255,159,86,.24); background:radial-gradient(circle at 32% 28%, #ffe6a6, #e77956 36%, #572054 70%, #120919); }
+  .homepage-scene__planet--archive span::before { background:repeating-linear-gradient(13deg, rgba(255,244,193,.26) 0 6px, transparent 7px 18px); transform:rotate(calc(var(--scene-time) * 1.1deg)); }
+  .homepage-scene__planet--future { --depth-x:38px; --depth-y:-28px; width:clamp(120px, 13vw, 230px); aspect-ratio:1; right:12%; top:12%; box-shadow:0 0 70px rgba(89,219,255,.28); background:radial-gradient(circle at 30% 25%, #dffbff, #56cdfb 19%, #3654c9 48%, #160f4d 74%, #050716); }
+  .homepage-scene__planet--future::after { content:""; position:absolute; left:-19%; right:-19%; top:43%; height:15%; border:1px solid rgba(195,248,255,.42); border-radius:50%; transform:rotate(-12deg); box-shadow:0 0 26px rgba(114,231,255,.22); }
+  .homepage-scene__planet--future span::before { background:linear-gradient(92deg, transparent 0 34%, rgba(255,255,255,.18) 36% 39%, transparent 42%), radial-gradient(circle at 70% 72%, rgba(255,104,205,.28), transparent 24%); transform:rotate(calc(var(--scene-time) * -.65deg)); }
+  .homepage-scene__planet--moon { --depth-x:-28px; --depth-y:-40px; width:clamp(42px, 5vw, 86px); aspect-ratio:1; right:32%; top:28%; opacity:.82; background:radial-gradient(circle at 34% 30%, #fff5e5, #d8d6ff 42%, #5e65a7 76%); box-shadow:0 0 34px rgba(216,214,255,.18); }
+  .homepage-scene__foreground-planet { position:absolute; z-index:5; right:-22vmax; bottom:-31vmax; width:min(82vmax, 980px); aspect-ratio:1; border-radius:50%; pointer-events:none; background:radial-gradient(circle at 34% 30%, rgba(255,210,127,.78), rgba(224,94,129,.44) 24%, rgba(74,31,112,.24) 48%, rgba(7,4,16,.02) 68%), repeating-radial-gradient(circle at 38% 32%, rgba(255,255,255,.12) 0 2px, transparent 3px 18px); box-shadow:inset 42px 55px 120px rgba(255,216,126,.16), inset -80px -100px 180px rgba(0,0,0,.72), 0 0 120px rgba(255,117,189,.18); transform:translate3d(calc(var(--parallax-x) * 18px), calc(var(--parallax-y) * 12px), 0); }
+
+  .homepage-scene__terrain { position:absolute; z-index:13; left:0; right:0; bottom:0; height:36svh; pointer-events:none; transform:translate3d(calc(var(--parallax-x) * 12px), calc(var(--parallax-y) * 6px), 0); }
+  .homepage-scene__ridge { position:absolute; left:-8%; right:-8%; bottom:0; height:100%; clip-path:polygon(0 62%, 10% 48%, 22% 57%, 35% 42%, 48% 56%, 62% 37%, 76% 52%, 88% 43%, 100% 58%, 100% 100%, 0 100%); }
+  .homepage-scene__ridge--far { bottom:8%; opacity:.78; background:linear-gradient(180deg, rgba(76,54,116,.56), rgba(13,11,27,.92)); filter:blur(.3px); }
+  .homepage-scene__ridge--near { height:84%; background:linear-gradient(180deg, rgba(64,37,81,.88), #090713 63%); box-shadow:0 -24px 80px rgba(255,119,203,.14), inset 0 22px 80px rgba(90,224,255,.07); clip-path:polygon(0 54%, 13% 47%, 25% 58%, 38% 44%, 50% 53%, 62% 45%, 75% 59%, 88% 48%, 100% 55%, 100% 100%, 0 100%); }
+  .homepage-scene__crater { position:absolute; z-index:2; bottom:10%; border-radius:50%; background:radial-gradient(ellipse, rgba(0,0,0,.34), rgba(255,255,255,.06) 58%, transparent 64%); transform:rotate(-5deg); }
+  .homepage-scene__crater--one { left:17%; width:18vw; height:4vw; opacity:.7; }
+  .homepage-scene__crater--two { right:22%; width:13vw; height:3vw; opacity:.48; }
+  .homepage-scene__crystal { position:absolute; z-index:3; bottom:21%; width:18px; height:64px; clip-path:polygon(50% 0, 100% 56%, 64% 100%, 20% 86%, 0 40%); background:linear-gradient(160deg, rgba(146,240,255,.86), rgba(255,115,215,.32)); box-shadow:0 0 34px rgba(121,226,255,.32); }
+  .homepage-scene__crystal--one { left:7%; transform:rotate(-13deg); }
+  .homepage-scene__crystal--two { right:8%; bottom:24%; height:44px; opacity:.72; transform:rotate(18deg); }
+
+  .astronaut { position:absolute; z-index:18; left:50%; bottom:17svh; width:clamp(78px, 8vw, 122px); aspect-ratio:.58; pointer-events:none; transform:translateX(-50%) translate3d(calc(var(--parallax-x) * 16px), calc(var(--parallax-y) * 5px), 0); }
+  .astronaut__body { position:absolute; inset:0; transform-origin:50% 80%; animation:astro-body 2.8s ease-in-out infinite; }
+  .astronaut__shadow { position:absolute; left:10%; right:10%; bottom:-7%; height:12%; border-radius:50%; background:radial-gradient(ellipse, rgba(0,0,0,.44), transparent 70%); animation:astro-shadow 2.8s ease-in-out infinite; }
+  .astronaut__helmet { position:absolute; left:20%; top:0; width:60%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 36% 28%, #fff, #dfefff 42%, #91a9c4 76%); box-shadow:inset -8px -10px 18px rgba(17,31,56,.28), 0 0 26px rgba(124,230,255,.24); animation:astro-head 2.8s ease-in-out infinite; }
+  .astronaut__helmet i { position:absolute; left:22%; top:32%; width:56%; height:34%; border-radius:48% 48% 42% 42%; background:linear-gradient(135deg, rgba(18,31,58,.92), rgba(33,133,181,.62) 58%, rgba(255,128,210,.48)); box-shadow:inset 0 0 12px rgba(255,255,255,.2); }
+  .astronaut__torso { position:absolute; left:24%; top:32%; width:52%; height:34%; border-radius:30% 30% 24% 24%; background:linear-gradient(145deg, #f9fbff, #b8c8da 66%, #6e7f97); box-shadow:inset -9px -10px 18px rgba(24,35,54,.24); }
+  .astronaut__torso i { position:absolute; left:30%; top:26%; width:42%; height:22%; border-radius:999px; background:linear-gradient(90deg, #ff7ac8, #69e7ff); box-shadow:0 0 14px rgba(105,231,255,.32); }
+  .astronaut__backpack { position:absolute; left:14%; top:37%; width:20%; height:28%; border-radius:10px; background:linear-gradient(180deg, #94a8bd, #536376); }
+  .astronaut__arm, .astronaut__leg { position:absolute; transform-origin:50% 10%; }
+  .astronaut__arm { top:35%; width:16%; height:36%; border-radius:999px; background:linear-gradient(180deg, #eef6ff, #8d9eb2); }
+  .astronaut__arm i { position:absolute; left:12%; right:12%; bottom:-7%; height:25%; border-radius:999px; background:#dfe8f2; }
+  .astronaut__arm--left { left:17%; animation:astro-arm-left 2.8s ease-in-out infinite; }
+  .astronaut__arm--right { right:17%; animation:astro-arm-right 2.8s ease-in-out infinite; }
+  .astronaut__leg { top:63%; width:18%; height:38%; border-radius:999px; background:linear-gradient(180deg, #edf5ff, #7f90a8); }
+  .astronaut__leg i { position:absolute; left:-28%; bottom:-3%; width:160%; height:23%; border-radius:999px; background:linear-gradient(90deg, #dce8f3, #76869c); transform-origin:70% 50%; }
+  .astronaut__leg--left { left:31%; animation:astro-leg-left 2.8s cubic-bezier(.45,0,.55,1) infinite; }
+  .astronaut__leg--right { right:31%; animation:astro-leg-right 2.8s cubic-bezier(.45,0,.55,1) infinite; }
+  .astronaut__leg--left i { animation:astro-foot-left 2.8s cubic-bezier(.45,0,.55,1) infinite; }
+  .astronaut__leg--right i { animation:astro-foot-right 2.8s cubic-bezier(.45,0,.55,1) infinite; }
+
+  .homepage-scene__shade { z-index:25; background:linear-gradient(90deg, rgba(2,3,11,.68), rgba(2,3,11,.10) 34%, rgba(2,3,11,.18) 66%, rgba(2,3,11,.62)), linear-gradient(180deg, rgba(2,3,11,.28), transparent 40%, rgba(2,3,11,.72)); }
+  .homepage-scene__vignette { z-index:32; background:radial-gradient(ellipse at 52% 45%, transparent 0 44%, rgba(0,0,0,.42) 78%, rgba(0,0,0,.88)); }
+  .homepage-scene__content { position:relative; z-index:36; min-height:100svh; display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:center; gap:clamp(1rem, 4vw, 4rem); padding:clamp(5.8rem, 10vh, 7.8rem) clamp(1.1rem, 4vw, 4.5rem) calc(clamp(1.2rem, 4vh, 3rem) + env(safe-area-inset-bottom)); pointer-events:none; }
+  .homepage-scene__intro { width:min(780px, 58vw); pointer-events:auto; }
+  .homepage-scene__eyebrow { margin:0 0 16px; color:rgba(118,231,255,.88); font-size:clamp(11px, .8vw, 13px); font-weight:850; letter-spacing:.28em; text-transform:uppercase; }
+  .homepage-scene__quote { max-width:15ch; margin:0; color:#fff7df; font-family:Georgia, "Times New Roman", serif; font-size:clamp(48px, 7.1vw, 112px); font-weight:500; line-height:.94; letter-spacing:-.055em; text-wrap:balance; text-shadow:0 18px 70px rgba(0,0,0,.48); }
+  .homepage-scene__author { display:block; margin-top:24px; color:rgba(255,186,112,.9); font-size:clamp(11px, .8vw, 13px); font-style:normal; font-weight:850; letter-spacing:.2em; text-transform:uppercase; }
+  .homepage-scene__enter { display:inline-flex; margin-top:28px; padding:15px 19px; color:#fff7df; text-decoration:none; font-size:12px; font-weight:850; letter-spacing:.16em; text-transform:uppercase; border:1px solid rgba(118,231,255,.42); border-radius:999px; background:rgba(255,255,255,.07); box-shadow:inset 0 1px rgba(255,255,255,.16), 0 20px 70px rgba(0,0,0,.32); }
+  .homepage-scene__enter:hover, .homepage-scene__enter:focus-visible { outline:none; border-color:rgba(255,186,112,.82); box-shadow:0 0 0 4px rgba(255,186,112,.13), 0 24px 80px rgba(118,231,255,.16); }
+  .homepage-scene__nav { pointer-events:auto; display:grid; gap:10px; padding:14px; isolation:isolate; contain:paint; border:1px solid rgba(255,247,223,.16); border-radius:28px; background:linear-gradient(145deg, rgba(3,7,16,.80), rgba(3,7,16,.56)); box-shadow:0 28px 90px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter:blur(18px) saturate(1.08); }
+  .homepage-scene__nav::before { content:"Explore"; display:block; padding:2px 5px 6px; color:rgba(118,231,255,.78); font-size:9px; font-weight:850; letter-spacing:.24em; text-transform:uppercase; pointer-events:none; }
+
+  @keyframes astro-body { 0%,100%{ transform:translateY(0) rotate(-1.2deg); } 25%{ transform:translateY(2.5%) rotate(1.4deg); } 50%{ transform:translateY(-1.2%) rotate(-.6deg); } 75%{ transform:translateY(2.2%) rotate(1deg); } }
+  @keyframes astro-head { 0%,100%{ transform:translateY(0) rotate(.8deg); } 50%{ transform:translateY(-7%) rotate(-1.4deg); } }
+  @keyframes astro-shadow { 0%,100%{ transform:scaleX(.92); opacity:.38; } 50%{ transform:scaleX(1.08); opacity:.52; } }
+  @keyframes astro-arm-left { 0%,100%{ transform:rotate(20deg); } 50%{ transform:rotate(-22deg); } }
+  @keyframes astro-arm-right { 0%,100%{ transform:rotate(-22deg); } 50%{ transform:rotate(20deg); } }
+  @keyframes astro-leg-left { 0%,100%{ transform:rotate(-18deg) translateY(0); } 35%{ transform:rotate(22deg) translateY(-2%); } 50%{ transform:rotate(16deg) translateY(0); } 75%{ transform:rotate(-10deg) translateY(2%); } }
+  @keyframes astro-leg-right { 0%,100%{ transform:rotate(20deg) translateY(-1%); } 35%{ transform:rotate(-13deg) translateY(2%); } 50%{ transform:rotate(-18deg) translateY(0); } 75%{ transform:rotate(22deg) translateY(-2%); } }
+  @keyframes astro-foot-left { 0%,100%{ transform:rotate(13deg); } 45%{ transform:rotate(-11deg); } 70%{ transform:rotate(6deg); } }
+  @keyframes astro-foot-right { 0%,100%{ transform:rotate(-10deg); } 45%{ transform:rotate(12deg); } 70%{ transform:rotate(-4deg); } }
+
+  @media (max-width: 980px) {
+    .homepage-scene__content { grid-template-columns:1fr; align-items:start; padding-top:clamp(5.6rem, 9vh, 7rem); }
+    .homepage-scene__intro { width:min(760px, 78vw); }
+    .homepage-scene__nav { position:absolute; left:18px; right:18px; bottom:calc(22px + env(safe-area-inset-bottom)); display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; border-radius:20px; padding:10px; }
+    .homepage-scene__nav::-webkit-scrollbar { display:none; }
+    .homepage-scene__nav::before { display:none; }
+    .homepage-scene__planet--archive { left:4%; top:23%; }
+    .homepage-scene__planet--future { right:4%; top:13%; }
+    .astronaut { bottom:20svh; }
+  }
+
+  @media (max-width: 640px) {
+    .homepage-scene__content { padding:5.4rem 1.1rem calc(6.5rem + env(safe-area-inset-bottom)); }
+    .homepage-scene__intro { width:min(100%, 440px); }
+    .homepage-scene__quote { max-width:13ch; font-size:clamp(34px, 9.5vw, 52px); }
+    .homepage-scene__author { margin-top:16px; font-size:10px; }
+    .homepage-scene__enter { margin-top:18px; padding:12px 14px; font-size:10px; }
+    .homepage-scene__foreground-planet { right:-37vmax; bottom:-27vmax; width:72vmax; }
+    .homepage-scene__terrain { height:31svh; }
+    .astronaut { width:82px; bottom:19svh; left:55%; }
+    .homepage-scene__planet--moon { right:44%; top:32%; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .homepage-scene, .homepage-scene * { animation-duration:.001ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.001ms !important; }
+    .homepage-scene__nebula, .homepage-scene__stars, .homepage-scene__planet, .homepage-scene__foreground-planet, .homepage-scene__terrain, .astronaut { transform:none !important; }
+  }
+</style>
