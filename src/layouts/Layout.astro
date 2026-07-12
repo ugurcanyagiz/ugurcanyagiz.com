@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
 
-const { title = "UGURCAN", description = "", orbitPreload = false, theme = "light", immersive = false } = Astro.props;
+const { title = "UGURCAN", description = "", orbitPreload = false, theme = "light", immersive = false, hideChrome = false } = Astro.props;
 
 const year = new Date().getFullYear();
 const instagramUrl = "https://instagram.com/john.yagiz";
@@ -27,7 +27,7 @@ const mailtoUrl = `mailto:${email}`;
 
   <body class:list={[theme === "dark" && "theme-dark", immersive && "is-immersive"]}>
     <!-- TOP BRAND BAR (sticky) -->
-    <header class="topbar">
+    {!hideChrome && <header class="topbar">
       <div class="topbar-inner">
         <a class="brand" href="/" aria-label="Go to homepage">UGURCAN</a>
       </div>
@@ -35,14 +35,14 @@ const mailtoUrl = `mailto:${email}`;
       <div class="subnav">
         <slot name="subnav" />
       </div>
-    </header>
+    </header>}
 
     <main class="main">
       <slot />
     </main>
 
     <!-- FOOTER -->
-    <footer class="site-footer">
+    {!hideChrome && <footer class="site-footer">
       <div class="footer-inner">
         <div class="footer-left">© {year} Ugurcan Yagiz</div>
 
@@ -60,7 +60,7 @@ const mailtoUrl = `mailto:${email}`;
           </a>
         </div>
       </div>
-    </footer>
+    </footer>}
 
     <style>
       .topbar{
