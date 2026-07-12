@@ -44,7 +44,7 @@ body:has(.cinematic-home) .main {
   z-index: 1;
   max-width: none;
   object-fit: cover;
-  object-position: center;
+  object-position: var(--cinematic-video-object-position, center center);
   opacity: 0;
   transition: opacity 900ms ease;
 }
@@ -64,6 +64,12 @@ body:has(.cinematic-home) .main {
 .cinematic-home[data-video-failed] .cinematic-home__video,
 .cinematic-home[data-reduced-motion] .cinematic-home__video {
   display: none;
+}
+
+@media (max-width: 767px), (orientation: portrait) {
+  .cinematic-home__video {
+    object-position: var(--cinematic-video-object-position-mobile, var(--cinematic-video-object-position, center center));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

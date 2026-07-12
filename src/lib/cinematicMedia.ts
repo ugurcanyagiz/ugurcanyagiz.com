@@ -1,14 +1,29 @@
+export type CinematicVideoFormat = {
+  src?: string;
+  type: "video/mp4" | "video/webm";
+};
+
+export type CinematicVideoVariant = {
+  webm?: string;
+  mp4?: string;
+  poster: string;
+  objectPosition: string;
+};
+
 export const cinematicHomeMedia = {
   desktop: {
-    webm: "/media/cinematic/home-desktop.webm",
-    mp4: "/media/cinematic/home-desktop.mp4",
+    mp4: "/back.mp4",
     poster: "/images/cinematic-home-poster-desktop.svg",
+    objectPosition: "center center",
   },
   mobile: {
-    webm: "/media/cinematic/home-mobile.webm",
-    mp4: "/media/cinematic/home-mobile.mp4",
+    mp4: "/back.mp4",
     poster: "/images/cinematic-home-poster-mobile.svg",
+    objectPosition: "center center",
   },
-} as const;
+} as const satisfies {
+  desktop: CinematicVideoVariant;
+  mobile: CinematicVideoVariant;
+};
 
 export type CinematicHomeMedia = typeof cinematicHomeMedia;
