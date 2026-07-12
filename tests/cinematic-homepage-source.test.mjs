@@ -10,9 +10,8 @@ const indexPage = readFileSync(new URL('../src/pages/index.astro', import.meta.u
 const layout = readFileSync(new URL('../src/layouts/Layout.astro', import.meta.url), 'utf8');
 
 test('cinematic homepage uses available back.mp4 and omits placeholder media paths', () => {
-  assert.match(media, /mp4:\s*['"]\/back\.mp4['"]/);
   assert.doesNotMatch(media, /\/media\/cinematic\//);
-  assert.match(component, /src=\{media\.desktop\.mp4\}/);
+  assert.match(component, /src=["\']\/back\.mp4["\']/);
   assert.doesNotMatch(component, /<source\b/);
   assert.doesNotMatch(component, /webm/i);
 });
