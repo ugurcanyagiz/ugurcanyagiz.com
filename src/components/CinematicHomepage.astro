@@ -1,0 +1,38 @@
+---
+import { cinematicHomeMedia } from "../lib/cinematicMedia";
+import "../styles/cinematic-home.css";
+const media = cinematicHomeMedia;
+---
+
+<section
+  class="cinematic-home"
+  data-cinematic-home
+  data-desktop-poster={media.desktop.poster}
+  data-mobile-poster={media.mobile.poster}
+  aria-label="Cinematic homepage foundation"
+>
+  <div class="cinematic-home__poster" data-cinematic-home-poster aria-hidden="true"></div>
+
+  <video
+    class="cinematic-home__video"
+    data-cinematic-home-video
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="metadata"
+    poster={media.desktop.poster}
+    aria-hidden="true"
+  >
+    <source src={media.mobile.webm} type="video/webm" media="(max-width: 767px), (orientation: portrait)" />
+    <source src={media.mobile.mp4} type="video/mp4" media="(max-width: 767px), (orientation: portrait)" />
+    <source src={media.desktop.webm} type="video/webm" />
+    <source src={media.desktop.mp4} type="video/mp4" />
+  </video>
+
+  <div class="cinematic-home__fallback-shade" aria-hidden="true"></div>
+</section>
+
+<script>
+  import "../scripts/cinematic-home";
+</script>

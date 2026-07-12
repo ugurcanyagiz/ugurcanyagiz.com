@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160" role="img" aria-label="Temporary cinematic homepage desktop poster placeholder">
+  <defs>
+    <radialGradient id="g1" cx="50%" cy="45%" r="58%">
+      <stop offset="0" stop-color="#20375b"/>
+      <stop offset="0.45" stop-color="#071225"/>
+      <stop offset="1" stop-color="#02040b"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="60%" cy="48%" r="28%">
+      <stop offset="0" stop-color="#d8b06a" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#d8b06a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="3840" height="2160" fill="url(#g1)"/>
+  <rect width="3840" height="2160" fill="url(#g2)"/>
+</svg>

@@ -1,0 +1,73 @@
+html:has(.cinematic-home),
+body:has(.cinematic-home) {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #02040b;
+}
+
+body:has(.cinematic-home) .main {
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+.cinematic-home {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #02040b;
+  touch-action: none;
+}
+
+.cinematic-home__poster,
+.cinematic-home__video,
+.cinematic-home__fallback-shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cinematic-home__poster {
+  z-index: 0;
+  background-color: #02040b;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+.cinematic-home__video {
+  z-index: 1;
+  max-width: none;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 900ms ease;
+}
+
+.cinematic-home__fallback-shade {
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(216, 176, 106, 0.08), transparent 38%),
+    linear-gradient(180deg, rgba(2, 4, 11, 0.06), rgba(2, 4, 11, 0.32));
+}
+
+.cinematic-home[data-video-ready] .cinematic-home__video {
+  opacity: 1;
+}
+
+.cinematic-home[data-video-failed] .cinematic-home__video,
+.cinematic-home[data-reduced-motion] .cinematic-home__video {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinematic-home__video {
+    display: none;
+  }
+}
