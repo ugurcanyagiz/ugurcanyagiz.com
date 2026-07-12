@@ -12,18 +12,29 @@ const layout = readFileSync(new URL('../src/layouts/Layout.astro', import.meta.u
 test('cinematic homepage uses available back.mp4 and omits placeholder media paths', () => {
   assert.match(media, /mp4:\s*['"]\/back\.mp4['"]/);
   assert.doesNotMatch(media, /\/media\/cinematic\//);
-  assert.match(component, /videoSources/);
-  assert.match(component, /filter\(\(source\).*Boolean\(source && source\.src\)\)/s);
-  assert.doesNotMatch(component, /src=\{[^}]*webm[^}]*\}\s+type=['"]video\/webm['"]/);
+  assert.match(component, /src=\{media\.desktop\.mp4\}/);
+  assert.doesNotMatch(component, /<source\b/);
+  assert.doesNotMatch(component, /webm/i);
 });
 
 test('video behavior and mobile playback attributes remain present', () => {
-  for (const token of ['autoplay', 'muted', 'loop', 'playsinline', 'preload="metadata"', 'poster={media.desktop.poster}']) {
+  for (const token of ['autoplay', 'muted', 'loop', 'playsinline', 'preload="auto"', 'poster={media.desktop.poster}']) {
     assert.ok(component.includes(token), `${token} should be present`);
   }
   for (const token of ['video.muted = true', 'video.defaultMuted = true', 'video.playsInline = true', 'void video.play().catch']) {
     assert.ok(script.includes(token), `${token} should be present`);
   }
+});
+
+
+test('video diagnostics and bounded playback retry behavior are retained', () => {
+  for (const token of ['loadedmetadata', 'loadeddata', 'canplay', 'playing', 'stalled', 'error']) {
+    assert.ok(script.includes(token), `${token} diagnostic should be present`);
+  }
+  for (const token of ['video.error?.code', 'video.currentSrc', 'visibilitychange', 'retryCount >= maxPlaybackRetries']) {
+    assert.ok(script.includes(token), `${token} should be present`);
+  }
+  assert.doesNotMatch(script, /catch\([^)]*\)\s*=>\s*\{\s*if \(!disposed\) showPosterOnly\(\);\s*\}/);
 });
 
 test('homepage chrome is hidden while inner-page chrome remains available', () => {
