@@ -48,6 +48,9 @@ function initializeCinematicHome(root: CinematicHomeRoot): void {
 
     root.removeAttribute("data-reduced-motion");
     root.removeAttribute("data-video-failed");
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
     video.load();
     void video.play().catch(() => {
       if (!disposed) showPosterOnly();

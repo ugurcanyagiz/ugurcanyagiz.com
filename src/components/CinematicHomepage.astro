@@ -2,6 +2,13 @@
 import { cinematicHomeMedia } from "../lib/cinematicMedia";
 import "../styles/cinematic-home.css";
 const media = cinematicHomeMedia;
+const mobileSourceMedia = "(max-width: 767px), (orientation: portrait)";
+const videoSources = [
+  media.mobile.webm && { src: media.mobile.webm, type: "video/webm", media: mobileSourceMedia },
+  media.mobile.mp4 && { src: media.mobile.mp4, type: "video/mp4", media: mobileSourceMedia },
+  media.desktop.webm && { src: media.desktop.webm, type: "video/webm" },
+  media.desktop.mp4 && { src: media.desktop.mp4, type: "video/mp4" },
+].filter((source): source is { src: string; type: "video/webm" | "video/mp4"; media?: string } => Boolean(source && source.src));
 ---
 
 <section
@@ -9,6 +16,9 @@ const media = cinematicHomeMedia;
   data-cinematic-home
   data-desktop-poster={media.desktop.poster}
   data-mobile-poster={media.mobile.poster}
+  data-desktop-object-position={media.desktop.objectPosition}
+  data-mobile-object-position={media.mobile.objectPosition}
+  style={`--cinematic-video-object-position: ${media.desktop.objectPosition}; --cinematic-video-object-position-mobile: ${media.mobile.objectPosition};`}
   aria-label="Cinematic homepage foundation"
 >
   <div class="cinematic-home__poster" data-cinematic-home-poster aria-hidden="true"></div>
@@ -24,10 +34,7 @@ const media = cinematicHomeMedia;
     poster={media.desktop.poster}
     aria-hidden="true"
   >
-    <source src={media.mobile.webm} type="video/webm" media="(max-width: 767px), (orientation: portrait)" />
-    <source src={media.mobile.mp4} type="video/mp4" media="(max-width: 767px), (orientation: portrait)" />
-    <source src={media.desktop.webm} type="video/webm" />
-    <source src={media.desktop.mp4} type="video/mp4" />
+    {videoSources.map((source) => <source src={source.src} type={source.type} media={source.media} />)}
   </video>
 
   <div class="cinematic-home__fallback-shade" aria-hidden="true"></div>
