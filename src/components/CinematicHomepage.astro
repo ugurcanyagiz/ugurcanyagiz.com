@@ -2,13 +2,6 @@
 import { cinematicHomeMedia } from "../lib/cinematicMedia";
 import "../styles/cinematic-home.css";
 const media = cinematicHomeMedia;
-const mobileSourceMedia = "(max-width: 767px), (orientation: portrait)";
-const videoSources = [
-  media.mobile.webm && { src: media.mobile.webm, type: "video/webm", media: mobileSourceMedia },
-  media.mobile.mp4 && { src: media.mobile.mp4, type: "video/mp4", media: mobileSourceMedia },
-  media.desktop.webm && { src: media.desktop.webm, type: "video/webm" },
-  media.desktop.mp4 && { src: media.desktop.mp4, type: "video/mp4" },
-].filter((source): source is { src: string; type: "video/webm" | "video/mp4"; media?: string } => Boolean(source && source.src));
 ---
 
 <section
@@ -26,16 +19,15 @@ const videoSources = [
   <video
     class="cinematic-home__video"
     data-cinematic-home-video
+    src={media.desktop.mp4}
     autoplay
     muted
     loop
     playsinline
-    preload="metadata"
+    preload="auto"
     poster={media.desktop.poster}
     aria-hidden="true"
-  >
-    {videoSources.map((source) => <source src={source.src} type={source.type} media={source.media} />)}
-  </video>
+  ></video>
 
   <div class="cinematic-home__fallback-shade" aria-hidden="true"></div>
 </section>
