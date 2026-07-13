@@ -1,37 +1,56 @@
 ---
 import { cinematicHomeMedia } from "../lib/cinematicMedia";
 import "../styles/cinematic-home.css";
+
 const media = cinematicHomeMedia;
+const meteors = [
+  { key: "science", label: "Science", href: "/science", duration: "18s", delay: "-4s", top: "18%", size: "clamp(70px, 7vw, 126px)", depth: ".92" },
+  { key: "history", label: "History", href: "/history", duration: "24s", delay: "-16s", top: "45%", size: "clamp(62px, 6vw, 108px)", depth: ".76" },
+  { key: "art", label: "Art", href: "/art", duration: "21s", delay: "-10s", top: "32%", size: "clamp(68px, 6.6vw, 118px)", depth: ".86" },
+  { key: "future", label: "Future", href: "/future", duration: "26s", delay: "-21s", top: "11%", size: "clamp(58px, 5.7vw, 102px)", depth: ".7" },
+  { key: "astrophysics", label: "Astrophysics", href: "/science", duration: "20s", delay: "-14s", top: "54%", size: "clamp(72px, 7.2vw, 130px)", depth: ".96" },
+  { key: "mathematics", label: "Mathematics", href: "/science", duration: "29s", delay: "-6s", top: "38%", size: "clamp(54px, 5.3vw, 96px)", depth: ".66" },
+  { key: "jlog", label: "JLOG", href: "/blog", duration: "23s", delay: "-2s", top: "7%", size: "clamp(60px, 5.9vw, 106px)", depth: ".73" },
+  { key: "me", label: "Me", href: "/me", duration: "27s", delay: "-18s", top: "27%", size: "clamp(56px, 5.5vw, 100px)", depth: ".68" },
+] as const;
 ---
 
-<section
-  class="cinematic-home"
-  data-cinematic-home
-  data-desktop-poster={media.desktop.poster}
-  data-mobile-poster={media.mobile.poster}
-  data-desktop-object-position={media.desktop.objectPosition}
-  data-mobile-object-position={media.mobile.objectPosition}
-  style={`--cinematic-video-object-position: ${media.desktop.objectPosition}; --cinematic-video-object-position-mobile: ${media.mobile.objectPosition};`}
-  aria-label="Cinematic homepage foundation"
->
-  <div class="cinematic-home__poster" data-cinematic-home-poster aria-hidden="true"></div>
+<section class="cinematic-home" aria-label="Explore Ugurcan's atlas">
+  <picture class="cinematic-home__picture">
+    <source media="(max-width: 640px), (orientation: portrait)" srcset={media.mobile} />
+    <source media="(max-width: 1180px)" srcset={media.tablet} />
+    <img
+      class="cinematic-home__background"
+      src={media.desktop}
+      alt="A quiet anime-inspired study overlooking a city at sunset"
+      fetchpriority="high"
+      decoding="async"
+    />
+  </picture>
 
-  <video
-    class="cinematic-home__video"
-    data-cinematic-home-video
-    src="/back.mp4"
-    autoplay
-    muted
-    loop
-    playsinline
-    preload="auto"
-    poster={media.desktop.poster}
-    aria-hidden="true"
-  ></video>
+  <nav class="cinematic-home__sky" aria-label="Explore sections">
+    {meteors.map((meteor, index) => (
+      <a
+        class={`cinematic-home__meteor cinematic-home__meteor--${meteor.key}`}
+        href={meteor.href}
+        aria-label={`Explore ${meteor.label}`}
+        style={`--meteor-duration:${meteor.duration};--meteor-delay:${meteor.delay};--meteor-top:${meteor.top};--meteor-size:${meteor.size};--meteor-depth:${meteor.depth};--meteor-index:${index};`}
+      >
+        <span class="cinematic-home__trail" aria-hidden="true"></span>
+        <img
+          class="cinematic-home__meteor-image"
+          src={`/images/cinematic-home/${meteor.key}.webp`}
+          alt=""
+          width="512"
+          height="512"
+          loading={index < 3 ? "eager" : "lazy"}
+          decoding="async"
+        />
+        <span class="cinematic-home__meteor-label">{meteor.label}</span>
+      </a>
+    ))}
+  </nav>
 
-  <div class="cinematic-home__fallback-shade" aria-hidden="true"></div>
+  <div class="cinematic-home__glass" aria-hidden="true"></div>
+  <div class="cinematic-home__vignette" aria-hidden="true"></div>
 </section>
-
-<script>
-  import "../scripts/cinematic-home";
-</script>
