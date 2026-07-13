@@ -4,14 +4,14 @@ import "../styles/cinematic-home.css";
 
 const media = cinematicHomeMedia;
 const meteors = [
-  { key: "science", label: "Science", href: "/science", duration: "18s", delay: "-4s", top: "18%", size: "clamp(70px, 7vw, 126px)", depth: ".92" },
-  { key: "history", label: "History", href: "/history", duration: "24s", delay: "-16s", top: "45%", size: "clamp(62px, 6vw, 108px)", depth: ".76" },
-  { key: "art", label: "Art", href: "/art", duration: "21s", delay: "-10s", top: "32%", size: "clamp(68px, 6.6vw, 118px)", depth: ".86" },
-  { key: "future", label: "Future", href: "/future", duration: "26s", delay: "-21s", top: "11%", size: "clamp(58px, 5.7vw, 102px)", depth: ".7" },
-  { key: "astrophysics", label: "Astrophysics", href: "/science", duration: "20s", delay: "-14s", top: "54%", size: "clamp(72px, 7.2vw, 130px)", depth: ".96" },
-  { key: "mathematics", label: "Mathematics", href: "/science", duration: "29s", delay: "-6s", top: "38%", size: "clamp(54px, 5.3vw, 96px)", depth: ".66" },
-  { key: "jlog", label: "JLOG", href: "/blog", duration: "23s", delay: "-2s", top: "7%", size: "clamp(60px, 5.9vw, 106px)", depth: ".73" },
-  { key: "me", label: "Me", href: "/me", duration: "27s", delay: "-18s", top: "27%", size: "clamp(56px, 5.5vw, 100px)", depth: ".68" },
+  { key: "science", label: "Science", href: "/science", duration: "42s", delay: "-9s", top: "15%", start: "8vw", end: "74vw", drift: "-9vh", angle: "-8deg", size: "clamp(66px, 6.4vw, 112px)", depth: ".92", blur: "0px" },
+  { key: "history", label: "History", href: "/history", duration: "54s", delay: "-37s", top: "43%", start: "19vw", end: "78vw", drift: "-6vh", angle: "-5deg", size: "clamp(54px, 5.2vw, 92px)", depth: ".68", blur: ".45px" },
+  { key: "art", label: "Art", href: "/art", duration: "47s", delay: "-25s", top: "29%", start: "5vw", end: "63vw", drift: "-12vh", angle: "-11deg", size: "clamp(62px, 5.9vw, 104px)", depth: ".82", blur: ".15px" },
+  { key: "future", label: "Future", href: "/future", duration: "58s", delay: "-48s", top: "9%", start: "31vw", end: "79vw", drift: "8vh", angle: "6deg", size: "clamp(48px, 4.6vw, 82px)", depth: ".58", blur: ".8px" },
+  { key: "astrophysics", label: "Astrophysics", href: "/science", duration: "45s", delay: "-33s", top: "48%", start: "7vw", end: "69vw", drift: "-14vh", angle: "-13deg", size: "clamp(68px, 6.8vw, 120px)", depth: ".96", blur: "0px" },
+  { key: "mathematics", label: "Mathematics", href: "/science", duration: "62s", delay: "-17s", top: "35%", start: "27vw", end: "76vw", drift: "-4vh", angle: "-4deg", size: "clamp(44px, 4.2vw, 76px)", depth: ".52", blur: "1px" },
+  { key: "jlog", label: "JLOG", href: "/blog", duration: "51s", delay: "-5s", top: "7%", start: "12vw", end: "66vw", drift: "10vh", angle: "7deg", size: "clamp(52px, 5vw, 88px)", depth: ".64", blur: ".55px" },
+  { key: "me", label: "Me", href: "/me", duration: "60s", delay: "-43s", top: "24%", start: "36vw", end: "79vw", drift: "-8vh", angle: "-7deg", size: "clamp(46px, 4.5vw, 80px)", depth: ".56", blur: ".9px" },
 ] as const;
 ---
 
@@ -34,7 +34,7 @@ const meteors = [
         class={`cinematic-home__meteor cinematic-home__meteor--${meteor.key}`}
         href={meteor.href}
         aria-label={`Explore ${meteor.label}`}
-        style={`--meteor-duration:${meteor.duration};--meteor-delay:${meteor.delay};--meteor-top:${meteor.top};--meteor-size:${meteor.size};--meteor-depth:${meteor.depth};--meteor-index:${index};`}
+        style={`--meteor-duration:${meteor.duration};--meteor-delay:${meteor.delay};--meteor-top:${meteor.top};--meteor-start:${meteor.start};--meteor-end:${meteor.end};--meteor-drift:${meteor.drift};--meteor-angle:${meteor.angle};--meteor-size:${meteor.size};--meteor-depth:${meteor.depth};--meteor-blur:${meteor.blur};--meteor-index:${index};`}
       >
         <span class="cinematic-home__trail" aria-hidden="true"></span>
         <img
