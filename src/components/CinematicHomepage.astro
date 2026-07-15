@@ -2,12 +2,11 @@
 import "../styles/cinematic-home.css";
 
 const destinations = [
-  { label: "Me", href: "/me", tone: "personal" },
+  { label: "JLOG", href: "/blog", tone: "journal" },
   { label: "Science", href: "/science", tone: "science" },
   { label: "History", href: "/history", tone: "history" },
   { label: "Art", href: "/art", tone: "art" },
   { label: "Future", href: "/future", tone: "future" },
-  { label: "Journal", href: "/blog", tone: "journal" },
 ] as const;
 ---
 
@@ -17,6 +16,7 @@ const destinations = [
     <div class="cosmic-library__stars"></div>
     <div class="cosmic-library__orbits"></div>
     <div class="cosmic-library__glow"></div>
+    <div class="cosmic-library__wind"></div>
     <div class="cosmic-library__papers">
       <i></i><i></i><i></i><i></i><i></i><i></i>
     </div>
@@ -42,7 +42,6 @@ const destinations = [
         </a>
       ))}
     </div>
-    <span class="cosmic-library__enter" aria-hidden="true">ENTER TO EXPLORE</span>
   </nav>
 
   <div class="cosmic-library__progress" aria-hidden="true">
