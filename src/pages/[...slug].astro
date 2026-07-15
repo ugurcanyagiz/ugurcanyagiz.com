@@ -88,60 +88,301 @@ export function getStaticPaths() {
 }
 
 const slug = Astro.params.slug ?? "";
-const title = slug
-  .split("/")
-  .filter(Boolean)
-  .map((part) => part.replace(/-/g, " "))
-  .join(" / ") || "Topic";
+const segments = slug.split("/").filter(Boolean);
+const titleCase = (value: string) => value.replace(/[-_]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+const section = segments[0] || "atlas";
+const parentTitle = titleCase(segments.at(-2) || section);
+const topicTitle = titleCase(segments.at(-1) || "Topic");
+const title = segments.map(titleCase).join(" / ") || "Topic";
+const parentHref = `/${segments.slice(0, -1).join("/")}`;
+const sectionHref = `/${section}`;
+const trail = segments.map((part, index) => ({
+  label: titleCase(part),
+  href: `/${segments.slice(0, index + 1).join("/")}`,
+}));
 ---
 
 <SiteLayout
   title={`${title} | UGURCAN YAGIZ`}
-  description={`Placeholder page for ${title}.`}
-  theme="dark"
+  description={`${topicTitle} için hafif renkli, scroll tabanlı atlas alt konu şablonu.`}
+  activeSection={section}
+  showBackground={false}
+  fullBleed
 >
-  <article class="topic-placeholder">
-    <p class="topic-placeholder__eyebrow">Knowledge atlas topic</p>
-    <h1>{title}</h1>
-    <p>
-      This is a placeholder page for <code>/{slug}</code>. A full topic page can be added here later.
-    </p>
-    <a href="/">← Back to Atlas</a>
+  <article class="topic-placeholder topic-deep-page">
+    <nav class="topic-deep-page__crumbs" aria-label="Breadcrumb">
+      <a href={sectionHref}>{titleCase(section)}</a>
+      {trail.slice(1).map((item, index) => (
+        <>
+          <span aria-hidden="true">/</span>
+          {index === trail.length - 2 ? <span>{item.label}</span> : <a href={item.href}>{item.label}</a>}
+        </>
+      ))}
+    </nav>
+
+    <header class="topic-deep-page__hero">
+      <p class="topic-placeholder__eyebrow">{titleCase(section)} atlas / {parentTitle}</p>
+      <h1>{topicTitle}</h1>
+      <p>
+        {topicTitle} konusu için hazırlanan bu hafif renkli alt sayfa, üst kategoriyle aynı görsel dili korur:
+        geniş nefes alan tipografi, yumuşak kartlar ve scroll ile kademeli açılan içerik blokları.
+      </p>
+      <div class="topic-deep-page__actions">
+        <a href={parentHref}>← Parent topic</a>
+        <a href={sectionHref}>Section index</a>
+      </div>
+    </header>
+
+    <section class="topic-deep-page__section" aria-label="Topic structure">
+      <div class="topic-deep-page__card">
+        <span>01</span>
+        <h2>Context</h2>
+        <p>Bu bölüm, konunun bağlı olduğu üst başlığı ve atlas içindeki yerini hızlıca açıklar.</p>
+      </div>
+      <div class="topic-deep-page__card">
+        <span>02</span>
+        <h2>Core ideas</h2>
+        <p>Ana fikirler daha sonra gerçek içerikle doldurulabilecek net ve okunabilir parçalara ayrılır.</p>
+      </div>
+      <div class="topic-deep-page__card">
+        <span>03</span>
+        <h2>Reading path</h2>
+        <p>Scroll tabanlı reveal akışı, ziyaretçiyi konu boyunca sakin ve düzenli şekilde yönlendirir.</p>
+      </div>
+    </section>
   </article>
 </SiteLayout>
 
 <style>
-  .topic-placeholder {
-    max-width: 760px;
-    margin: 0 auto;
-    padding: clamp(72px, 12vw, 140px) 24px;
-    color: #fff7df;
+  :global(body:has(.topic-deep-page)){
+    background:#f7f3ea;
+    color:#181511;
   }
 
-  .topic-placeholder__eyebrow {
-    margin: 0 0 12px;
-    color: rgba(121, 215, 255, .78);
-    font-size: 12px;
-    font-weight: 760;
-    letter-spacing: .18em;
-    text-transform: uppercase;
+  :global(body:has(.topic-deep-page) .site-page){
+    color:#181511;
+    background:
+      radial-gradient(circle at 14% 10%, color-mix(in srgb,var(--section-accent) 20%, transparent), transparent 30rem),
+      radial-gradient(circle at 82% 8%, rgba(255,255,255,.94), transparent 24rem),
+      linear-gradient(180deg,#fbfaf6 0%,#f4eee3 52%,#fffdf8 100%);
   }
 
-  .topic-placeholder h1 {
-    margin: 0 0 18px;
-    font-size: clamp(42px, 8vw, 88px);
-    line-height: .95;
-    text-transform: capitalize;
+  :global(body:has(.topic-deep-page) .site-page__cosmos){
+    background:
+      radial-gradient(circle at 12% 14%, color-mix(in srgb,var(--section-accent) 16%, transparent), transparent 28rem),
+      linear-gradient(180deg,rgba(255,255,255,.72),rgba(245,239,227,.86));
+    opacity:1;
   }
 
-  .topic-placeholder p {
-    color: rgba(255, 247, 223, .72);
-    font-size: 18px;
-    line-height: 1.7;
+  :global(body:has(.topic-deep-page) .site-page__cosmos:after){
+    background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,253,248,.92));
   }
 
-  .topic-placeholder a {
-    color: #efca80;
-    font-weight: 800;
+  :global(body:has(.topic-deep-page) .site-page__landscape),
+  :global(body:has(.topic-deep-page) .site-page__sun),
+  :global(body:has(.topic-deep-page) .site-page__cloud),
+  :global(body:has(.topic-deep-page) .site-page__orbit){
+    opacity:.1;
+  }
+
+  :global(body:has(.topic-deep-page) .site-page__section-mark){
+    color:rgba(24,21,17,.42);
+    text-shadow:none;
+  }
+
+  :global(body:has(.topic-deep-page) .site-page__home-link){
+    color:#181511;
+    background:rgba(255,255,255,.76);
+    border-color:rgba(24,21,17,.12);
+  }
+
+  :global(body:has(.topic-deep-page) .site-page__scroll-progress){
+    background:linear-gradient(90deg, transparent, var(--section-accent), #181511);
+    box-shadow:0 0 18px color-mix(in srgb,var(--section-accent) 38%, transparent);
+  }
+
+  .topic-deep-page{
+    width:min(1180px, calc(100% - 40px));
+    margin:0 auto;
+    padding:clamp(7rem,12vw,11rem) 0 clamp(5rem,10vw,9rem);
+    color:#181511;
+  }
+
+  .topic-deep-page__crumbs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    align-items:center;
+    margin-bottom:clamp(1rem,2vw,1.6rem);
+    color:rgba(24,21,17,.52);
+    font-size:.72rem;
+    font-weight:900;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+
+  .topic-deep-page__crumbs a{
+    color:rgba(24,21,17,.62);
+  }
+
+  .topic-deep-page__hero,
+  .topic-deep-page__card{
+    border:1px solid rgba(24,21,17,.10);
+    background:rgba(255,255,255,.68);
+    box-shadow:0 28px 90px rgba(55,42,18,.10);
+    backdrop-filter:blur(20px) saturate(1.05);
+  }
+
+  .topic-deep-page__hero{
+    position:relative;
+    overflow:hidden;
+    border-radius:clamp(28px,4vw,48px);
+    padding:clamp(1.5rem,4vw,4rem);
+  }
+
+  .topic-deep-page__hero:after{
+    content:"";
+    position:absolute;
+    inset:auto -12% -48% -12%;
+    height:68%;
+    background:radial-gradient(ellipse at center,color-mix(in srgb,var(--section-accent) 18%, transparent),transparent 68%);
+    pointer-events:none;
+  }
+
+  .topic-placeholder__eyebrow{
+    margin:0 0 1rem;
+    color:color-mix(in srgb,var(--section-accent) 72%, #181511);
+    font-size:.74rem;
+    font-weight:950;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+  }
+
+  .topic-deep-page h1{
+    max-width:11ch;
+    margin:0 0 1rem;
+    color:#181511;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(3.5rem,10vw,9rem);
+    font-weight:500;
+    line-height:.86;
+    letter-spacing:-.08em;
+    text-transform:capitalize;
+    text-wrap:balance;
+  }
+
+  .topic-deep-page p{
+    max-width:760px;
+    margin:0;
+    color:rgba(24,21,17,.68);
+    font-size:clamp(1rem,2vw,1.28rem);
+    line-height:1.75;
+  }
+
+  .topic-deep-page__actions{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-wrap:wrap;
+    gap:.75rem;
+    margin-top:1.5rem;
+  }
+
+  .topic-deep-page__actions a{
+    display:inline-flex;
+    align-items:center;
+    min-height:44px;
+    padding:0 1rem;
+    border:1px solid rgba(24,21,17,.12);
+    border-radius:999px;
+    color:#181511;
+    background:rgba(255,255,255,.72);
+    font-size:.76rem;
+    font-weight:900;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+
+  .topic-deep-page__section{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:clamp(1rem,2vw,1.35rem);
+    margin-top:clamp(1rem,3vw,2rem);
+  }
+
+  .topic-deep-page__card{
+    min-height:240px;
+    border-radius:clamp(22px,3vw,34px);
+    padding:clamp(1.1rem,2.5vw,1.7rem);
+    transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease,background .25s ease;
+  }
+
+  .topic-deep-page__card span{
+    display:inline-grid;
+    place-items:center;
+    width:42px;
+    height:42px;
+    margin-bottom:clamp(2rem,5vw,4rem);
+    border:1px solid color-mix(in srgb,var(--section-accent) 38%, rgba(24,21,17,.12));
+    border-radius:50%;
+    color:color-mix(in srgb,var(--section-accent) 72%, #181511);
+    background:color-mix(in srgb,var(--section-accent) 10%, white);
+    font-weight:950;
+  }
+
+  .topic-deep-page__card h2{
+    margin:0 0 .55rem;
+    color:#181511;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(1.45rem,2.4vw,2.15rem);
+    font-weight:500;
+    letter-spacing:-.045em;
+  }
+
+  .topic-deep-page__card p{
+    font-size:1rem;
+  }
+
+  @media (hover:hover){
+    .topic-deep-page__card:hover,
+    .topic-deep-page__actions a:hover{
+      transform:translateY(-7px);
+      border-color:color-mix(in srgb,var(--section-accent) 40%, rgba(24,21,17,.12));
+      background:#fff;
+      box-shadow:0 38px 120px rgba(55,42,18,.14);
+    }
+  }
+
+  @supports (animation-timeline: view()){
+    .topic-deep-page__hero,
+    .topic-deep-page__crumbs,
+    .topic-deep-page__card{
+      animation:topic-deep-reveal both ease-out;
+      animation-timeline:view();
+      animation-range:entry 0% cover 30%;
+    }
+
+    @keyframes topic-deep-reveal{
+      from{opacity:.2;transform:translateY(44px) scale(.985);filter:blur(8px)}
+      to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+  }
+
+  @media (max-width:860px){
+    .topic-deep-page__section{grid-template-columns:1fr}
+    .topic-deep-page__card{min-height:auto}
+  }
+
+  @media (max-width:640px){
+    .topic-deep-page{width:min(100% - 28px,1180px);padding-top:clamp(6rem,22vw,8rem)}
+    .topic-deep-page h1{font-size:clamp(3rem,16vw,5.2rem)}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .topic-deep-page__hero,
+    .topic-deep-page__crumbs,
+    .topic-deep-page__card{animation:none!important;transform:none!important;filter:none!important}
+    .topic-deep-page__card,
+    .topic-deep-page__actions a{transition:none!important}
   }
 </style>
