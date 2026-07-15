@@ -562,21 +562,6 @@ body:has(.site-page .page){
   color:#181511;
 }
 
-body:has(.site-page .page) .topbar,
-body:has(.site-page .page) .subnav,
-body:has(.site-page .page) .site-footer{
-  background:rgba(255,252,246,.86);
-  border-color:rgba(24,21,17,.08);
-  color:#181511;
-  backdrop-filter:blur(18px) saturate(1.05);
-}
-
-body:has(.site-page .page) .brand,
-body:has(.site-page .page) .footer-left,
-body:has(.site-page .page) .icon-btn{
-  color:rgba(24,21,17,.76);
-}
-
 body:has(.site-page .page) .site-page{
   color:#181511;
   background:
