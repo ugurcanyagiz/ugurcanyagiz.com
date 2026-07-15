@@ -10,7 +10,7 @@ const destinations = [
 ] as const;
 ---
 
-<section class="cosmic-library" data-cosmic-library data-active="0" aria-label="Explore Ugurcan Yagiz">
+<section class="cosmic-library" data-cosmic-library data-active="0" aria-label="Explore Ugurcan Yagiz" tabindex="0">
   <div class="cosmic-library__scene" aria-hidden="true">
     <div class="cosmic-library__backdrop"></div>
     <div class="cosmic-library__stars"></div>
@@ -25,6 +25,7 @@ const destinations = [
 
   <a class="cosmic-library__brand" href="/" aria-label="Ugurcan Yagiz home">UGURCAN YAGIZ</a>
   <p class="cosmic-library__eyebrow">THE LIVING ARCHIVE</p>
+  <p class="cosmic-library__edition" aria-hidden="true">EST. 2026&nbsp;&nbsp;·&nbsp;&nbsp;NYC</p>
 
   <nav class="cosmic-library__menu" aria-label="Main sections">
     <div class="cosmic-library__wheel" data-menu-wheel>
@@ -71,12 +72,15 @@ const destinations = [
       root.dataset.tone = items[active]?.dataset.tone ?? "personal";
       items.forEach((item, index) => {
         const isActive = index === active;
-        item.toggleAttribute("aria-current", isActive);
+        if (isActive) item.setAttribute("aria-current", "page");
+        else item.removeAttribute("aria-current");
         item.tabIndex = isActive ? 0 : -1;
       });
       if (current) current.textContent = String(active + 1).padStart(2, "0");
       if (scrollPage && !reducedMotion.matches) {
-        window.scrollTo({ top: active * window.innerHeight, behavior: "smooth" });
+        const maxScroll = Math.max(0, root.scrollHeight - window.innerHeight);
+        const target = items.length > 1 ? (active / (items.length - 1)) * maxScroll : 0;
+        window.scrollTo({ top: root.offsetTop + target, behavior: "smooth" });
       }
     };
 
