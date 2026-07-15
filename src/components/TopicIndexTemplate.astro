@@ -8,12 +8,12 @@ const {
 ---
 <main class="topic-index" data-topic-index>
   <div class="topic-index__search" data-reveal>
-    <label class="topic-index__search-label" for={`topic-search-${sectionLabel}`}>Konu ara</label>
+    <label class="topic-index__search-label" for={`topic-search-${sectionLabel}`}>Search topics</label>
     <input
       class="topic-index__search-input"
       id={`topic-search-${sectionLabel}`}
       type="search"
-      placeholder={`${sectionLabel} içinde ara...`}
+      placeholder={`Search ${sectionLabel}...`}
       autocomplete="off"
       data-topic-search
     />
@@ -27,7 +27,7 @@ const {
     ))}
   </section>
 
-  <p class="topic-index__empty" data-topic-empty hidden>Sonuç bulunamadı.</p>
+  <p class="topic-index__empty" data-topic-empty hidden>No matching topics found.</p>
   <ScrollReveal />
 </main>
 
