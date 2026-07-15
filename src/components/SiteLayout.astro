@@ -28,6 +28,7 @@ const inferredLabel = pageLabel || (resolvedActive ? resolvedActive.toUpperCase(
     <slot name="subnav" />
   </div>
   <div class:list={["site-page", `site-page--${resolvedActive}`, fullBleed && "site-page--full-bleed"]} data-section={resolvedActive}>
+    <div class="site-page__scroll-progress" aria-hidden="true"></div>
     <div class="site-page__cosmos" aria-hidden="true">
       <span class="site-page__glow"></span>
       <span class="site-page__sun"></span>
