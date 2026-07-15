@@ -63,8 +63,18 @@ const destinations = [
     const current = root.querySelector<HTMLElement>("[data-progress-current]");
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let active = 0;
-    let touchStart = 0;
-    let locked = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartedAt = 0;
+    let wheelIntent = 0;
+    let animationFrame = 0;
+    let animating = false;
+    let queuedDirection = 0;
+
+    const TRANSITION_MS = 430;
+    const SWIPE_DISTANCE = 34;
+    const SWIPE_VELOCITY = .24;
+    const easeOutQuint = (value: number) => 1 - Math.pow(1 - value, 5);
 
     const select = (next: number, scrollPage = false) => {
       active = Math.max(0, Math.min(items.length - 1, next));
@@ -77,25 +87,66 @@ const destinations = [
         item.tabIndex = isActive ? 0 : -1;
       });
       if (current) current.textContent = String(active + 1).padStart(2, "0");
-      if (scrollPage && !reducedMotion.matches) {
-        const maxScroll = Math.max(0, root.scrollHeight - window.innerHeight);
-        const target = items.length > 1 ? (active / (items.length - 1)) * maxScroll : 0;
-        window.scrollTo({ top: root.offsetTop + target, behavior: "smooth" });
-      }
+      if (scrollPage) animateTo(active);
     };
 
     const syncFromScroll = () => {
       const max = Math.max(1, root.scrollHeight - window.innerHeight);
       const local = Math.max(0, Math.min(max, window.scrollY - root.offsetTop));
-      select(Math.round((local / max) * (items.length - 1)));
+      if (!animating) select(Math.round((local / max) * (items.length - 1)));
       root.style.setProperty("--scroll-progress", String(local / max));
     };
 
+    const animateTo = (index: number) => {
+      cancelAnimationFrame(animationFrame);
+      const maxScroll = Math.max(0, root.scrollHeight - window.innerHeight);
+      const destination = root.offsetTop + (items.length > 1 ? (index / (items.length - 1)) * maxScroll : 0);
+      const origin = window.scrollY;
+      const distance = destination - origin;
+
+      if (reducedMotion.matches || Math.abs(distance) < 2) {
+        window.scrollTo(0, destination);
+        animating = false;
+        root.removeAttribute("data-transitioning");
+        syncFromScroll();
+        return;
+      }
+
+      animating = true;
+      root.setAttribute("data-transitioning", "true");
+      const startedAt = performance.now();
+
+      const tick = (now: number) => {
+        const elapsed = Math.min(1, (now - startedAt) / TRANSITION_MS);
+        window.scrollTo(0, origin + distance * easeOutQuint(elapsed));
+        syncFromScroll();
+        if (elapsed < 1) {
+          animationFrame = requestAnimationFrame(tick);
+          return;
+        }
+        animating = false;
+        root.removeAttribute("data-transitioning");
+        syncFromScroll();
+        if (queuedDirection) {
+          const nextDirection = queuedDirection;
+          queuedDirection = 0;
+          step(nextDirection);
+        }
+      };
+      animationFrame = requestAnimationFrame(tick);
+    };
+
     const step = (direction: number) => {
-      if (locked) return;
-      locked = true;
-      select(active + direction, true);
-      window.setTimeout(() => { locked = false; }, 520);
+      const normalized = Math.sign(direction);
+      if (!normalized) return;
+      if (animating) {
+        queuedDirection = normalized;
+        return;
+      }
+      const next = Math.max(0, Math.min(items.length - 1, active + normalized));
+      if (next === active) return;
+      root.dataset.direction = normalized > 0 ? "forward" : "backward";
+      select(next, true);
     };
 
     items.forEach((item, index) => {
@@ -109,20 +160,53 @@ const destinations = [
     });
 
     root.addEventListener("keydown", (event) => {
-      if (["ArrowDown", "s", "S"].includes(event.key)) { event.preventDefault(); step(1); }
-      if (["ArrowUp", "w", "W"].includes(event.key)) { event.preventDefault(); step(-1); }
+      if (["ArrowDown", "ArrowRight", "s", "S"].includes(event.key)) { event.preventDefault(); step(1); }
+      if (["ArrowUp", "ArrowLeft", "w", "W"].includes(event.key)) { event.preventDefault(); step(-1); }
       if ((event.key === "Enter" || event.key === " ") && document.activeElement === root) {
         event.preventDefault();
         items[active]?.click();
       }
     });
-    root.addEventListener("touchstart", (event) => { touchStart = event.touches[0]?.clientY ?? 0; }, { passive: true });
+
+    root.addEventListener("wheel", (event) => {
+      event.preventDefault();
+      const dominantDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      wheelIntent += dominantDelta;
+      if (Math.abs(wheelIntent) >= 38) {
+        step(wheelIntent > 0 ? 1 : -1);
+        wheelIntent = 0;
+      }
+    }, { passive: false });
+
+    root.addEventListener("touchstart", (event) => {
+      if (event.touches.length !== 1) return;
+      touchStartX = event.touches[0]?.clientX ?? 0;
+      touchStartY = event.touches[0]?.clientY ?? 0;
+      touchStartedAt = performance.now();
+    }, { passive: true });
+    root.addEventListener("touchmove", (event) => {
+      if (event.touches.length === 1) event.preventDefault();
+    }, { passive: false });
     root.addEventListener("touchend", (event) => {
-      const delta = touchStart - (event.changedTouches[0]?.clientY ?? touchStart);
-      if (Math.abs(delta) > 44) step(delta > 0 ? 1 : -1);
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      const deltaX = touchStartX - touch.clientX;
+      const deltaY = touchStartY - touch.clientY;
+      const dominantDelta = Math.abs(deltaX) > Math.abs(deltaY) ? deltaX : deltaY;
+      const duration = Math.max(1, performance.now() - touchStartedAt);
+      const velocity = Math.abs(dominantDelta) / duration;
+      if (Math.abs(dominantDelta) >= SWIPE_DISTANCE || velocity >= SWIPE_VELOCITY) {
+        step(dominantDelta > 0 ? 1 : -1);
+      }
+    }, { passive: true });
+    root.addEventListener("touchcancel", () => {
+      touchStartX = 0;
+      touchStartY = 0;
+      touchStartedAt = 0;
     }, { passive: true });
     window.addEventListener("scroll", syncFromScroll, { passive: true });
     window.addEventListener("resize", syncFromScroll, { passive: true });
+    window.addEventListener("pagehide", () => cancelAnimationFrame(animationFrame), { once: true });
     syncFromScroll();
   });
 </script>

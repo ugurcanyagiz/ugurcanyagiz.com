@@ -25,7 +25,7 @@ test('scroll progress drives menu selection and scene depth', () => {
   assert.match(component, /syncFromScroll/);
   assert.match(component, /--scroll-progress/);
   assert.match(component, /window\.scrollTo/);
-  assert.match(component, /active \/ \(items\.length - 1\)/);
+  assert.match(component, /index \/ \(items\.length - 1\)/);
   assert.match(styles, /var\(--scroll-progress\)/);
   assert.match(styles, /cosmic-library__backdrop/);
   assert.match(styles, /cosmic-library__papers/);
@@ -39,6 +39,24 @@ test('menu supports keyboard, touch, and click interaction', () => {
   assert.match(component, /touchstart/);
   assert.match(component, /touchend/);
   assert.match(component, /item\.addEventListener\("click"/);
+  assert.match(component, /ArrowRight/);
+  assert.match(component, /ArrowLeft/);
+  assert.match(component, /Math\.abs\(deltaX\) > Math\.abs\(deltaY\)/);
+  assert.match(component, /dominantDelta > 0 \? 1 : -1/);
+  assert.match(component, /SWIPE_VELOCITY/);
+  assert.match(component, /touchmove/);
+  assert.match(component, /passive: false/);
+});
+
+test('game-like transitions use deterministic easing and buffer one input', () => {
+  assert.match(component, /TRANSITION_MS = 430/);
+  assert.match(component, /easeOutQuint/);
+  assert.match(component, /requestAnimationFrame/);
+  assert.match(component, /queuedDirection/);
+  assert.match(component, /data-transitioning/);
+  assert.match(styles, /library-wind-boost/);
+  assert.match(styles, /cubic-bezier\(\.16, 1, \.3, 1\)/);
+  assert.match(styles, /touch-action: none/);
 });
 
 test('homepage chrome is hidden while inner-page chrome remains available', () => {
