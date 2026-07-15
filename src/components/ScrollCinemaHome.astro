@@ -35,7 +35,7 @@ const phases = [
     eyebrow: "Cosmic Knowledge Atlas",
     ...SECTION_QUOTES.intro,
     accent: "Enter",
-    href: "/me",
+    href: "/blog",
   },
   ...NAV_ITEMS.map((item) => ({
     key: item.sectionId,
@@ -141,7 +141,7 @@ const scrollHeight = 100 + (phases.length - 1) * 88;
     const label = root.querySelector('[data-active-label]');
     const bar = root.querySelector('[data-progress-bar]');
     const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const phaseNames = ['Intro', 'Science', 'History', 'Art', 'Future', 'JLOG'];
+    const phaseNames = ['Intro', 'JLOG', 'Science', 'History', 'Art', 'Future'];
     const accents = [
       [239, 202, 128],
       [121, 215, 255],

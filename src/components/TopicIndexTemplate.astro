@@ -62,30 +62,34 @@ const {
 
 <style>
   :global(body:has(.topic-index)){
-    background:#f7f4ee;
+    background:#f7f3ea;
     color:#151515;
   }
 
   :global(body:has(.topic-index) .site-page){
-    background:linear-gradient(180deg,#fbfaf7 0%,#f4efe6 52%,#ffffff 100%);
+    background:
+      radial-gradient(circle at 14% 10%, color-mix(in srgb,var(--section-accent) 20%, transparent), transparent 30rem),
+      radial-gradient(circle at 82% 8%, rgba(255,255,255,.94), transparent 24rem),
+      linear-gradient(180deg,#fbfaf6 0%,#f4eee3 52%,#fffdf8 100%);
     color:#151515;
   }
 
   :global(body:has(.topic-index) .site-page__cosmos){
-    background:radial-gradient(circle at 12% 14%, color-mix(in srgb, var(--section-accent) 18%, transparent), transparent 28rem),
-      radial-gradient(circle at 84% 8%, rgba(255,255,255,.9), transparent 22rem),
-      linear-gradient(180deg, rgba(255,255,255,.72), rgba(245,241,234,.72));
+    background:
+      radial-gradient(circle at 12% 14%, color-mix(in srgb,var(--section-accent) 16%, transparent), transparent 28rem),
+      linear-gradient(180deg,rgba(255,255,255,.72),rgba(245,239,227,.86));
+    opacity:1;
   }
 
   :global(body:has(.topic-index) .site-page__cosmos:after){
-    background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.94));
+    background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,253,248,.92));
   }
 
   :global(body:has(.topic-index) .site-page__landscape),
   :global(body:has(.topic-index) .site-page__sun),
   :global(body:has(.topic-index) .site-page__cloud),
   :global(body:has(.topic-index) .site-page__orbit){
-    opacity:.12;
+    opacity:.1;
   }
 
   :global(body:has(.topic-index) .site-page__section-mark){

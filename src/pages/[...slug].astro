@@ -83,6 +83,14 @@ export function getStaticPaths() {
   { params: { slug: 'science/physics/classical-mechanics' } },
   { params: { slug: 'science/physics/quantum-theory' } },
   { params: { slug: 'science/physics/relativity' } },
+  { params: { slug: 'art/design/typography' } },
+  { params: { slug: 'art/visual-studies/museum-curation' } },
+  { params: { slug: 'future/technology/climate-adaptation' } },
+  { params: { slug: 'future/artificial-intelligence/verification' } },
+  { params: { slug: 'history/maps-timelines/silk-road' } },
+  { params: { slug: 'history/philosophy/stoicism' } },
+  { params: { slug: 'science/astronomy/exoplanets' } },
+  { params: { slug: 'science/biology/microbiome' } },
   { params: { slug: 'science/physics/thermodynamics' } }
   ];
 }
@@ -100,11 +108,61 @@ const trail = segments.map((part, index) => ({
   label: titleCase(part),
   href: `/${segments.slice(0, index + 1).join("/")}`,
 }));
+
+type SectionContent = {
+  lens: string;
+  context: string;
+  ideas: string[];
+  readingPath: string[];
+  questions: string[];
+};
+
+const SECTION_CONTENT: Record<string, SectionContent> = {
+  science: {
+    lens: "Science here is not a list of answers to memorize; it is a cycle of observation, modeling, testing, and correction.",
+    context: "This atlas topic connects scales of understanding: from measurement to theory, and from theory back to everyday intuition.",
+    ideas: ["Separate the observable fact first: what is truly being measured, and what is being interpreted?", "Read the power and limits of a model together; good science gives both explanation and uncertainty.", "Trace how small mechanisms turn into large-scale consequences."],
+    readingPath: ["Build the core vocabulary", "Simplify the mechanism through examples", "Note the open questions and common misconceptions"],
+    questions: ["What evidence supports this idea?", "At what scale does the model break down?", "Which other scientific field does this topic connect to?"],
+  },
+  history: {
+    lens: "History pages are built less as event lists and more as maps of causes, institutions, incentives, and fragile systems.",
+    context: "This atlas topic explains how a historical pattern leaves traces in the present through geography, economics, ideas, and power.",
+    ideas: ["Avoid single-cause explanations; history usually changes when several pressures accumulate at once.", "Watch how institutions and technologies narrow or expand what people can choose.", "Separate the winners’ narrative from everyday realities on the ground."],
+    readingPath: ["Set the time and place", "Map the incentives of the actors", "Compare long-term consequences with today’s systems"],
+    questions: ["Who gained, and who lost?", "Was the turning point a single event, or accumulated pressure?", "Where does this pattern repeat today?"],
+  },
+  art: {
+    lens: "The Art section reads art not only as taste, but as a system of attention, rhythm, material, composition, and cultural memory.",
+    context: "This atlas topic studies how a work or practice creates meaning through visual decisions, technical limits, and audience perception.",
+    ideas: ["Form carries meaning: scale, space, color, and repetition guide the viewer’s body.", "Technical choices are practical as much as aesthetic; tools, time, and materials shape the result.", "Meaning often comes from contrast: silence/sound, empty/full, order/disruption."],
+    readingPath: ["Describe the first impression", "Break down the composition and technique", "Read it again through cultural context and personal experience"],
+    questions: ["Where does the eye go first, and why?", "Which technical decision changes the emotion?", "Which question from its time is the work answering?"],
+  },
+  future: {
+    lens: "Future pages are less about prediction and more about reading signals: cost curves, institutions, safety, and human behavior together.",
+    context: "This atlas topic maps an emerging technological or social shift without hype, balancing opportunities, risks, and required infrastructure.",
+    ideas: ["A technology’s future is determined not only by prototypes, but by cost, trust, distribution, and maintenance.", "New systems collide with old institutions; law, education, and culture shape the speed of adaptation.", "The best future reading is both optimistic and careful: it sees capability and side effects together."],
+    readingPath: ["Separate today’s signals", "List the barriers to scale", "Think through consequences for people and institutions"],
+    questions: ["Which cost curve accelerates this change?", "Where do safety and trust problems appear?", "Is the winner the technology itself, or the system that uses it well?"],
+  },
+  blog: {
+    lens: "JLOG subpages turn personal notes, reading trails, and research questions into short but organized thought files.",
+    context: "This atlas topic treats an idea not as a finished answer, but as a space for observation, quotation, questions, and revision.",
+    ideas: ["Separate personal observation from general claims.", "Do not lose the question a text leaves behind.", "Short notes can become larger research paths over time."],
+    readingPath: ["Identify where the note begins", "List the connected ideas", "Save the question that remains open"],
+    questions: ["What curiosity created this note?", "Which source or experience changed the idea?", "How could I test this later?"],
+  },
+};
+
+const content = SECTION_CONTENT[section] || SECTION_CONTENT.science;
+const topicHuman = topicTitle.toLowerCase();
+const parentHuman = parentTitle.toLowerCase();
 ---
 
 <SiteLayout
   title={`${title} | UGURCAN YAGIZ`}
-  description={`${topicTitle} için hafif renkli, scroll tabanlı atlas alt konu şablonu.`}
+  description={`${topicTitle} in a light, scroll-based atlas topic template.`}
   activeSection={section}
   showBackground={false}
   fullBleed
@@ -124,8 +182,8 @@ const trail = segments.map((part, index) => ({
       <p class="topic-placeholder__eyebrow">{titleCase(section)} atlas / {parentTitle}</p>
       <h1>{topicTitle}</h1>
       <p>
-        {topicTitle} konusu için hazırlanan bu hafif renkli alt sayfa, üst kategoriyle aynı görsel dili korur:
-        geniş nefes alan tipografi, yumuşak kartlar ve scroll ile kademeli açılan içerik blokları.
+        {content.context} This page positions <b>{topicHuman}</b> inside the <b>{parentHuman}</b> path
+        and gives visitors a complete, quick-reading starting map.
       </p>
       <div class="topic-deep-page__actions">
         <a href={parentHref}>← Parent topic</a>
@@ -136,18 +194,39 @@ const trail = segments.map((part, index) => ({
     <section class="topic-deep-page__section" aria-label="Topic structure">
       <div class="topic-deep-page__card">
         <span>01</span>
-        <h2>Context</h2>
-        <p>Bu bölüm, konunun bağlı olduğu üst başlığı ve atlas içindeki yerini hızlıca açıklar.</p>
+        <h2>Lens</h2>
+        <p>{content.lens}</p>
       </div>
       <div class="topic-deep-page__card">
         <span>02</span>
         <h2>Core ideas</h2>
-        <p>Ana fikirler daha sonra gerçek içerikle doldurulabilecek net ve okunabilir parçalara ayrılır.</p>
+        <ul>
+          {content.ideas.map((idea) => <li>{idea}</li>)}
+        </ul>
       </div>
       <div class="topic-deep-page__card">
         <span>03</span>
         <h2>Reading path</h2>
-        <p>Scroll tabanlı reveal akışı, ziyaretçiyi konu boyunca sakin ve düzenli şekilde yönlendirir.</p>
+        <ol>
+          {content.readingPath.map((step) => <li>{step}</li>)}
+        </ol>
+      </div>
+    </section>
+
+    <section class="topic-deep-page__detail" aria-label="Topic notes">
+      <div>
+        <p class="topic-deep-page__kicker">Why it matters</p>
+        <h2>How to read {topicTitle}</h2>
+        <p>
+          {topicTitle} may look like a standalone topic, but inside the atlas it belongs to a larger network.
+          The page therefore follows definition, mechanism, example, and consequence to build a fast mental model.
+        </p>
+      </div>
+      <div class="topic-deep-page__questions">
+        <p class="topic-deep-page__kicker">Guiding questions</p>
+        <ul>
+          {content.questions.map((question) => <li>{question}</li>)}
+        </ul>
       </div>
     </section>
   </article>
@@ -339,8 +418,62 @@ const trail = segments.map((part, index) => ({
     letter-spacing:-.045em;
   }
 
-  .topic-deep-page__card p{
+  .topic-deep-page__card p,
+  .topic-deep-page__card li{
+    color:rgba(24,21,17,.66);
     font-size:1rem;
+    line-height:1.8;
+  }
+
+  .topic-deep-page__card ul,
+  .topic-deep-page__card ol{
+    display:grid;
+    gap:.65rem;
+    margin:0;
+    padding-left:1.15rem;
+  }
+
+  .topic-deep-page__detail{
+    display:grid;
+    grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);
+    gap:clamp(1rem,2vw,1.4rem);
+    margin-top:clamp(1rem,2vw,1.4rem);
+    padding:clamp(1.3rem,3vw,2.2rem);
+    border:1px solid rgba(24,21,17,.1);
+    border-radius:28px;
+    background:rgba(255,255,255,.66);
+    box-shadow:0 22px 70px rgba(60,43,20,.08);
+  }
+
+  .topic-deep-page__detail h2{
+    margin:.25rem 0 .7rem;
+    color:#181511;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(1.7rem,3vw,3rem);
+    font-weight:500;
+    letter-spacing:-.05em;
+  }
+
+  .topic-deep-page__detail p,
+  .topic-deep-page__detail li{
+    color:rgba(24,21,17,.68);
+    line-height:1.85;
+  }
+
+  .topic-deep-page__kicker{
+    margin:0;
+    color:var(--section-accent);
+    font-size:.72rem;
+    font-weight:950;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+
+  .topic-deep-page__questions ul{
+    display:grid;
+    gap:.8rem;
+    margin:.8rem 0 0;
+    padding-left:1.15rem;
   }
 
   @media (hover:hover){
@@ -369,7 +502,8 @@ const trail = segments.map((part, index) => ({
   }
 
   @media (max-width:860px){
-    .topic-deep-page__section{grid-template-columns:1fr}
+    .topic-deep-page__section,
+    .topic-deep-page__detail{grid-template-columns:1fr}
     .topic-deep-page__card{min-height:auto}
   }
 
