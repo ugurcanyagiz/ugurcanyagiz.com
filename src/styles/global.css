@@ -770,17 +770,10 @@ body:has(.article-editorial){
   background:#f6f4ef;
   color:#162033;
 }
-body:has(.article-editorial) .topbar{
-  background:rgba(246,244,239,.82);
-  border-bottom-color:rgba(22,32,51,.1);
-  backdrop-filter:blur(18px) saturate(1.08);
-}
-body:has(.article-editorial) .subnav,
 body:has(.article-editorial) .site-footer{
   background:rgba(246,244,239,.72);
   border-color:rgba(22,32,51,.08);
 }
-body:has(.article-editorial) .brand,
 body:has(.article-editorial) .footer-left,
 body:has(.article-editorial) .icon-btn{ color:rgba(22,32,51,.74); }
 body:has(.article-editorial) .site-page{
