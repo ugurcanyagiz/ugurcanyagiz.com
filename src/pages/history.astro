@@ -1,6 +1,6 @@
 ---
 import SiteLayout from "../components/SiteLayout.astro";
-import FilterBar from "../components/FilterBar.astro";
+import TopicIndexTemplate from "../components/TopicIndexTemplate.astro";
 
 const cards = [
   {
@@ -185,46 +185,15 @@ const cards = [
   },
 ];
 
-const filters = ["ALL", "CIVILIZATIONS", "WARS", "POWER", "ECONOMY", "CULTURE", "IDEAS", "SOCIAL", "TECH", "PATTERNS"];
 
-import AtlasBackground from "../components/AtlasBackground.astro";
-import SectionHeader from "../components/SectionHeader.astro";
-import ScrollReveal from "../components/ScrollReveal.astro";
 ---
-<SiteLayout title="History — Ugurcan" description="A surreal timeline of civilization, power, memory, institutions, and patterns that keep returning." fullBleed showBackground={false}>
-  <FilterBar slot="subnav" filters={filters} cardSelector=".history-card" queryKey="topic" defaultFilter="ALL" />
-  <main class="atlas-page history-atlas">
-    <AtlasBackground variant="history" id="history-scene" />
-    <div class="atlas-content">
-      <section class="atlas-hero">
-        <div class="atlas-hero__panel" data-reveal>
-          <p class="atlas-eyebrow">Personal atlas / History</p>
-          <h1>History</h1>
-          <p class="atlas-hero__subtitle">A surreal timeline of civilization, power, memory, institutions, and patterns that keep returning.</p>
-        </div>
-      </section>
 
-      <section class="atlas-section">
-        <SectionHeader eyebrow="Scroll system" title="Empires → Trade → Ideas → War → Institutions" text="Move through this room like an exhibition: each card is a fragment, a question, and a doorway into a longer note." />
-        <div class="atlas-grid atlas-grid--four">
-          <article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Empires</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Trade</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Ideas</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>War</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Institutions</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article>
-        </div>
-      </section>
-
-      <section class="atlas-section">
-        <SectionHeader eyebrow="Archive" title="Existing notes, redesigned as exhibition cards" text="All routes and articles are preserved; the visual system now matches the surreal premium direction of /me." />
-        <div class="atlas-grid">
-          {cards.map((c) => (
-            <a class="atlas-card history-card" href={c.href} data-category={c.category} data-reveal>
-              <span class="atlas-glyph" aria-hidden="true">◈</span>
-              <p class="atlas-eyebrow">{c.category} · {c.subtitle}</p>
-              <h3>{c.title}</h3>
-              <p>{c.excerpt}</p>
-            </a>
-          ))}
-        </div>
-      </section>
-    </div>
-    <ScrollReveal />
-  </main>
+<SiteLayout title="History — Ugurcan" description="İmparatorluklardan devrimlere kadar repo içindeki tarih yazılarının blog hissinde, hızlı okunur konu indeksi." fullBleed showBackground={false}>
+  <TopicIndexTemplate
+    eyebrow="Personal archive / History"
+    title="History"
+    description="İmparatorluklardan devrimlere kadar repo içindeki tarih yazılarının blog hissinde, hızlı okunur konu indeksi."
+    cards={cards}
+    sectionLabel="History"
+  />
 </SiteLayout>
