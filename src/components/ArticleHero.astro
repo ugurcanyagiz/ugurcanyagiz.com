@@ -1,0 +1,17 @@
+---
+const { eyebrow = '', title, deck = '', updated = '', image = null } = Astro.props;
+---
+<header class="hero">
+  <div class="hero-top">
+    <a class="back" href="/">← Back to Atlas</a>
+    {eyebrow && <span class="chip">{eyebrow}</span>}
+  </div>
+  <div class={image ? 'hero-grid' : 'hero-left'}>
+    <div class="hero-left">
+      <h1>{title}</h1>
+      {deck && <p class="subtitle">{deck}</p>}
+      {updated && <p class="subtitle">{updated}</p>}
+    </div>
+    {image && <div class="hero-right card"><img class="hero-img" src={image.src} alt={image.alt} width={image.width ?? 1600} height={image.height ?? 1000} loading="eager" decoding="async" />{image.caption && <div class="hero-img-cap">{image.caption}</div>}</div>}
+  </div>
+</header>
