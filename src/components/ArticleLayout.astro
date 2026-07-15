@@ -1,0 +1,60 @@
+---
+import SiteLayout from "./SiteLayout.astro";
+
+const { title = "UGURCAN YAGIZ", description = "" } = Astro.props;
+---
+
+<SiteLayout title={title} description={description} showBackground={false}>
+  <div class="article-editorial" data-article-editorial>
+    <div class="article-progress" aria-hidden="true"><span></span></div>
+    <div class="article-atmosphere" aria-hidden="true">
+      <span class="article-atmosphere__field article-atmosphere__field--cyan"></span>
+      <span class="article-atmosphere__field article-atmosphere__field--gold"></span>
+      <span class="article-atmosphere__orbital"></span>
+      <span class="article-atmosphere__grain"></span>
+    </div>
+    <slot />
+  </div>
+</SiteLayout>
+
+<script>
+  const root = document.querySelector("[data-article-editorial]");
+
+  if (root) {
+    const progress = root.querySelector(".article-progress span");
+    const atmosphere = root.querySelector(".article-atmosphere");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const updateArticleProgress = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (progress) progress.style.transform = `scaleX(${ratio})`;
+      if (atmosphere && !reduceMotion.matches) {
+        atmosphere.style.setProperty("--article-scroll", ratio.toFixed(4));
+      }
+    };
+
+    updateArticleProgress();
+    window.addEventListener("scroll", updateArticleProgress, { passive: true });
+    window.addEventListener("resize", updateArticleProgress);
+
+    const revealTargets = root.querySelectorAll("article.page > header, article.page > .section, article.page > .footnav");
+    revealTargets.forEach((target) => target.classList.add("article-reveal"));
+
+    if ("IntersectionObserver" in window && !reduceMotion.matches) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: "0px 0px -12%", threshold: 0.12 });
+
+      revealTargets.forEach((target) => observer.observe(target));
+    } else {
+      revealTargets.forEach((target) => target.classList.add("is-visible"));
+    }
+  }
+</script>
