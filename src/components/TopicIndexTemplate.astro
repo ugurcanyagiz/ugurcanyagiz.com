@@ -1,0 +1,103 @@
+---
+import ScrollReveal from "./ScrollReveal.astro";
+
+const {
+  cards = [],
+  sectionLabel = "Topics",
+} = Astro.props;
+---
+<main class="topic-index" data-topic-index>
+  <section class="topic-index__list" aria-label={`${sectionLabel} topics`}>
+    {cards.map((card) => (
+      <a class="topic-index__link" href={card.href} data-reveal>
+        {card.title}
+      </a>
+    ))}
+  </section>
+  <ScrollReveal />
+</main>
+
+<style>
+  :global(body:has(.topic-index)){
+    background:#f7f4ee;
+    color:#151515;
+  }
+
+  :global(body:has(.topic-index) .site-page){
+    background:linear-gradient(180deg,#fbfaf7 0%,#f4efe6 52%,#ffffff 100%);
+    color:#151515;
+  }
+
+  :global(body:has(.topic-index) .site-page__cosmos){
+    background:radial-gradient(circle at 12% 14%, color-mix(in srgb, var(--section-accent) 18%, transparent), transparent 28rem),
+      radial-gradient(circle at 84% 8%, rgba(255,255,255,.9), transparent 22rem),
+      linear-gradient(180deg, rgba(255,255,255,.72), rgba(245,241,234,.72));
+  }
+
+  :global(body:has(.topic-index) .site-page__cosmos:after){
+    background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.94));
+  }
+
+  :global(body:has(.topic-index) .site-page__landscape),
+  :global(body:has(.topic-index) .site-page__sun),
+  :global(body:has(.topic-index) .site-page__cloud),
+  :global(body:has(.topic-index) .site-page__orbit){
+    opacity:.12;
+  }
+
+  :global(body:has(.topic-index) .site-page__section-mark){
+    display:none;
+  }
+
+  :global(body:has(.topic-index) .site-page__home-link){
+    color:#171717;
+    background:rgba(255,255,255,.78);
+    border-color:rgba(20,20,20,.12);
+  }
+
+  .topic-index{
+    position:relative;
+    min-height:100svh;
+    color:#151515;
+  }
+
+  .topic-index__list{
+    width:min(1680px, calc(100% - 48px));
+    margin:0 auto;
+    padding:clamp(7rem,12vw,12rem) 0 clamp(5rem,10vw,10rem);
+    display:grid;
+    gap:clamp(.9rem,1.65vw,1.45rem);
+  }
+
+  .topic-index__link{
+    display:block;
+    padding:clamp(1rem,2.4vw,2rem) clamp(1rem,3vw,2.4rem);
+    border:1px solid rgba(21,21,21,.10);
+    border-radius:clamp(22px,3vw,42px);
+    background:rgba(255,255,255,.66);
+    box-shadow:0 24px 90px rgba(28,22,12,.08);
+    backdrop-filter:blur(18px);
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(2rem,5.4vw,6.6rem);
+    font-weight:500;
+    letter-spacing:-.07em;
+    line-height:.9;
+    transition:transform .28s ease, border-color .28s ease, box-shadow .28s ease, background .28s ease;
+  }
+
+  .topic-index__link:hover,
+  .topic-index__link:focus-visible{
+    outline:none;
+    transform:translateY(-8px) scale(1.008);
+    border-color:color-mix(in srgb, var(--section-accent) 42%, rgba(21,21,21,.12));
+    background:#fff;
+    box-shadow:0 38px 120px rgba(28,22,12,.14);
+  }
+
+  @media (max-width:760px){
+    .topic-index__list{
+      width:min(100% - 28px, 1680px);
+      padding-top:clamp(5.5rem,20vw,8rem);
+    }
+  }
+</style>
