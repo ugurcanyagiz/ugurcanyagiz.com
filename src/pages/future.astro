@@ -1,6 +1,6 @@
 ---
 import SiteLayout from "../components/SiteLayout.astro";
-import FilterBar from "../components/FilterBar.astro";
+import TopicIndexTemplate from "../components/TopicIndexTemplate.astro";
 
 /**
  * Future categories (filters)
@@ -77,44 +77,8 @@ const cards = [
   },
 ];
 
-import AtlasBackground from "../components/AtlasBackground.astro";
-import SectionHeader from "../components/SectionHeader.astro";
-import ScrollReveal from "../components/ScrollReveal.astro";
 ---
-<SiteLayout title="Future — Ugurcan" description="Signals dashboard for AI, biotech, space, energy, computing, society, and robotics — thoughtful, not hype-driven." fullBleed showBackground={false}>
-  <FilterBar slot="subnav" filters={filters} cardSelector=".future-card" queryKey="topic" defaultFilter="ALL" />
-  <main class="atlas-page future-atlas">
-    <AtlasBackground variant="future" id="future-scene" />
-    <div class="atlas-content">
-      <section class="atlas-hero">
-        <div class="atlas-hero__panel" data-reveal>
-          <p class="atlas-eyebrow">Personal atlas / Future</p>
-          <h1>Future</h1>
-          <p class="atlas-hero__subtitle">Signals dashboard for AI, biotech, space, energy, computing, society, and robotics — thoughtful, not hype-driven.</p>
-        </div>
-      </section>
 
-      <section class="atlas-section">
-        <SectionHeader eyebrow="Scroll system" title="AI → Biotech → Space → Energy → Computing → Society → Robotics" text="Move through this room like an exhibition: each card is a fragment, a question, and a doorway into a longer note." />
-        <div class="atlas-grid atlas-grid--four">
-          <article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>AI</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Biotech</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Space</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Energy</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Computing</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Society</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Robotics</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article>
-        </div>
-      </section>
-
-      <section class="atlas-section">
-        <SectionHeader eyebrow="Archive" title="Existing notes, redesigned as exhibition cards" text="All routes and articles are preserved; the visual system now matches the surreal premium direction of /me." />
-        <div class="atlas-grid">
-          {cards.map((c) => (
-            <a class="atlas-card future-card" href={c.href} data-category={c.category} data-reveal>
-              <span class="atlas-glyph" aria-hidden="true">⬡</span>
-              <p class="atlas-eyebrow">{c.category} · {c.subtitle}</p>
-              <h3>{c.title}</h3>
-              <p>{c.excerpt}</p>
-            </a>
-          ))}
-        </div>
-      </section>
-    </div>
-    <ScrollReveal />
-  </main>
+<SiteLayout title="Future — Ugurcan" description="AI, biotech, space, energy, computing, society ve robotics yazıları için light color, scroll-based bir konu indeksi." fullBleed showBackground={false}>
+  <TopicIndexTemplate cards={cards} sectionLabel="Future" />
 </SiteLayout>
