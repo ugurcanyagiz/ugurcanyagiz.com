@@ -8,6 +8,8 @@ const indexPage = readFileSync(new URL('../src/pages/index.astro', import.meta.u
 const layout = readFileSync(new URL('../src/layouts/Layout.astro', import.meta.url), 'utf8');
 
 test('cosmic library renders the five destination routes as a focused menu', () => {
+  assert.match(component, /cinematic-home\.css\?inline/);
+  assert.match(component, /<style is:global set:html=\{cinematicHomeStyles\}>/);
   for (const href of ['/blog', '/science', '/history', '/art', '/future']) {
     assert.ok(component.includes(`href: "${href}"`), `${href} should be configured`);
   }

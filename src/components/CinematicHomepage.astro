@@ -1,5 +1,5 @@
 ---
-import "../styles/cinematic-home.css";
+import cinematicHomeStyles from "../styles/cinematic-home.css?inline";
 
 const destinations = [
   { label: "JLOG", href: "/blog", tone: "journal" },
@@ -9,6 +9,8 @@ const destinations = [
   { label: "Future", href: "/future", tone: "future" },
 ] as const;
 ---
+
+<style is:global set:html={cinematicHomeStyles}></style>
 
 <section class="cosmic-library" data-cosmic-library data-active="0" aria-label="Explore Ugurcan Yagiz">
   <div class="cosmic-library__scene" aria-hidden="true">
