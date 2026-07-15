@@ -71,12 +71,15 @@ const destinations = [
       root.dataset.tone = items[active]?.dataset.tone ?? "personal";
       items.forEach((item, index) => {
         const isActive = index === active;
-        item.toggleAttribute("aria-current", isActive);
+        if (isActive) item.setAttribute("aria-current", "page");
+        else item.removeAttribute("aria-current");
         item.tabIndex = isActive ? 0 : -1;
       });
       if (current) current.textContent = String(active + 1).padStart(2, "0");
       if (scrollPage && !reducedMotion.matches) {
-        window.scrollTo({ top: active * window.innerHeight, behavior: "smooth" });
+        const maxScroll = Math.max(0, root.scrollHeight - window.innerHeight);
+        const target = items.length > 1 ? (active / (items.length - 1)) * maxScroll : 0;
+        window.scrollTo({ top: root.offsetTop + target, behavior: "smooth" });
       }
     };
 

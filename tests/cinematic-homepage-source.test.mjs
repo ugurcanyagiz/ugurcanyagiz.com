@@ -15,12 +15,15 @@ test('cosmic library renders the five destination routes as a focused menu', () 
   assert.match(component, /label: "JLOG"/);
   assert.match(component, /data-menu-item/);
   assert.match(component, /aria-current/);
+  assert.match(component, /setAttribute\("aria-current", "page"\)/);
+  assert.match(component, /removeAttribute\("aria-current"\)/);
 });
 
 test('scroll progress drives menu selection and scene depth', () => {
   assert.match(component, /syncFromScroll/);
   assert.match(component, /--scroll-progress/);
   assert.match(component, /window\.scrollTo/);
+  assert.match(component, /active \/ \(items\.length - 1\)/);
   assert.match(styles, /var\(--scroll-progress\)/);
   assert.match(styles, /cosmic-library__backdrop/);
   assert.match(styles, /cosmic-library__papers/);
