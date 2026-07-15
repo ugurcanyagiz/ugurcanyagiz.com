@@ -1,56 +1,125 @@
 ---
-import { cinematicHomeMedia } from "../lib/cinematicMedia";
 import "../styles/cinematic-home.css";
 
-const media = cinematicHomeMedia;
-const meteors = [
-  { key: "science", label: "Science", href: "/science", duration: "42s", delay: "-9s", top: "15%", start: "8vw", end: "74vw", drift: "-9vh", angle: "-8deg", size: "clamp(66px, 6.4vw, 112px)", depth: ".92", blur: "0px" },
-  { key: "history", label: "History", href: "/history", duration: "54s", delay: "-37s", top: "43%", start: "19vw", end: "78vw", drift: "-6vh", angle: "-5deg", size: "clamp(54px, 5.2vw, 92px)", depth: ".68", blur: ".45px" },
-  { key: "art", label: "Art", href: "/art", duration: "47s", delay: "-25s", top: "29%", start: "5vw", end: "63vw", drift: "-12vh", angle: "-11deg", size: "clamp(62px, 5.9vw, 104px)", depth: ".82", blur: ".15px" },
-  { key: "future", label: "Future", href: "/future", duration: "58s", delay: "-48s", top: "9%", start: "31vw", end: "79vw", drift: "8vh", angle: "6deg", size: "clamp(48px, 4.6vw, 82px)", depth: ".58", blur: ".8px" },
-  { key: "astrophysics", label: "Astrophysics", href: "/science", duration: "45s", delay: "-33s", top: "48%", start: "7vw", end: "69vw", drift: "-14vh", angle: "-13deg", size: "clamp(68px, 6.8vw, 120px)", depth: ".96", blur: "0px" },
-  { key: "mathematics", label: "Mathematics", href: "/science", duration: "62s", delay: "-17s", top: "35%", start: "27vw", end: "76vw", drift: "-4vh", angle: "-4deg", size: "clamp(44px, 4.2vw, 76px)", depth: ".52", blur: "1px" },
-  { key: "jlog", label: "JLOG", href: "/blog", duration: "51s", delay: "-5s", top: "7%", start: "12vw", end: "66vw", drift: "10vh", angle: "7deg", size: "clamp(52px, 5vw, 88px)", depth: ".64", blur: ".55px" },
-  { key: "me", label: "Me", href: "/me", duration: "60s", delay: "-43s", top: "24%", start: "36vw", end: "79vw", drift: "-8vh", angle: "-7deg", size: "clamp(46px, 4.5vw, 80px)", depth: ".56", blur: ".9px" },
+const destinations = [
+  { label: "Me", href: "/me", tone: "personal" },
+  { label: "Science", href: "/science", tone: "science" },
+  { label: "History", href: "/history", tone: "history" },
+  { label: "Art", href: "/art", tone: "art" },
+  { label: "Future", href: "/future", tone: "future" },
+  { label: "Journal", href: "/blog", tone: "journal" },
 ] as const;
 ---
 
-<section class="cinematic-home" aria-label="Explore Ugurcan's atlas">
-  <picture class="cinematic-home__picture">
-    <source media="(max-width: 640px), (orientation: portrait)" srcset={media.mobile} />
-    <source media="(max-width: 1180px)" srcset={media.tablet} />
-    <img
-      class="cinematic-home__background"
-      src={media.desktop}
-      alt="A quiet anime-inspired study overlooking a city at sunset"
-      fetchpriority="high"
-      decoding="async"
-    />
-  </picture>
+<section class="cosmic-library" data-cosmic-library data-active="0" aria-label="Explore Ugurcan Yagiz">
+  <div class="cosmic-library__scene" aria-hidden="true">
+    <div class="cosmic-library__backdrop"></div>
+    <div class="cosmic-library__stars"></div>
+    <div class="cosmic-library__orbits"></div>
+    <div class="cosmic-library__glow"></div>
+    <div class="cosmic-library__papers">
+      <i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <div class="cosmic-library__shade"></div>
+  </div>
 
-  <nav class="cinematic-home__sky" aria-label="Explore sections">
-    {meteors.map((meteor, index) => (
-      <a
-        class={`cinematic-home__meteor cinematic-home__meteor--${meteor.key}`}
-        href={meteor.href}
-        aria-label={`Explore ${meteor.label}`}
-        style={`--meteor-duration:${meteor.duration};--meteor-delay:${meteor.delay};--meteor-top:${meteor.top};--meteor-start:${meteor.start};--meteor-end:${meteor.end};--meteor-drift:${meteor.drift};--meteor-angle:${meteor.angle};--meteor-size:${meteor.size};--meteor-depth:${meteor.depth};--meteor-blur:${meteor.blur};--meteor-index:${index};`}
-      >
-        <span class="cinematic-home__trail" aria-hidden="true"></span>
-        <img
-          class="cinematic-home__meteor-image"
-          src={`/images/cinematic-home/${meteor.key}.webp`}
-          alt=""
-          width="512"
-          height="512"
-          loading={index < 3 ? "eager" : "lazy"}
-          decoding="async"
-        />
-        <span class="cinematic-home__meteor-label">{meteor.label}</span>
-      </a>
-    ))}
+  <a class="cosmic-library__brand" href="/" aria-label="Ugurcan Yagiz home">UGURCAN YAGIZ</a>
+  <p class="cosmic-library__eyebrow">THE LIVING ARCHIVE</p>
+
+  <nav class="cosmic-library__menu" aria-label="Main sections">
+    <div class="cosmic-library__wheel" data-menu-wheel>
+      {destinations.map((item, index) => (
+        <a
+          class="cosmic-library__item"
+          data-menu-item
+          data-index={index}
+          data-tone={item.tone}
+          href={item.href}
+          aria-current={index === 0 ? "page" : undefined}
+          tabindex={index === 0 ? 0 : -1}
+        >
+          <span>{item.label}</span>
+        </a>
+      ))}
+    </div>
+    <span class="cosmic-library__enter" aria-hidden="true">ENTER TO EXPLORE</span>
   </nav>
 
-  <div class="cinematic-home__glass" aria-hidden="true"></div>
-  <div class="cinematic-home__vignette" aria-hidden="true"></div>
+  <div class="cosmic-library__progress" aria-hidden="true">
+    <span data-progress-current>01</span>
+    <i></i>
+    <span>{String(destinations.length).padStart(2, "0")}</span>
+  </div>
+
+  <p class="cosmic-library__hint"><span>SCROLL</span><i></i></p>
+  <div class="cosmic-library__scroll-space" aria-hidden="true"></div>
 </section>
+
+<script>
+  const roots = document.querySelectorAll<HTMLElement>("[data-cosmic-library]");
+
+  roots.forEach((root) => {
+    const items = [...root.querySelectorAll<HTMLAnchorElement>("[data-menu-item]")];
+    const current = root.querySelector<HTMLElement>("[data-progress-current]");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let active = 0;
+    let touchStart = 0;
+    let locked = false;
+
+    const select = (next: number, scrollPage = false) => {
+      active = Math.max(0, Math.min(items.length - 1, next));
+      root.dataset.active = String(active);
+      root.dataset.tone = items[active]?.dataset.tone ?? "personal";
+      items.forEach((item, index) => {
+        const isActive = index === active;
+        item.toggleAttribute("aria-current", isActive);
+        item.tabIndex = isActive ? 0 : -1;
+      });
+      if (current) current.textContent = String(active + 1).padStart(2, "0");
+      if (scrollPage && !reducedMotion.matches) {
+        window.scrollTo({ top: active * window.innerHeight, behavior: "smooth" });
+      }
+    };
+
+    const syncFromScroll = () => {
+      const max = Math.max(1, root.scrollHeight - window.innerHeight);
+      const local = Math.max(0, Math.min(max, window.scrollY - root.offsetTop));
+      select(Math.round((local / max) * (items.length - 1)));
+      root.style.setProperty("--scroll-progress", String(local / max));
+    };
+
+    const step = (direction: number) => {
+      if (locked) return;
+      locked = true;
+      select(active + direction, true);
+      window.setTimeout(() => { locked = false; }, 520);
+    };
+
+    items.forEach((item, index) => {
+      item.addEventListener("focus", () => select(index));
+      item.addEventListener("click", (event) => {
+        if (index !== active) {
+          event.preventDefault();
+          select(index, true);
+        }
+      });
+    });
+
+    root.addEventListener("keydown", (event) => {
+      if (["ArrowDown", "s", "S"].includes(event.key)) { event.preventDefault(); step(1); }
+      if (["ArrowUp", "w", "W"].includes(event.key)) { event.preventDefault(); step(-1); }
+      if ((event.key === "Enter" || event.key === " ") && document.activeElement === root) {
+        event.preventDefault();
+        items[active]?.click();
+      }
+    });
+    root.addEventListener("touchstart", (event) => { touchStart = event.touches[0]?.clientY ?? 0; }, { passive: true });
+    root.addEventListener("touchend", (event) => {
+      const delta = touchStart - (event.changedTouches[0]?.clientY ?? touchStart);
+      if (Math.abs(delta) > 44) step(delta > 0 ? 1 : -1);
+    }, { passive: true });
+    window.addEventListener("scroll", syncFromScroll, { passive: true });
+    window.addEventListener("resize", syncFromScroll, { passive: true });
+    syncFromScroll();
+  });
+</script>
