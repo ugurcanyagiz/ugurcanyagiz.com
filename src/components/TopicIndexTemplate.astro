@@ -7,15 +7,58 @@ const {
 } = Astro.props;
 ---
 <main class="topic-index" data-topic-index>
-  <section class="topic-index__list" aria-label={`${sectionLabel} topics`}>
+  <div class="topic-index__search" data-reveal>
+    <label class="topic-index__search-label" for={`topic-search-${sectionLabel}`}>Konu ara</label>
+    <input
+      class="topic-index__search-input"
+      id={`topic-search-${sectionLabel}`}
+      type="search"
+      placeholder={`${sectionLabel} içinde ara...`}
+      autocomplete="off"
+      data-topic-search
+    />
+  </div>
+
+  <section class="topic-index__list" aria-label={`${sectionLabel} topics`} data-topic-list>
     {cards.map((card) => (
-      <a class="topic-index__link" href={card.href} data-reveal>
+      <a class="topic-index__link" href={card.href} data-topic-link data-topic-title={card.title.toLowerCase()} data-reveal>
         {card.title}
       </a>
     ))}
   </section>
+
+  <p class="topic-index__empty" data-topic-empty hidden>Sonuç bulunamadı.</p>
   <ScrollReveal />
 </main>
+
+<script>
+  const roots = document.querySelectorAll("[data-topic-index]");
+
+  roots.forEach((root) => {
+    const input = root.querySelector("[data-topic-search]");
+    const links = Array.from(root.querySelectorAll("[data-topic-link]"));
+    const empty = root.querySelector("[data-topic-empty]");
+
+    if (!(input instanceof HTMLInputElement)) return;
+
+    const filterTopics = () => {
+      const query = input.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      links.forEach((link) => {
+        const title = link.getAttribute("data-topic-title") || "";
+        const isVisible = title.includes(query);
+        link.toggleAttribute("hidden", !isVisible);
+        if (isVisible) visibleCount += 1;
+      });
+
+      empty?.toggleAttribute("hidden", visibleCount !== 0);
+    };
+
+    input.addEventListener("input", filterTopics);
+    filterTopics();
+  });
+</script>
 
 <style>
   :global(body:has(.topic-index)){
@@ -61,10 +104,55 @@ const {
     color:#151515;
   }
 
-  .topic-index__list{
+  .topic-index__search,
+  .topic-index__list,
+  .topic-index__empty{
     width:min(1680px, calc(100% - 48px));
-    margin:0 auto;
-    padding:clamp(7rem,12vw,12rem) 0 clamp(5rem,10vw,10rem);
+    margin-inline:auto;
+  }
+
+  .topic-index__search{
+    padding:clamp(7rem,12vw,12rem) 0 0;
+  }
+
+  .topic-index__search-label{
+    display:block;
+    margin:0 0 .75rem;
+    color:rgba(21,21,21,.52);
+    font-size:.74rem;
+    font-weight:900;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+  }
+
+  .topic-index__search-input{
+    width:100%;
+    min-height:clamp(64px,7vw,104px);
+    padding:0 clamp(1.1rem,3vw,2.4rem);
+    border:1px solid rgba(21,21,21,.12);
+    border-radius:clamp(22px,3vw,42px);
+    background:rgba(255,255,255,.72);
+    box-shadow:0 24px 90px rgba(28,22,12,.08);
+    backdrop-filter:blur(18px);
+    color:#151515;
+    font:500 clamp(1.35rem,3.5vw,4rem)/1 Georgia,"Times New Roman",serif;
+    letter-spacing:-.055em;
+    outline:none;
+    transition:border-color .24s ease, box-shadow .24s ease, background .24s ease;
+  }
+
+  .topic-index__search-input::placeholder{
+    color:rgba(21,21,21,.34);
+  }
+
+  .topic-index__search-input:focus{
+    border-color:color-mix(in srgb, var(--section-accent) 48%, rgba(21,21,21,.12));
+    background:#fff;
+    box-shadow:0 34px 110px rgba(28,22,12,.13);
+  }
+
+  .topic-index__list{
+    padding:clamp(1rem,2vw,1.6rem) 0 clamp(5rem,10vw,10rem);
     display:grid;
     gap:clamp(.9rem,1.65vw,1.45rem);
   }
@@ -85,6 +173,10 @@ const {
     transition:transform .28s ease, border-color .28s ease, box-shadow .28s ease, background .28s ease;
   }
 
+  .topic-index__link[hidden]{
+    display:none;
+  }
+
   .topic-index__link:hover,
   .topic-index__link:focus-visible{
     outline:none;
@@ -94,9 +186,22 @@ const {
     box-shadow:0 38px 120px rgba(28,22,12,.14);
   }
 
+  .topic-index__empty{
+    margin-top:-3rem;
+    padding:0 0 clamp(5rem,10vw,10rem);
+    color:rgba(21,21,21,.54);
+    font-size:clamp(1rem,2vw,1.35rem);
+    font-weight:750;
+  }
+
   @media (max-width:760px){
-    .topic-index__list{
+    .topic-index__search,
+    .topic-index__list,
+    .topic-index__empty{
       width:min(100% - 28px, 1680px);
+    }
+
+    .topic-index__search{
       padding-top:clamp(5.5rem,20vw,8rem);
     }
   }
