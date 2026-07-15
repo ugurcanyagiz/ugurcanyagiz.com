@@ -22,13 +22,23 @@ const resolvedActive = activeSection || (firstSegment === "jlog" ? "blog" : firs
 const inferredLabel = pageLabel || (resolvedActive ? resolvedActive.toUpperCase() : "ATLAS");
 ---
 <Layout title={title} description={description || subtitle} theme="dark">
+  <a class="site-skip-link" href="#site-content">Skip to content</a>
   <div slot="subnav" class="site-shell-nav">
     <SiteNav activeSection={resolvedActive} />
     <slot name="subnav" />
   </div>
-  <div class:list={["site-page", fullBleed && "site-page--full-bleed"]}>
+  <div class:list={["site-page", `site-page--${resolvedActive}`, fullBleed && "site-page--full-bleed"]} data-section={resolvedActive}>
+    <div class="site-page__cosmos" aria-hidden="true">
+      <span class="site-page__glow"></span>
+      <span class="site-page__orbit site-page__orbit--one"></span>
+      <span class="site-page__orbit site-page__orbit--two"></span>
+      <span class="site-page__grain"></span>
+    </div>
     {showBackground && <CinematicBackground variant={backgroundVariant} />}
-    <div class="site-page__inner">
+    <div class="site-page__section-mark" aria-hidden="true">
+      <span>{inferredLabel}</span><i></i><span>THE LIVING ARCHIVE</span>
+    </div>
+    <div class="site-page__inner" id="site-content">
       {showHeader && (
         <PageHeader pageLabel={inferredLabel} title={title} subtitle={subtitle} description={description} sectionIndex={sectionIndex} />
       )}
@@ -36,5 +46,6 @@ const inferredLabel = pageLabel || (resolvedActive ? resolvedActive.toUpperCase(
         <slot />
       </div>
     </div>
+    <a class="site-page__home-link" href="/" aria-label="Return to the living archive">← Archive</a>
   </div>
 </Layout>
