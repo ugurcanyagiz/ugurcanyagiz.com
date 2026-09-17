@@ -1,0 +1,130 @@
+---
+import Layout from "../layouts/Layout.astro";
+import "../styles/work.css";
+
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const actual = [78, 83, 80, 89, 92, 95, 101, 108, 112, 116, 121, 126];
+const budget = [80, 82, 84, 87, 90, 94, 98, 102, 106, 110, 115, 120];
+const path = (values: number[]) => values.map((value, i) => `${i ? "L" : "M"} ${24 + i * 67} ${190 - (value - 70) * 2.45}`).join(" ");
+const sheetRows = [
+  ["Northstar Retail", 184500, 121700, 62800, 4100, "Matched"],
+  ["Harbor Supply", 142800, 101200, 41600, -2750, "Review"],
+  ["Meridian Labs", 216400, 139900, 76500, 6200, "Matched"],
+  ["Atlas Works", 119750, 82400, 37350, -1100, "Review"],
+  ["Cedar Group", 173200, 110600, 62600, 3450, "Matched"],
+];
+const closeSteps = [
+  ["01", "Transaction review", "Completeness and cut-off"],
+  ["02", "Journal entries & accruals", "Supporting documentation"],
+  ["03", "Account reconciliations", "Balance sheet validation"],
+  ["04", "Variance analysis", "Exception review & data integrity"],
+  ["05", "Management reporting", "Management review"],
+];
+---
+
+<Layout title="Work — Ugurcan Yagiz" description="An interactive accounting, finance, data, and automation work showcase using fictional sample data." hideChrome robots="noindex, nofollow">
+  <main class="work" data-work>
+    <div class="work-grid" aria-hidden="true"></div>
+    <a class="skip-link" href="#financial-analysis">Skip to showcase</a>
+
+    <section class="work-hero" aria-labelledby="work-title">
+      <div class="hero-orbit" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="hero-ticker" aria-hidden="true"><span>REV 12.4</span><span>GM 31.8</span><span>NI 1.14</span></div>
+      <div class="hero-copy">
+        <p class="eyebrow">Professional work showcase · Sample environment</p>
+        <h1 id="work-title">UGURCAN<br />YAGIZ</h1>
+        <p class="hero-discipline">Accounting <span>×</span> Finance <span>×</span> Data</p>
+        <p class="hero-lede">Turning financial data into clear insights, efficient processes, and better decisions.</p>
+      </div>
+      <a class="hero-scroll" href="#financial-analysis"><span>Explore the work</span><i aria-hidden="true"></i></a>
+    </section>
+
+    <div class="sample-banner" role="note"><strong>Demonstration environment</strong><span>All companies, transactions, and financial values shown below are fictional sample data.</span></div>
+
+    <section class="work-section" id="financial-analysis" data-reveal aria-labelledby="analysis-title">
+      <header class="section-head"><div><p class="eyebrow">01 / Financial analysis</p><h2 id="analysis-title">From performance data<br />to a decision-ready story.</h2></div><p>Structured reporting that makes the relationship between plan, performance, margin, and cost immediately legible.</p></header>
+      <div class="kpi-grid" aria-label="Illustrative key performance indicators">
+        <article><span>Revenue</span><strong data-count="12.4" data-prefix="$" data-suffix="M">$12.4M</strong><small>+3.8% vs budget</small></article>
+        <article><span>Gross margin</span><strong data-count="31.8" data-suffix="%">31.8%</strong><small>+1.2 pts vs plan</small></article>
+        <article><span>Operating expenses</span><strong data-count="2.7" data-prefix="$" data-suffix="M">$2.7M</strong><small>2.1% above budget</small></article>
+        <article><span>Net income</span><strong data-count="1.14" data-prefix="$" data-suffix="M">$1.14M</strong><small>9.6% margin</small></article>
+      </div>
+      <div class="analysis-grid">
+        <article class="panel chart-panel">
+          <div class="panel-head"><div><p>Actual vs budget</p><strong>Monthly revenue trend</strong></div><div class="legend"><span class="actual">Actual</span><span class="budget">Budget</span></div></div>
+          <svg class="line-chart" viewBox="0 0 800 230" role="img" aria-label="Actual revenue trends above budget in the second half of the sample year">
+            <g class="chart-lines" aria-hidden="true"><path d="M24 40H762M24 90H762M24 140H762M24 190H762" /></g>
+            <path class="budget-line" d={path(budget)} pathLength="1" />
+            <path class="actual-line" d={path(actual)} pathLength="1" />
+            <g class="chart-dots">{actual.map((v, i) => <circle cx={24 + i * 67} cy={190 - (v - 70) * 2.45} r="4"><title>{months[i]}: ${v * 10000}</title></circle>)}</g>
+          </svg>
+          <div class="chart-months" aria-hidden="true">{months.map(month => <span>{month}</span>)}</div>
+        </article>
+        <article class="panel variance-panel">
+          <div class="panel-head"><div><p>Variance bridge</p><strong>Net income movement</strong></div><span class="tag">USD · sample</span></div>
+          <div class="variance-row"><span>Budget net income</span><i style="--w:72%"></i><b>$1.04M</b></div>
+          <div class="variance-row positive"><span>Revenue</span><i style="--w:48%"></i><b>+$186K</b></div>
+          <div class="variance-row positive"><span>Gross margin</span><i style="--w:31%"></i><b>+$94K</b></div>
+          <div class="variance-row negative"><span>Logistics</span><i style="--w:22%"></i><b>−$71K</b></div>
+          <div class="variance-row negative"><span>Other Opex</span><i style="--w:17%"></i><b>−$109K</b></div>
+          <div class="variance-total"><span>Actual net income</span><strong>$1.14M</strong></div>
+        </article>
+      </div>
+      <aside class="interpretation"><span>Illustrative management interpretation</span><p>Revenue exceeded budget primarily due to stronger performance in the second half of the period, while margin improvement partially offset increased logistics costs.</p></aside>
+    </section>
+
+    <section class="work-section work-section--light" data-reveal aria-labelledby="excel-title">
+      <header class="section-head"><div><p class="eyebrow">02 / Excel & automation</p><h2 id="excel-title">A working model,<br />not a list of skills.</h2></div><p>Structured data, transparent logic, controlled exceptions, and a report that updates when the inputs change.</p></header>
+      <div class="formula-strip" aria-label="Excel methods demonstrated">{["XLOOKUP", "INDEX / MATCH", "SUMIFS", "PivotTables", "Power Query", "Dynamic Arrays", "Financial Modeling", "VBA / Macros"].map(item => <span>{item}</span>)}</div>
+      <article class="spreadsheet panel">
+        <div class="sheet-toolbar"><span class="cell-name">G4</span><span class="fx">fx</span><code>=FILTER(A4:F8,F4:F8=H2,"No exceptions")</code><label>View <select data-sheet-filter><option value="all">All records</option><option value="Review">Exceptions only</option><option value="Matched">Matched only</option></select></label></div>
+        <div class="sheet-scroll"><table><caption>Fictional customer profitability model</caption><thead><tr><th></th><th>Customer</th><th>Revenue</th><th>Cost</th><th>Gross margin</th><th>Variance</th><th>Status</th></tr></thead><tbody>{sheetRows.map((row, i) => <tr data-sheet-row data-status={row[5]}><th>{i + 4}</th><td>{row[0]}</td><td>${Number(row[1]).toLocaleString()}</td><td>${Number(row[2]).toLocaleString()}</td><td>${Number(row[3]).toLocaleString()}</td><td class:list={[Number(row[4]) < 0 && "negative-cell"]}>{Number(row[4]) < 0 ? "−" : "+"}${Math.abs(Number(row[4])).toLocaleString()}</td><td><span class:list={["status", row[5] === "Review" && "status--review"]}>{row[5]}</span></td></tr>)}</tbody><tfoot><tr><th></th><td>Filtered total</td><td data-sheet-total>$836,650</td><td colspan="4">Dynamic array output</td></tr></tfoot></table></div>
+      </article>
+      <ol class="process-line" aria-label="Automation process">{["Raw data", "Validation", "Lookup / transformation", "Exception identification", "Reconciliation", "Management report"].map((item, i) => <li><span>{String(i + 1).padStart(2,"0")}</span>{item}</li>)}</ol>
+    </section>
+
+    <section class="work-section reconcile-section" data-reveal aria-labelledby="reconcile-title">
+      <header class="section-head"><div><p class="eyebrow">03 / Accounting control</p><h2 id="reconcile-title">Make the difference<br />explainable.</h2></div><p>A compact reconciliation that moves from an open exception to a balanced, review-ready position.</p></header>
+      <div class="reconcile panel" data-reconcile>
+        <div class="reconcile-ledgers"><div><span>GL balance</span><strong>$428,750</strong><small>Book balance</small></div><i aria-hidden="true">≠</i><div><span>Bank balance</span><strong>$431,250</strong><small>Statement balance</small></div></div>
+        <div class="reconcile-status"><div><span>Unexplained difference</span><strong data-difference>$2,500</strong></div><div class="reconcile-adjustment" aria-hidden="true"><span>Outstanding check</span><strong>−$2,500</strong></div></div>
+        <div class="reconcile-line"><span></span><i></i></div>
+        <div class="reconcile-final"><div><span>Final reconciled balance</span><strong data-final>Pending</strong></div><button type="button" data-reconcile-button>Apply reconciling item</button></div>
+        <p class="sr-status" aria-live="polite" data-reconcile-live>Reconciliation has an outstanding difference of $2,500.</p>
+      </div>
+    </section>
+
+    <section class="work-section work-section--dashboard" data-reveal aria-labelledby="bi-title">
+      <header class="section-head"><div><p class="eyebrow">04 / Business intelligence</p><h2 id="bi-title">Receivables,<br />seen from every angle.</h2></div><p>Functional filters recalculate the dashboard from a local fictional AR dataset—turning aging into priorities.</p></header>
+      <article class="dashboard panel" data-dashboard>
+        <div class="dashboard-top"><div><span class="dashboard-brand">AR / CONTROL ROOM</span><small>Sample dataset · USD</small></div><div class="filters"><label>Period<select data-ar-filter="period"><option value="all">All periods</option><option>Q1</option><option>Q2</option><option>Q3</option><option>Q4</option></select></label><label>Customer<select data-ar-filter="customer"><option value="all">All customers</option><option>Northstar</option><option>Harbor</option><option>Meridian</option><option>Atlas</option></select></label><label>Region<select data-ar-filter="region"><option value="all">All regions</option><option>North</option><option>South</option><option>East</option><option>West</option></select></label></div></div>
+        <div class="ar-kpis"><div><span>Total AR</span><strong data-ar-kpi="total">$1.42M</strong></div><div><span>Current</span><strong data-ar-kpi="current">$742K</strong></div><div><span>30–60</span><strong data-ar-kpi="mid">$326K</strong></div><div><span>60–90</span><strong data-ar-kpi="late">$211K</strong></div><div><span>90+</span><strong data-ar-kpi="critical">$141K</strong></div></div>
+        <div class="dashboard-grid"><div class="dash-chart"><div class="mini-head"><strong>AR aging</strong><span data-record-count>16 accounts</span></div><div class="aging-bars" data-aging-bars></div></div><div class="dash-chart"><div class="mini-head"><strong>Customer exposure</strong><span>share of AR</span></div><div class="donut-wrap"><div class="donut" data-donut><span data-donut-center>4</span></div><ul data-exposure></ul></div></div><div class="dash-chart dash-chart--wide"><div class="mini-head"><strong>Collection trend</strong><span>rolling six periods</span></div><svg viewBox="0 0 620 130" role="img" aria-label="Sample collection trend"><path class="area" data-collection-area d="M10 110 L130 90 L250 100 L370 62 L490 70 L610 30 L610 120 L10 120Z"/><path class="trend" data-collection-line d="M10 110 L130 90 L250 100 L370 62 L490 70 L610 30"/><g data-trend-dots></g></svg></div></div>
+      </article>
+    </section>
+
+    <section class="work-section" data-reveal aria-labelledby="close-title">
+      <header class="section-head"><div><p class="eyebrow">05 / Month-end close</p><h2 id="close-title">A controlled path<br />from activity to insight.</h2></div><p>Each close stage pairs execution with a control activity—so speed never comes at the expense of integrity.</p></header>
+      <ol class="close-flow">{closeSteps.map(([day,title,control]) => <li><span class="day">Day {day}</span><div><strong>{title}</strong><small>{control}</small></div><i aria-hidden="true"></i></li>)}</ol>
+    </section>
+
+    <section class="work-section systems-section" data-reveal aria-labelledby="systems-title">
+      <header class="section-head"><div><p class="eyebrow">06 / Accounting systems</p><h2 id="systems-title">Connected systems.<br />Traceable information.</h2></div><p>Experience is presented in context: where each system supports the flow from operations through analysis.</p></header>
+      <div class="systems-map panel"><div class="systems-spine">{["Operations / Sales", "SAP Business One HANA", "General Ledger", "Reconciliation", "Financial Reporting", "Management Analysis"].map((item,i) => <div class:list={[i === 1 && "primary-node"]}><span>{String(i+1).padStart(2,"0")}</span><strong>{item}</strong></div>)}</div><div class="systems-tools"><span>Microsoft Excel</span><span>Power BI</span><span>QuickBooks</span><span>Microsoft 365</span><span>VBA / Excel Automation</span></div></div>
+    </section>
+
+    <section class="work-section improvement-section" data-reveal aria-labelledby="improve-title">
+      <header class="section-head"><div><p class="eyebrow">07 / Process improvement</p><h2 id="improve-title">Move effort away<br />from repetition.</h2></div><p>Automation focuses attention on validation, exceptions, review, and the accounting judgment that creates value.</p></header>
+      <div class="workflow-compare"><article class="panel manual"><p>Manual process</p><ol>{["Export data", "Copy / paste", "Manual matching", "Manual review", "Report"].map(item => <li>{item}</li>)}</ol></article><div class="transform-mark" aria-hidden="true">→</div><article class="panel improved"><p>Improved workflow</p><ol>{["Import", "Automated validation", "Matching logic", "Exception review", "Automated reporting"].map(item => <li>{item}</li>)}</ol></article></div>
+      <div class="ai-workflow panel"><div><p class="eyebrow">Responsible AI-assisted workflow</p><h3>Automation supports judgment.<br />It does not replace it.</h3><p>Validation gates and human review remain explicit parts of the accounting process.</p></div><ol>{["Raw financial data", "Validation", "Automation", "Exception detection", "Analysis", "Human review", "Management insight"].map((item,i) => <li class:list={[(i===1||i===5)&&"human-gate"]}><span>{item}</span></li>)}</ol></div>
+    </section>
+
+    <footer class="work-ending">
+      <p class="eyebrow">End of presentation</p><h2>Numbers tell the story.<br /><em>Good analysis makes it useful.</em></h2><a href="mailto:info@ugurcanyagiz.com">info@ugurcanyagiz.com <span aria-hidden="true">↗</span></a><small>© {new Date().getFullYear()} Ugurcan Yagiz</small>
+    </footer>
+  </main>
+</Layout>
+
+<script>
+  import "../scripts/work.ts";
+</script>

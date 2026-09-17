@@ -1,7 +1,7 @@
 ---
 import "../styles/global.css";
 
-const { title = "UGURCAN", description = "", orbitPreload = false, theme = "light", immersive = false, hideChrome = false } = Astro.props;
+const { title = "UGURCAN", description = "", orbitPreload = false, theme = "light", immersive = false, hideChrome = false, robots = "" } = Astro.props;
 
 const year = new Date().getFullYear();
 const instagramUrl = "https://instagram.com/john.yagiz";
@@ -16,6 +16,7 @@ const mailtoUrl = `mailto:${email}`;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
+    {robots && <meta name="robots" content={robots} />}
     {orbitPreload && (
       <>
         <link rel="preload" as="image" href="/images/orbit-bg-desktop.webp" media="(min-width: 1181px) and (orientation: landscape)" />
