@@ -1,0 +1,108 @@
+---
+
+import { NAV_ITEMS } from '../lib/navigation';
+const nodes = NAV_ITEMS.map((item) => ({ title: item.label, href: item.href, index: item.index, className: item.sectionId }));
+---
+
+<section class="orbit-scroll-home" data-orbit-scroll-home aria-label="UGURCAN homepage orbit scene">
+  <div class="orbit-scroll-home__sticky">
+    <picture class="orbit-scroll-home__picture" aria-hidden="true">
+      <source srcset="/images/cosmic-atlas-mobile.svg" media="(orientation: portrait), (max-width: 640px)" />
+      <source srcset="/images/cosmic-atlas-tablet.svg" media="(max-width: 1180px)" />
+      <img
+        class="orbit-scroll-home__image"
+        src="/images/cosmic-atlas-desktop.svg"
+        alt=""
+        loading="eager"
+        decoding="async"
+        fetchpriority="high"
+        draggable="false"
+      />
+    </picture>
+
+    <div class="orbit-scroll-home__gold" aria-hidden="true"></div>
+    <div class="orbit-scroll-home__depth" aria-hidden="true"></div>
+    <div class="orbit-scroll-home__vignette" aria-hidden="true"></div>
+    <div class="orbit-scroll-home__grain" aria-hidden="true"></div>
+
+    <div class="orbit-scroll-home__brand" aria-hidden="true">
+      <span>UGURCAN</span>
+    </div>
+
+    <nav class="orbit-scroll-home__nodes" aria-label="Primary sections">
+      <div class="orbit-scroll-home__ring" aria-hidden="true"></div>
+      {nodes.map((node) => (
+        <a class:list={["orbit-scroll-home__node", `orbit-scroll-home__node--${node.className}`]} href={node.href}>
+          <span class="orbit-scroll-home__node-index">{node.index}</span>
+          <span class="orbit-scroll-home__node-title">{node.title}</span>
+          <span class="orbit-scroll-home__node-mark" aria-hidden="true">→</span>
+        </a>
+      ))}
+    </nav>
+
+    <p class="orbit-scroll-home__line">
+      Science, history, art, and the future — told with clarity, wonder, and evidence.
+    </p>
+  </div>
+</section>
+
+<script>
+  const scenes = document.querySelectorAll('[data-orbit-scroll-home]');
+
+  scenes.forEach((scene) => {
+    const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reduce = reduceQuery.matches;
+    let ticking = false;
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+    const lerp = (start, end, amount) => start + (end - start) * amount;
+
+    function setReducedLayout() {
+      scene.style.setProperty('--progress', '0');
+      scene.style.setProperty('--orbit-scale', '1.06');
+      scene.style.setProperty('--orbit-y', '0px');
+      scene.style.setProperty('--orbit-rotate', '0deg');
+      scene.style.setProperty('--scene-brightness', '.98');
+      scene.style.setProperty('--scene-depth', '.42');
+      scene.style.setProperty('--node-shift', '0px');
+      scene.style.setProperty('--node-fade', '1');
+    }
+
+    function update() {
+      ticking = false;
+
+      if (reduce) {
+        setReducedLayout();
+        return;
+      }
+
+      const rect = scene.getBoundingClientRect();
+      const scrollable = Math.max(1, rect.height - window.innerHeight);
+      const progress = clamp(-rect.top / scrollable, 0, 1);
+
+      scene.style.setProperty('--progress', progress.toFixed(4));
+      scene.style.setProperty('--orbit-scale', lerp(1.02, 1.16, progress).toFixed(4));
+      scene.style.setProperty('--orbit-y', `${lerp(0, -40, progress).toFixed(2)}px`);
+      scene.style.setProperty('--orbit-rotate', `${lerp(0, 1.5, progress).toFixed(3)}deg`);
+      scene.style.setProperty('--scene-brightness', lerp(.98, 1.06, progress).toFixed(4));
+      scene.style.setProperty('--scene-depth', lerp(.34, .52, progress).toFixed(4));
+      scene.style.setProperty('--node-shift', `${lerp(0, -24, progress).toFixed(2)}px`);
+      scene.style.setProperty('--node-fade', lerp(1, .74, progress).toFixed(4));
+    }
+
+    function requestUpdate() {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    }
+
+    update();
+    window.addEventListener('scroll', requestUpdate, { passive: true });
+    window.addEventListener('resize', requestUpdate, { passive: true });
+    reduceQuery.addEventListener?.('change', (event) => {
+      reduce = event.matches;
+      requestUpdate();
+    });
+  });
+</script>

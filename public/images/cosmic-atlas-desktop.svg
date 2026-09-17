@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3840 2160" role="img" aria-label="Abstract premium cosmic atlas background">
+  <defs>
+    <radialGradient id="space" cx="50%" cy="48%" r="72%">
+      <stop offset="0%" stop-color="#14213b"/>
+      <stop offset="38%" stop-color="#070b18"/>
+      <stop offset="72%" stop-color="#03050c"/>
+      <stop offset="100%" stop-color="#010208"/>
+    </radialGradient>
+    <radialGradient id="sphere" cx="38%" cy="32%" r="68%">
+      <stop offset="0%" stop-color="#f6d893" stop-opacity=".92"/>
+      <stop offset="18%" stop-color="#c99d58" stop-opacity=".82"/>
+      <stop offset="48%" stop-color="#2b3759" stop-opacity=".88"/>
+      <stop offset="82%" stop-color="#060915" stop-opacity=".98"/>
+      <stop offset="100%" stop-color="#02040b"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="48%" r="48%">
+      <stop offset="0%" stop-color="#d8b06a" stop-opacity=".42"/>
+      <stop offset="36%" stop-color="#d8b06a" stop-opacity=".13"/>
+      <stop offset="100%" stop-color="#d8b06a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f6efe4" stop-opacity="0"/>
+      <stop offset="26%" stop-color="#e9c77b" stop-opacity=".42"/>
+      <stop offset="52%" stop-color="#f6efe4" stop-opacity=".16"/>
+      <stop offset="74%" stop-color="#8ddfff" stop-opacity=".18"/>
+      <stop offset="100%" stop-color="#f6efe4" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" stitchTiles="stitch"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .08"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+
+  <rect width="3840" height="2160" fill="url(#space)"/>
+  <circle cx="1900" cy="1010" r="1120" fill="url(#halo)" filter="url(#softGlow)"/>
+
+  <g opacity=".82" filter="url(#softGlow)">
+    <ellipse cx="1918" cy="1050" rx="1510" ry="395" fill="none" stroke="url(#ring)" stroke-width="3" transform="rotate(-8 1918 1050)"/>
+    <ellipse cx="1918" cy="1050" rx="1220" ry="305" fill="none" stroke="#d8b06a" stroke-opacity=".14" stroke-width="2" transform="rotate(-20 1918 1050)"/>
+    <ellipse cx="1918" cy="1050" rx="1750" ry="470" fill="none" stroke="#8ddfff" stroke-opacity=".08" stroke-width="2" transform="rotate(5 1918 1050)"/>
+  </g>
+
+  <circle cx="1918" cy="1012" r="370" fill="url(#sphere)"/>
+  <circle cx="1808" cy="902" r="122" fill="#f7d996" opacity=".13" filter="url(#softGlow)"/>
+  <path d="M1595 1072c186 154 463 164 665 24" fill="none" stroke="#f6efe4" stroke-opacity=".08" stroke-width="2"/>
+  <path d="M1648 846c151-124 366-172 566-88" fill="none" stroke="#d8b06a" stroke-opacity=".11" stroke-width="2"/>
+
+  <g opacity=".72">
+    <circle cx="640" cy="420" r="2.4" fill="#f6efe4"/>
+    <circle cx="890" cy="1260" r="1.8" fill="#d8b06a"/>
+    <circle cx="1170" cy="690" r="1.5" fill="#8ddfff"/>
+    <circle cx="1420" cy="1540" r="2.1" fill="#f6efe4"/>
+    <circle cx="2240" cy="390" r="1.7" fill="#f6efe4"/>
+    <circle cx="2560" cy="1510" r="2.2" fill="#d8b06a"/>
+    <circle cx="3020" cy="760" r="1.6" fill="#8ddfff"/>
+    <circle cx="3260" cy="1290" r="2" fill="#f6efe4"/>
+    <circle cx="3470" cy="510" r="1.4" fill="#d8b06a"/>
+    <circle cx="520" cy="1610" r="1.4" fill="#8ddfff"/>
+  </g>
+
+  <g opacity=".24" stroke="#f6efe4" stroke-width="1">
+    <path d="M420 1720 C 900 1460, 1180 1580, 1540 1320" fill="none"/>
+    <path d="M2520 660 C 2840 420, 3180 430, 3460 250" fill="none"/>
+  </g>
+
+  <rect width="3840" height="2160" fill="url(#space)" opacity=".18"/>
+  <rect width="3840" height="2160" filter="url(#grain)" opacity=".75"/>
+  <rect width="3840" height="2160" fill="none"/>
+</svg>

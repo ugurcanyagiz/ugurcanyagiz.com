@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2160 2160" role="img" aria-label="Abstract tablet cosmic atlas background">
+  <defs>
+    <radialGradient id="space" cx="50%" cy="42%" r="78%">
+      <stop offset="0%" stop-color="#14213b"/>
+      <stop offset="42%" stop-color="#070b18"/>
+      <stop offset="78%" stop-color="#02040b"/>
+      <stop offset="100%" stop-color="#010208"/>
+    </radialGradient>
+    <radialGradient id="sphere" cx="36%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#f6d893" stop-opacity=".92"/>
+      <stop offset="20%" stop-color="#c99d58" stop-opacity=".78"/>
+      <stop offset="52%" stop-color="#2a3658" stop-opacity=".9"/>
+      <stop offset="86%" stop-color="#060915" stop-opacity=".98"/>
+      <stop offset="100%" stop-color="#02040b"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="45%" r="52%">
+      <stop offset="0%" stop-color="#d8b06a" stop-opacity=".38"/>
+      <stop offset="40%" stop-color="#d8b06a" stop-opacity=".12"/>
+      <stop offset="100%" stop-color="#d8b06a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f6efe4" stop-opacity="0"/>
+      <stop offset="28%" stop-color="#e9c77b" stop-opacity=".44"/>
+      <stop offset="62%" stop-color="#f6efe4" stop-opacity=".12"/>
+      <stop offset="100%" stop-color="#8ddfff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="16" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .075"/></feComponentTransfer></filter>
+  </defs>
+  <rect width="2160" height="2160" fill="url(#space)"/>
+  <circle cx="1080" cy="940" r="820" fill="url(#halo)" filter="url(#softGlow)"/>
+  <g opacity=".82" filter="url(#softGlow)">
+    <ellipse cx="1080" cy="1020" rx="960" ry="270" fill="none" stroke="url(#ring)" stroke-width="3" transform="rotate(-10 1080 1020)"/>
+    <ellipse cx="1080" cy="1020" rx="770" ry="215" fill="none" stroke="#d8b06a" stroke-opacity=".14" stroke-width="2" transform="rotate(-23 1080 1020)"/>
+    <ellipse cx="1080" cy="1020" rx="1110" ry="340" fill="none" stroke="#8ddfff" stroke-opacity=".075" stroke-width="2" transform="rotate(7 1080 1020)"/>
+  </g>
+  <circle cx="1080" cy="955" r="300" fill="url(#sphere)"/>
+  <circle cx="988" cy="862" r="94" fill="#f7d996" opacity=".13" filter="url(#softGlow)"/>
+  <path d="M825 1010c150 132 380 144 535 20" fill="none" stroke="#f6efe4" stroke-opacity=".08" stroke-width="2"/>
+  <path d="M870 790c118-94 292-132 452-62" fill="none" stroke="#d8b06a" stroke-opacity=".11" stroke-width="2"/>
+  <g opacity=".72">
+    <circle cx="300" cy="350" r="2" fill="#f6efe4"/><circle cx="460" cy="1280" r="1.6" fill="#d8b06a"/><circle cx="720" cy="570" r="1.5" fill="#8ddfff"/><circle cx="880" cy="1640" r="2" fill="#f6efe4"/><circle cx="1370" cy="310" r="1.6" fill="#f6efe4"/><circle cx="1560" cy="1500" r="2" fill="#d8b06a"/><circle cx="1860" cy="720" r="1.6" fill="#8ddfff"/><circle cx="1940" cy="1320" r="1.8" fill="#f6efe4"/><circle cx="420" cy="1760" r="1.4" fill="#8ddfff"/>
+  </g>
+  <g opacity=".22" stroke="#f6efe4" stroke-width="1"><path d="M180 1710 C 520 1460, 790 1540, 1040 1320" fill="none"/><path d="M1380 590 C 1650 360, 1870 390, 2070 260" fill="none"/></g>
+  <rect width="2160" height="2160" fill="#02040b" opacity=".12"/>
+  <rect width="2160" height="2160" filter="url(#grain)" opacity=".75"/>
+</svg>

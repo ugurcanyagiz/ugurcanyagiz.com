@@ -1,0 +1,25 @@
+---
+import MenuButton from "./MenuButton.astro";
+import type { NavItem } from "../lib/navigation";
+
+export interface Props {
+  index: string;
+  label: string;
+  href: string;
+  active?: boolean;
+  className?: string;
+  sectionId?: string;
+  subtitle?: string;
+}
+
+const { index, label, href, active = false, className = "", sectionId = label.toLowerCase(), subtitle = "" } = Astro.props;
+const item: NavItem = { index, label, href: href.startsWith('#') ? `/${sectionId === 'jlog' ? 'blog' : sectionId}` : href, key: (sectionId === 'jlog' ? 'blog' : sectionId) as NavItem['key'], sectionId, subtitle, description: subtitle };
+---
+
+<MenuButton
+  item={item}
+  href={href}
+  active={active}
+  className={`section-nav-button ${className}`.trim()}
+  ariaCurrent={active ? 'location' : false}
+/>

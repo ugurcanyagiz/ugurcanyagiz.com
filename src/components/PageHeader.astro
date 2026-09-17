@@ -1,0 +1,13 @@
+---
+const { pageLabel = "Atlas", title = "", subtitle = "", description = "", sectionIndex = "" } = Astro.props;
+const intro = subtitle || description;
+---
+<header class="page-header">
+  <div class="page-header__meta">
+    {sectionIndex && <span class="page-header__index">{sectionIndex}</span>}
+    <span class="page-header__label">{pageLabel}</span>
+  </div>
+  {title && <h1 class="page-header__title">{title}</h1>}
+  {intro && <p class="page-header__intro">{intro}</p>}
+  <div class="page-header__divider" aria-hidden="true"></div>
+</header>

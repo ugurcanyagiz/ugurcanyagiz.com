@@ -1,0 +1,521 @@
+---
+import SiteLayout from "../components/SiteLayout.astro";
+
+export function getStaticPaths() {
+  return [
+  { params: { slug: 'art/architecture/cities' } },
+  { params: { slug: 'art/architecture/materials' } },
+  { params: { slug: 'art/architecture/sacred-spaces' } },
+  { params: { slug: 'art/architecture/spatial-design' } },
+  { params: { slug: 'art/cinema/cinematography' } },
+  { params: { slug: 'art/cinema/directors' } },
+  { params: { slug: 'art/cinema/editing' } },
+  { params: { slug: 'art/cinema/film-language' } },
+  { params: { slug: 'art/design/design-systems' } },
+  { params: { slug: 'art/design/graphic-design' } },
+  { params: { slug: 'art/design/interface-design' } },
+  { params: { slug: 'art/design/product-design' } },
+  { params: { slug: 'art/visual-studies/color' } },
+  { params: { slug: 'art/visual-studies/composition' } },
+  { params: { slug: 'art/visual-studies/image-reading' } },
+  { params: { slug: 'art/visual-studies/photography' } },
+  { params: { slug: 'blog/essays/culture' } },
+  { params: { slug: 'blog/essays/personal' } },
+  { params: { slug: 'blog/essays/science' } },
+  { params: { slug: 'blog/essays/technology' } },
+  { params: { slug: 'blog/personal-notes/daily-notes' } },
+  { params: { slug: 'blog/personal-notes/lessons' } },
+  { params: { slug: 'blog/personal-notes/questions' } },
+  { params: { slug: 'blog/personal-notes/reflections' } },
+  { params: { slug: 'blog/reading-log/articles' } },
+  { params: { slug: 'blog/reading-log/books' } },
+  { params: { slug: 'blog/reading-log/quotes' } },
+  { params: { slug: 'blog/reading-log/references' } },
+  { params: { slug: 'blog/research-notes/ai' } },
+  { params: { slug: 'blog/research-notes/design' } },
+  { params: { slug: 'blog/research-notes/history' } },
+  { params: { slug: 'blog/research-notes/science' } },
+  { params: { slug: 'future/artificial-intelligence/agents' } },
+  { params: { slug: 'future/artificial-intelligence/automation' } },
+  { params: { slug: 'future/artificial-intelligence/collaboration' } },
+  { params: { slug: 'future/artificial-intelligence/creativity' } },
+  { params: { slug: 'future/society/cities' } },
+  { params: { slug: 'future/society/culture' } },
+  { params: { slug: 'future/society/education' } },
+  { params: { slug: 'future/society/work' } },
+  { params: { slug: 'future/space/economy' } },
+  { params: { slug: 'future/space/mars' } },
+  { params: { slug: 'future/space/orbital-life' } },
+  { params: { slug: 'future/space/telescopes' } },
+  { params: { slug: 'future/technology/biotechnology' } },
+  { params: { slug: 'future/technology/interfaces' } },
+  { params: { slug: 'future/technology/networks' } },
+  { params: { slug: 'future/technology/robotics' } },
+  { params: { slug: 'history/ancient-civilizations/egypt' } },
+  { params: { slug: 'history/ancient-civilizations/greece' } },
+  { params: { slug: 'history/ancient-civilizations/mesopotamia' } },
+  { params: { slug: 'history/ancient-civilizations/rome' } },
+  { params: { slug: 'history/empires/british' } },
+  { params: { slug: 'history/empires/mongol' } },
+  { params: { slug: 'history/empires/ottoman' } },
+  { params: { slug: 'history/empires/roman' } },
+  { params: { slug: 'history/maps-timelines/historical-maps' } },
+  { params: { slug: 'history/maps-timelines/migration' } },
+  { params: { slug: 'history/maps-timelines/trade-routes' } },
+  { params: { slug: 'history/maps-timelines/world-timelines' } },
+  { params: { slug: 'history/philosophy/ancient' } },
+  { params: { slug: 'history/philosophy/enlightenment' } },
+  { params: { slug: 'history/philosophy/existentialism' } },
+  { params: { slug: 'history/philosophy/political-thought' } },
+  { params: { slug: 'science/astronomy/black-holes' } },
+  { params: { slug: 'science/astronomy/cosmology' } },
+  { params: { slug: 'science/astronomy/galaxies' } },
+  { params: { slug: 'science/astronomy/solar-system' } },
+  { params: { slug: 'science/astronomy/stars' } },
+  { params: { slug: 'science/biology/cells' } },
+  { params: { slug: 'science/biology/ecology' } },
+  { params: { slug: 'science/biology/evolution' } },
+  { params: { slug: 'science/biology/human-body' } },
+  { params: { slug: 'science/mind/artificial-intelligence' } },
+  { params: { slug: 'science/mind/cognition' } },
+  { params: { slug: 'science/mind/consciousness' } },
+  { params: { slug: 'science/mind/learning-systems' } },
+  { params: { slug: 'science/physics/classical-mechanics' } },
+  { params: { slug: 'science/physics/quantum-theory' } },
+  { params: { slug: 'science/physics/relativity' } },
+  { params: { slug: 'art/design/typography' } },
+  { params: { slug: 'art/visual-studies/museum-curation' } },
+  { params: { slug: 'future/technology/climate-adaptation' } },
+  { params: { slug: 'future/artificial-intelligence/verification' } },
+  { params: { slug: 'history/maps-timelines/silk-road' } },
+  { params: { slug: 'history/philosophy/stoicism' } },
+  { params: { slug: 'science/astronomy/exoplanets' } },
+  { params: { slug: 'science/biology/microbiome' } },
+  { params: { slug: 'science/physics/thermodynamics' } }
+  ];
+}
+
+const slug = Astro.params.slug ?? "";
+const segments = slug.split("/").filter(Boolean);
+const titleCase = (value: string) => value.replace(/[-_]+/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+const section = segments[0] || "atlas";
+const parentTitle = titleCase(segments.at(-2) || section);
+const topicTitle = titleCase(segments.at(-1) || "Topic");
+const title = segments.map(titleCase).join(" / ") || "Topic";
+const parentHref = `/${segments.slice(0, -1).join("/")}`;
+const sectionHref = `/${section}`;
+const trail = segments.map((part, index) => ({
+  label: titleCase(part),
+  href: `/${segments.slice(0, index + 1).join("/")}`,
+}));
+
+type SectionContent = {
+  lens: string;
+  context: string;
+  ideas: string[];
+  readingPath: string[];
+  questions: string[];
+};
+
+const SECTION_CONTENT: Record<string, SectionContent> = {
+  science: {
+    lens: "Science here is not a list of answers to memorize; it is a cycle of observation, modeling, testing, and correction.",
+    context: "This atlas topic connects scales of understanding: from measurement to theory, and from theory back to everyday intuition.",
+    ideas: ["Separate the observable fact first: what is truly being measured, and what is being interpreted?", "Read the power and limits of a model together; good science gives both explanation and uncertainty.", "Trace how small mechanisms turn into large-scale consequences."],
+    readingPath: ["Build the core vocabulary", "Simplify the mechanism through examples", "Note the open questions and common misconceptions"],
+    questions: ["What evidence supports this idea?", "At what scale does the model break down?", "Which other scientific field does this topic connect to?"],
+  },
+  history: {
+    lens: "History pages are built less as event lists and more as maps of causes, institutions, incentives, and fragile systems.",
+    context: "This atlas topic explains how a historical pattern leaves traces in the present through geography, economics, ideas, and power.",
+    ideas: ["Avoid single-cause explanations; history usually changes when several pressures accumulate at once.", "Watch how institutions and technologies narrow or expand what people can choose.", "Separate the winners’ narrative from everyday realities on the ground."],
+    readingPath: ["Set the time and place", "Map the incentives of the actors", "Compare long-term consequences with today’s systems"],
+    questions: ["Who gained, and who lost?", "Was the turning point a single event, or accumulated pressure?", "Where does this pattern repeat today?"],
+  },
+  art: {
+    lens: "The Art section reads art not only as taste, but as a system of attention, rhythm, material, composition, and cultural memory.",
+    context: "This atlas topic studies how a work or practice creates meaning through visual decisions, technical limits, and audience perception.",
+    ideas: ["Form carries meaning: scale, space, color, and repetition guide the viewer’s body.", "Technical choices are practical as much as aesthetic; tools, time, and materials shape the result.", "Meaning often comes from contrast: silence/sound, empty/full, order/disruption."],
+    readingPath: ["Describe the first impression", "Break down the composition and technique", "Read it again through cultural context and personal experience"],
+    questions: ["Where does the eye go first, and why?", "Which technical decision changes the emotion?", "Which question from its time is the work answering?"],
+  },
+  future: {
+    lens: "Future pages are less about prediction and more about reading signals: cost curves, institutions, safety, and human behavior together.",
+    context: "This atlas topic maps an emerging technological or social shift without hype, balancing opportunities, risks, and required infrastructure.",
+    ideas: ["A technology’s future is determined not only by prototypes, but by cost, trust, distribution, and maintenance.", "New systems collide with old institutions; law, education, and culture shape the speed of adaptation.", "The best future reading is both optimistic and careful: it sees capability and side effects together."],
+    readingPath: ["Separate today’s signals", "List the barriers to scale", "Think through consequences for people and institutions"],
+    questions: ["Which cost curve accelerates this change?", "Where do safety and trust problems appear?", "Is the winner the technology itself, or the system that uses it well?"],
+  },
+  blog: {
+    lens: "JLOG subpages turn personal notes, reading trails, and research questions into short but organized thought files.",
+    context: "This atlas topic treats an idea not as a finished answer, but as a space for observation, quotation, questions, and revision.",
+    ideas: ["Separate personal observation from general claims.", "Do not lose the question a text leaves behind.", "Short notes can become larger research paths over time."],
+    readingPath: ["Identify where the note begins", "List the connected ideas", "Save the question that remains open"],
+    questions: ["What curiosity created this note?", "Which source or experience changed the idea?", "How could I test this later?"],
+  },
+};
+
+const content = SECTION_CONTENT[section] || SECTION_CONTENT.science;
+const topicHuman = topicTitle.toLowerCase();
+const parentHuman = parentTitle.toLowerCase();
+---
+
+<SiteLayout
+  title={`${title} | UGURCAN YAGIZ`}
+  description={`${topicTitle} in a light, scroll-based atlas topic template.`}
+  activeSection={section}
+  showBackground={false}
+  fullBleed
+>
+  <article class="topic-placeholder topic-deep-page">
+    <nav class="topic-deep-page__crumbs" aria-label="Breadcrumb">
+      <a href={sectionHref}>{titleCase(section)}</a>
+      {trail.slice(1).map((item, index) => (
+        <>
+          <span aria-hidden="true">/</span>
+          {index === trail.length - 2 ? <span>{item.label}</span> : <a href={item.href}>{item.label}</a>}
+        </>
+      ))}
+    </nav>
+
+    <header class="topic-deep-page__hero">
+      <p class="topic-placeholder__eyebrow">{titleCase(section)} atlas / {parentTitle}</p>
+      <h1>{topicTitle}</h1>
+      <p>
+        {content.context} This page positions <b>{topicHuman}</b> inside the <b>{parentHuman}</b> path
+        and gives visitors a complete, quick-reading starting map.
+      </p>
+      <div class="topic-deep-page__actions">
+        <a href={parentHref}>← Parent topic</a>
+        <a href={sectionHref}>Section index</a>
+      </div>
+    </header>
+
+    <section class="topic-deep-page__section" aria-label="Topic structure">
+      <div class="topic-deep-page__card">
+        <span>01</span>
+        <h2>Lens</h2>
+        <p>{content.lens}</p>
+      </div>
+      <div class="topic-deep-page__card">
+        <span>02</span>
+        <h2>Core ideas</h2>
+        <ul>
+          {content.ideas.map((idea) => <li>{idea}</li>)}
+        </ul>
+      </div>
+      <div class="topic-deep-page__card">
+        <span>03</span>
+        <h2>Reading path</h2>
+        <ol>
+          {content.readingPath.map((step) => <li>{step}</li>)}
+        </ol>
+      </div>
+    </section>
+
+    <section class="topic-deep-page__detail" aria-label="Topic notes">
+      <div>
+        <p class="topic-deep-page__kicker">Why it matters</p>
+        <h2>How to read {topicTitle}</h2>
+        <p>
+          {topicTitle} may look like a standalone topic, but inside the atlas it belongs to a larger network.
+          The page therefore follows definition, mechanism, example, and consequence to build a fast mental model.
+        </p>
+      </div>
+      <div class="topic-deep-page__questions">
+        <p class="topic-deep-page__kicker">Guiding questions</p>
+        <ul>
+          {content.questions.map((question) => <li>{question}</li>)}
+        </ul>
+      </div>
+    </section>
+  </article>
+</SiteLayout>
+
+<style>
+  :global(body:has(.topic-deep-page)){
+    background:#07131f;
+    color:#f8f1df;
+  }
+
+  :global(body:has(.topic-deep-page) .site-page){
+    color:#f8f1df;
+    background:
+      radial-gradient(circle at 14% 12%, color-mix(in srgb,var(--section-accent) 18%, transparent), transparent 34rem),
+      radial-gradient(circle at 88% 14%, rgba(255,244,206,.12), transparent 24rem),
+      linear-gradient(180deg,#07131f 0%,#102837 34%,#152c31 62%,#071017 100%);
+  }
+
+  :global(body:has(.topic-deep-page) .site-page__cosmos){
+    background:
+      radial-gradient(circle at 76% 10%, rgba(255,231,168,.15), transparent 20rem),
+      radial-gradient(circle at 15% 30%, color-mix(in srgb,var(--section-accent) 15%, transparent), transparent 34rem);
+    opacity:1;
+  }
+
+  :global(body:has(.topic-deep-page) .site-page__cosmos:after){
+    background:linear-gradient(180deg,transparent 35%,rgba(4,12,17,.22) 60%,rgba(3,8,12,.92));
+  }
+
+  :global(body:has(.topic-deep-page) .site-page__landscape),
+  :global(body:has(.topic-deep-page) .site-page__sun),
+  :global(body:has(.topic-deep-page) .site-page__cloud),
+  :global(body:has(.topic-deep-page) .site-page__orbit){
+    opacity:.68;
+  }
+
+  :global(body:has(.topic-deep-page) .site-page__section-mark){
+    color:color-mix(in srgb,var(--section-accent) 82%,white);
+  }
+
+  :global(body:has(.topic-deep-page) .site-page__home-link){
+    color:#fff7df;
+    background:rgba(5,15,20,.72);
+    border-color:color-mix(in srgb,var(--section-accent) 44%,transparent);
+  }
+
+  :global(body:has(.topic-deep-page) .site-page__scroll-progress){
+    background:linear-gradient(90deg, transparent, var(--section-accent), color-mix(in srgb,var(--section-soft) 70%,white));
+    box-shadow:0 0 18px color-mix(in srgb,var(--section-accent) 38%, transparent);
+  }
+
+  .topic-deep-page{
+    width:min(1180px, calc(100% - 40px));
+    margin:0 auto;
+    padding:clamp(7rem,12vw,11rem) 0 clamp(5rem,10vw,9rem);
+    color:#f8f1df;
+  }
+
+  .topic-deep-page__crumbs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:.55rem;
+    align-items:center;
+    margin-bottom:clamp(1rem,2vw,1.6rem);
+    color:rgba(248,241,223,.58);
+    font-size:.72rem;
+    font-weight:900;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+  }
+
+  .topic-deep-page__crumbs a{
+    color:rgba(248,241,223,.72);
+  }
+
+  .topic-deep-page__hero,
+  .topic-deep-page__card{
+    border:1px solid color-mix(in srgb,var(--section-accent) 28%,rgba(255,255,255,.10));
+    background:linear-gradient(140deg,rgba(248,241,218,.14),rgba(8,21,28,.68) 58%,color-mix(in srgb,var(--section-accent) 10%,rgba(8,21,28,.54)));
+    box-shadow:0 42px 130px rgba(0,0,0,.38), inset 0 1px rgba(255,255,255,.14);
+    backdrop-filter:blur(20px) saturate(1.05);
+  }
+
+  .topic-deep-page__hero{
+    position:relative;
+    overflow:hidden;
+    border-radius:clamp(28px,4vw,48px);
+    padding:clamp(1.5rem,4vw,4rem);
+  }
+
+  .topic-deep-page__hero:after{
+    content:"";
+    position:absolute;
+    inset:auto -12% -48% -12%;
+    height:68%;
+    background:radial-gradient(ellipse at center,color-mix(in srgb,var(--section-accent) 18%, transparent),transparent 68%);
+    pointer-events:none;
+  }
+
+  .topic-placeholder__eyebrow{
+    margin:0 0 1rem;
+    color:color-mix(in srgb,var(--section-accent) 72%, white);
+    font-size:.74rem;
+    font-weight:950;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+  }
+
+  .topic-deep-page h1{
+    max-width:11ch;
+    margin:0 0 1rem;
+    color:#f8f1df;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(3.5rem,10vw,9rem);
+    font-weight:500;
+    line-height:.86;
+    letter-spacing:-.08em;
+    text-transform:capitalize;
+    text-wrap:balance;
+  }
+
+  .topic-deep-page p{
+    max-width:760px;
+    margin:0;
+    color:rgba(248,241,223,.72);
+    font-size:clamp(1rem,2vw,1.28rem);
+    line-height:1.75;
+  }
+
+  .topic-deep-page__actions{
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-wrap:wrap;
+    gap:.75rem;
+    margin-top:1.5rem;
+  }
+
+  .topic-deep-page__actions a{
+    display:inline-flex;
+    align-items:center;
+    min-height:44px;
+    padding:0 1rem;
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:999px;
+    color:#f8f1df;
+    background:rgba(255,255,255,.06);
+    font-size:.76rem;
+    font-weight:900;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+
+  .topic-deep-page__section{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:clamp(1rem,2vw,1.35rem);
+    margin-top:clamp(1rem,3vw,2rem);
+  }
+
+  .topic-deep-page__card{
+    min-height:240px;
+    border-radius:clamp(22px,3vw,34px);
+    padding:clamp(1.1rem,2.5vw,1.7rem);
+    transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease,background .25s ease;
+  }
+
+  .topic-deep-page__card span{
+    display:inline-grid;
+    place-items:center;
+    width:42px;
+    height:42px;
+    margin-bottom:clamp(2rem,5vw,4rem);
+    border:1px solid color-mix(in srgb,var(--section-accent) 38%, rgba(255,255,255,.12));
+    border-radius:50%;
+    color:color-mix(in srgb,var(--section-accent) 72%, white);
+    background:color-mix(in srgb,var(--section-accent) 12%, rgba(255,255,255,.07));
+    font-weight:950;
+  }
+
+  .topic-deep-page__card h2{
+    margin:0 0 .55rem;
+    color:#f8f1df;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(1.45rem,2.4vw,2.15rem);
+    font-weight:500;
+    letter-spacing:-.045em;
+  }
+
+  .topic-deep-page__card p,
+  .topic-deep-page__card li{
+    color:rgba(248,241,223,.72);
+    font-size:1rem;
+    line-height:1.8;
+  }
+
+  .topic-deep-page__card ul,
+  .topic-deep-page__card ol{
+    display:grid;
+    gap:.65rem;
+    margin:0;
+    padding-left:1.15rem;
+  }
+
+  .topic-deep-page__detail{
+    display:grid;
+    grid-template-columns:minmax(0,1.25fr) minmax(280px,.75fr);
+    gap:clamp(1rem,2vw,1.4rem);
+    margin-top:clamp(1rem,2vw,1.4rem);
+    padding:clamp(1.3rem,3vw,2.2rem);
+    border:1px solid rgba(255,255,255,.13);
+    border-radius:28px;
+    background:linear-gradient(145deg,rgba(247,240,218,.115),rgba(8,21,28,.64));
+    box-shadow:0 28px 90px rgba(0,0,0,.30), inset 0 1px rgba(255,255,255,.10);
+  }
+
+  .topic-deep-page__detail h2{
+    margin:.25rem 0 .7rem;
+    color:#f8f1df;
+    font-family:Georgia,"Times New Roman",serif;
+    font-size:clamp(1.7rem,3vw,3rem);
+    font-weight:500;
+    letter-spacing:-.05em;
+  }
+
+  .topic-deep-page__detail p,
+  .topic-deep-page__detail li{
+    color:rgba(248,241,223,.72);
+    line-height:1.85;
+  }
+
+  .topic-deep-page__kicker{
+    margin:0;
+    color:var(--section-accent);
+    font-size:.72rem;
+    font-weight:950;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+
+  .topic-deep-page__questions ul{
+    display:grid;
+    gap:.8rem;
+    margin:.8rem 0 0;
+    padding-left:1.15rem;
+  }
+
+  @media (hover:hover){
+    .topic-deep-page__card:hover,
+    .topic-deep-page__actions a:hover{
+      transform:translateY(-7px);
+      border-color:color-mix(in srgb,var(--section-accent) 40%, rgba(255,255,255,.14));
+      background:linear-gradient(145deg,rgba(247,240,218,.14),rgba(8,21,28,.72));
+      box-shadow:0 36px 110px rgba(0,0,0,.36), inset 0 1px rgba(255,255,255,.12);
+    }
+  }
+
+  @supports (animation-timeline: view()){
+    .topic-deep-page__hero,
+    .topic-deep-page__crumbs,
+    .topic-deep-page__card{
+      animation:topic-deep-reveal both ease-out;
+      animation-timeline:view();
+      animation-range:entry 0% cover 30%;
+    }
+
+    @keyframes topic-deep-reveal{
+      from{opacity:.2;transform:translateY(44px) scale(.985);filter:blur(8px)}
+      to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+    }
+  }
+
+  @media (max-width:860px){
+    .topic-deep-page__section,
+    .topic-deep-page__detail{grid-template-columns:1fr}
+    .topic-deep-page__card{min-height:auto}
+  }
+
+  @media (max-width:640px){
+    .topic-deep-page{width:min(100% - 28px,1180px);padding-top:clamp(6rem,22vw,8rem)}
+    .topic-deep-page h1{font-size:clamp(3rem,16vw,5.2rem)}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .topic-deep-page__hero,
+    .topic-deep-page__crumbs,
+    .topic-deep-page__card{animation:none!important;transform:none!important;filter:none!important}
+    .topic-deep-page__card,
+    .topic-deep-page__actions a{transition:none!important}
+  }
+</style>

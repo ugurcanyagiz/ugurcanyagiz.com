@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-label="Editorial diagram for Film Editing Invisible Art">
+<defs><radialGradient id="g" cx="30%" cy="20%"><stop stop-color="#ff7b9c" stop-opacity=".9"/><stop offset="1" stop-color="#050814"/></radialGradient><filter id="n"><feTurbulence baseFrequency=".55" numOctaves="3"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .12"/></feComponentTransfer></filter></defs>
+<rect width="1600" height="1000" fill="url(#g)"/><rect width="1600" height="1000" filter="url(#n)" opacity=".35"/>
+<g fill="none" stroke="#fff7df" stroke-opacity=".55" stroke-width="3"> <circle cx="800" cy="500" r="310"/><circle cx="800" cy="500" r="190"/><path d="M210 720 C470 280 1030 280 1390 720"/><path d="M260 300 H1340"/><path d="M420 165 V835 M800 120 V880 M1180 165 V835"/></g>
+<text x="110" y="865" fill="#fff7df" font-family="Georgia,serif" font-size="76">Film Editing Invisible Art</text>
+<text x="115" y="925" fill="#f0c36d" font-family="Arial,sans-serif" font-size="26" letter-spacing="8">LIGHT MOTION EDITORIAL STUDY</text>
+</svg>

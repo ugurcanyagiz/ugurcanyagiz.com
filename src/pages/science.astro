@@ -1,6 +1,6 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import FilterBar from "../components/FilterBar.astro";
+import SiteLayout from "../components/SiteLayout.astro";
+import TopicIndexTemplate from "../components/TopicIndexTemplate.astro";
 
 const cards = [
   {
@@ -183,48 +183,29 @@ const cards = [
       "We don’t know yet. But chemistry is universal — and the universe is huge. How common is life?",
     img: "https://images.unsplash.com/photo-1447433819943-74a20887a81e?w=200&q=80",
   },
+  {
+    href: "/science/astronomy/exoplanets",
+    category: "SPACE",
+    subtitle: "Worlds • Habitability",
+    title: "Exoplanets: Other Earths?",
+    excerpt:
+      "Planets around other stars help us ask what makes a world stable, detectable, and possibly alive.",
+    img: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=200&q=80",
+  },
+  {
+    href: "/science/biology/microbiome",
+    category: "BIOLOGY",
+    subtitle: "Microbes • Health",
+    title: "Microbiome: The Hidden Ecosystem in Us",
+    excerpt:
+      "Your body is also a habitat: microbes shape digestion, immunity, and maybe even mood through quiet feedback loops.",
+    img: "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=200&q=80",
+  },
 ];
 
-const filters = ["ALL", "SPACE", "PHYSICS", "BIOLOGY", "CHEMISTRY", "TECHNOLOGY", "MIND"];
 
-import AtlasBackground from "../components/AtlasBackground.astro";
-import SectionHeader from "../components/SectionHeader.astro";
-import ScrollReveal from "../components/ScrollReveal.astro";
 ---
-<Layout title="Science — Ugurcan" description="Cosmos → Matter → Life → Mind → Technology. A layered exploration of reality, curiosity, and careful awe.">
-  <FilterBar slot="subnav" filters={filters} cardSelector=".science-card" queryKey="topic" defaultFilter="ALL" />
-  <main class="atlas-page science-atlas">
-    <AtlasBackground variant="science" id="science-scene" />
-    <div class="atlas-content">
-      <section class="atlas-hero">
-        <div class="atlas-hero__panel" data-reveal>
-          <p class="atlas-eyebrow">Personal atlas / Science</p>
-          <h1>Science</h1>
-          <p class="atlas-hero__subtitle">Cosmos → Matter → Life → Mind → Technology. A layered exploration of reality, curiosity, and careful awe.</p>
-        </div>
-      </section>
 
-      <section class="atlas-section">
-        <SectionHeader eyebrow="Scroll system" title="Cosmos → Matter → Life → Mind → Technology" text="Move through this room like an exhibition: each card is a fragment, a question, and a doorway into a longer note." />
-        <div class="atlas-grid atlas-grid--four">
-          <article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Cosmos</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Matter</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Life</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Mind</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article><article class="atlas-card" data-reveal style="--accent: rgba(141,223,255,.18)"><span class="atlas-glyph">✦</span><h3>Technology</h3><p>A layer in the map: patterns, examples, and quiet connections.</p></article>
-        </div>
-      </section>
-
-      <section class="atlas-section">
-        <SectionHeader eyebrow="Archive" title="Existing notes, redesigned as exhibition cards" text="All routes and articles are preserved; the visual system now matches the surreal premium direction of /me." />
-        <div class="atlas-grid">
-          {cards.map((c) => (
-            <a class="atlas-card science-card" href={c.href} data-category={c.category} data-reveal>
-              <span class="atlas-glyph" aria-hidden="true">✺</span>
-              <p class="atlas-eyebrow">{c.category} · {c.subtitle}</p>
-              <h3>{c.title}</h3>
-              <p>{c.excerpt}</p>
-            </a>
-          ))}
-        </div>
-      </section>
-    </div>
-    <ScrollReveal />
-  </main>
-</Layout>
+<SiteLayout title="Science — Ugurcan" description="Cosmos → Matter → Life → Mind → Technology. A clean, modern, clickable topic index for science writing in the archive." fullBleed showBackground={false}>
+  <TopicIndexTemplate cards={cards} sectionLabel="Science" />
+</SiteLayout>

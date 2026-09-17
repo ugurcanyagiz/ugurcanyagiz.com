@@ -1,0 +1,31 @@
+---
+import type { NavItem } from '../lib/navigation';
+
+export interface Props {
+  item: NavItem;
+  href?: string;
+  active?: boolean;
+  className?: string;
+  ariaCurrent?: 'page' | 'location' | 'true' | false;
+}
+
+const { item, href = item.href, active = false, className = '', ariaCurrent = active ? 'page' : false } = Astro.props;
+const classes = ['menu-button', active && 'is-active', className].filter(Boolean).join(' ');
+---
+
+<a
+  class={classes}
+  href={href}
+  data-section-nav-button
+  data-section-id={item.sectionId}
+  data-route-href={item.href}
+  aria-current={ariaCurrent || undefined}
+  aria-label={`${item.label}: ${item.subtitle}`}
+>
+  <span class="menu-button__index" aria-hidden="true">{item.index}</span>
+  <span class="menu-button__text">
+    <span class="menu-button__label">{item.label}</span>
+    <span class="menu-button__subtitle">{item.subtitle}</span>
+  </span>
+  <span class="menu-button__indicator" aria-hidden="true"></span>
+</a>

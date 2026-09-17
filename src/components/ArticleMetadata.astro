@@ -1,0 +1,6 @@
+---
+const { items = [] } = Astro.props;
+---
+<div class="meta" aria-label="Article metadata">
+  {items.map((item) => <span class="meta-pill">{item}</span>)}
+</div>

@@ -1,0 +1,57 @@
+---
+import Layout from "../layouts/Layout.astro";
+import CinematicBackground from "./CinematicBackground.astro";
+import PageHeader from "./PageHeader.astro";
+import SiteNav from "./SiteNav.astro";
+
+const {
+  pageLabel,
+  title = "UGURCAN YAGIZ",
+  subtitle = "",
+  description = "",
+  activeSection = "",
+  backgroundVariant = "atlas",
+  sectionIndex = "",
+  showHeader = false,
+  showBackground = true,
+  fullBleed = false,
+} = Astro.props;
+
+const firstSegment = Astro.url.pathname.split("/").filter(Boolean)[0] || "home";
+const resolvedActive = activeSection || (firstSegment === "jlog" ? "blog" : firstSegment);
+const inferredLabel = pageLabel || (resolvedActive ? resolvedActive.toUpperCase() : "ATLAS");
+---
+<Layout title={title} description={description || subtitle} theme="dark">
+  <a class="site-skip-link" href="#site-content">Skip to content</a>
+  <div slot="subnav" class="site-shell-nav">
+    <SiteNav activeSection={resolvedActive} />
+    <slot name="subnav" />
+  </div>
+  <div class:list={["site-page", `site-page--${resolvedActive}`, fullBleed && "site-page--full-bleed"]} data-section={resolvedActive}>
+    <div class="site-page__scroll-progress" aria-hidden="true"></div>
+    <div class="site-page__cosmos" aria-hidden="true">
+      <span class="site-page__glow"></span>
+      <span class="site-page__sun"></span>
+      <span class="site-page__cloud site-page__cloud--one"></span>
+      <span class="site-page__cloud site-page__cloud--two"></span>
+      <span class="site-page__landscape site-page__landscape--far"></span>
+      <span class="site-page__landscape site-page__landscape--near"></span>
+      <span class="site-page__orbit site-page__orbit--one"></span>
+      <span class="site-page__orbit site-page__orbit--two"></span>
+      <span class="site-page__grain"></span>
+    </div>
+    {showBackground && <CinematicBackground variant={backgroundVariant} />}
+    <div class="site-page__section-mark" aria-hidden="true">
+      <span>{inferredLabel}</span><i></i><span>THE LIVING ARCHIVE</span>
+    </div>
+    <div class="site-page__inner" id="site-content">
+      {showHeader && (
+        <PageHeader pageLabel={inferredLabel} title={title} subtitle={subtitle} description={description} sectionIndex={sectionIndex} />
+      )}
+      <div class="site-page__content">
+        <slot />
+      </div>
+    </div>
+    <a class="site-page__home-link" href="/" aria-label="Return to the living archive">← Archive</a>
+  </div>
+</Layout>

@@ -1,5 +1,5 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import SiteLayout from "../../components/SiteLayout.astro";
 
 /**
  * Assets you have:
@@ -41,7 +41,7 @@ const inlineImages = [
 ];
 ---
 
-<Layout title={`JLOG! — ${title}`}>
+<SiteLayout title={`JLOG! — ${title}`}>
   <main class="page">
     <!-- HERO -->
     <header class="hero" aria-label="Page header">
@@ -801,4 +801,4 @@ const inlineImages = [
       tryAutoplay();
     }
   </script>
-</Layout>
+</SiteLayout>

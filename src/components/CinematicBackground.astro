@@ -1,0 +1,11 @@
+---
+const { variant = "atlas" } = Astro.props;
+---
+<div class:list={["cinematic-background", `cinematic-background--${variant}`]} aria-hidden="true">
+  <div class="cinematic-background__stars"></div>
+  <div class="cinematic-background__orbit"></div>
+  <div class="cinematic-background__glow cinematic-background__glow--gold"></div>
+  <div class="cinematic-background__glow cinematic-background__glow--blue"></div>
+  <div class="cinematic-background__grain"></div>
+  <div class="cinematic-background__vignette"></div>
+</div>
