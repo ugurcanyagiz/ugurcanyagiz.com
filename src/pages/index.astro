@@ -25,6 +25,7 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     <nav class="constellation" aria-label="Explore Personal Atlas">
       <div class="planet" aria-hidden="true">
         <img src="/images/surreal-ocean-planet.webp" alt="" width="670" height="663" fetchpriority="high" />
+        <span class="planet-current"></span>
         <span class="planet-light"></span>
       </div>
 
@@ -82,6 +83,7 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     aspect-ratio: 670 / 663;
     transform: translate(-50%, -50%);
     border-radius: 50%;
+    overflow: hidden;
     pointer-events: none;
   }
 
@@ -89,17 +91,25 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     display: block;
     width: 100%;
     height: 100%;
-    animation: tide 24s ease-in-out infinite alternate;
+    animation: tide 9s ease-in-out infinite alternate;
+  }
+
+  .planet-current {
+    position: absolute;
+    inset: -25%;
+    background: linear-gradient(153deg, transparent 25%, #afbbff30 43%, #fff1d34d 49%, #9db1ff26 57%, transparent 70%);
+    mix-blend-mode: screen;
+    animation: current-drift 7s ease-in-out infinite alternate;
   }
 
   .planet-light {
     position: absolute;
     inset: 0;
     border-radius: 50%;
-    background: radial-gradient(circle at var(--light-x) var(--light-y), var(--orbit-color), transparent 22%);
+    background: radial-gradient(circle at var(--light-x) var(--light-y), var(--orbit-color), transparent 37%);
     mix-blend-mode: screen;
     opacity: 0;
-    transition: opacity .28s ease;
+    transition: opacity .16s ease;
   }
 
   .connection {
@@ -109,10 +119,10 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     height: 100%;
     pointer-events: none;
     opacity: 0;
-    transition: opacity .28s ease;
+    transition: opacity .16s ease;
   }
 
-  .constellation[data-active] :is(.connection, .planet-light) { opacity: .78; }
+  .constellation[data-active] :is(.connection, .planet-light) { opacity: 1; }
 
   .section-star {
     position: absolute;
@@ -138,7 +148,7 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     height: 12px;
     background: radial-gradient(circle, #fff 10%, var(--star) 24%, transparent 68%);
     filter: drop-shadow(0 0 5px var(--star));
-    animation: twinkle 5s ease-in-out infinite alternate;
+    animation: twinkle 2.8s ease-in-out infinite alternate;
   }
 
   .section-star:nth-of-type(even) .star-light { animation-delay: -2.3s; }
@@ -155,11 +165,26 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
   .section-star:is(:hover, :focus-visible) { color: var(--star); }
   .section-star:focus-visible { outline: 1px solid var(--star); outline-offset: 2px; }
 
-  @keyframes tide {
-    from { transform: rotate(-3deg) scale(.995); }
-    to { transform: rotate(4deg) scale(1.012); }
+  .section-star[data-lit] .star-light {
+    animation: none;
+    transform: scale(1.42);
+    filter: drop-shadow(0 0 10px var(--star));
   }
-  @keyframes twinkle { from { opacity: .66; } to { opacity: 1; } }
+
+  @keyframes tide {
+    from { transform: rotate(-8deg) scale(1.04); }
+    to { transform: rotate(9deg) scale(1.09); }
+  }
+
+  @keyframes current-drift {
+    from { transform: translate(-8%, -19%); opacity: .34; }
+    to { transform: translate(8%, 19%); opacity: .88; }
+  }
+
+  @keyframes twinkle {
+    from { opacity: .56; transform: scale(.82); }
+    to { opacity: 1; transform: scale(1.16); }
+  }
 
   @media (max-width: 700px) {
     .planet { width: min(81vw, 55svh); top: 46%; }
@@ -168,7 +193,8 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .planet img, .star-light { animation: none; }
+    .planet img, .planet-current, .star-light { animation: none; }
+    .planet-current { display: none; }
     .planet-light, .connection { transition: none; }
   }
 </style>
@@ -181,12 +207,22 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
 
   if (nav && canvas && planet && context) {
     const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>(".section-star"));
+    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+    let tapped: HTMLAnchorElement | null = null;
+    let lit: HTMLAnchorElement | null = null;
+    let touchLink: HTMLAnchorElement | null = null;
+    let navigationTimer: number | undefined;
     let hovered: HTMLAnchorElement | null = null;
     let focused: HTMLAnchorElement | null = null;
 
     function draw() {
       if (!nav || !canvas || !planet || !context) return;
-      const link = hovered ?? focused;
+      const link = tapped ?? hovered ?? focused;
+      if (link !== lit) {
+        lit?.removeAttribute("data-lit");
+        link?.setAttribute("data-lit", "");
+        lit = link;
+      }
       const star = link?.querySelector(".star-light");
       if (!link || !star) {
         nav.removeAttribute("data-active");
@@ -219,7 +255,9 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
         starX, starY,
       );
       context.strokeStyle = color;
-      context.lineWidth = 0.9;
+      context.lineWidth = 1.6;
+      context.shadowColor = color;
+      context.shadowBlur = 7;
       context.stroke();
 
       nav.style.setProperty("--light-x", `${50 + dx * reach / globe.width * 100}%`);
@@ -229,6 +267,22 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     }
 
     for (const link of links) {
+      link.addEventListener("pointerdown", (event) => {
+        touchLink = event.pointerType === "touch" ? link : null;
+      });
+      link.addEventListener("pointercancel", () => { touchLink = null; });
+      link.addEventListener("click", (event) => {
+        const isTouchTap = touchLink === link && event.detail > 0;
+        touchLink = null;
+        if (!isTouchTap || reducedMotion.matches || event.defaultPrevented ||
+          event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+        event.preventDefault();
+        window.clearTimeout(navigationTimer);
+        tapped = link;
+        draw();
+        navigationTimer = window.setTimeout(() => window.location.assign(link.href), 320);
+      });
       link.addEventListener("pointerenter", (event) => {
         if (event.pointerType !== "touch") {
           hovered = link;
@@ -240,6 +294,14 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
       link.addEventListener("blur", () => { focused = null; draw(); });
     }
 
+    window.addEventListener("pagehide", () => {
+      window.clearTimeout(navigationTimer);
+      tapped = null;
+      hovered = null;
+      focused = null;
+      touchLink = null;
+      draw();
+    });
     new ResizeObserver(draw).observe(nav);
   }
 </script>
