@@ -1,60 +1,325 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import AtlasBackground from "../components/AtlasBackground.astro";
-import SectionHeader from "../components/SectionHeader.astro";
-import ScrollReveal from "../components/ScrollReveal.astro";
 
-const universe = [
-  ["/science", "Science", "Reality as a layered language", "Cosmos, matter, life, mind, and technology mapped with disciplined awe."],
-  ["/history", "History", "Civilization patterns", "Power, institutions, trade, crisis, memory, and what repeats across time."],
-  ["/art", "Art", "Perception and craft", "Music, painting, architecture, film, design, and photography as ways of seeing."],
-  ["/future", "Future", "Signals without hype", "AI, biotech, space, energy, computing, society, and robotics considered carefully."],
-  ["/blog", "JLOG", "Archive of becoming", "Personal notes, belief, memory, uncertainty, and quiet reflections."],
+const sections = [
+  { href: "/science", name: "Science", x: 23, y: 24, mobileX: 22, mobileY: 21, color: "#8adaff" },
+  { href: "/history", name: "History", x: 76, y: 19, mobileX: 77, mobileY: 16, color: "#ffd398" },
+  { href: "/art", name: "Art", x: 87, y: 59, mobileX: 82, mobileY: 66, color: "#ffabd8" },
+  { href: "/future", name: "Future", x: 66, y: 82, mobileX: 57, mobileY: 84, color: "#a0ffe3" },
+  { href: "/blog", name: "JLOG", x: 16, y: 70, mobileX: 19, mobileY: 72, color: "#f5dc9e" },
 ];
+
+const stars = Array.from({ length: 105 }, (_, i) => ({
+  x: ((i * 137.508 + 31) % 100).toFixed(2),
+  y: ((i * i * 17.137 + i * 11.73 + 8) % 100).toFixed(2),
+  size: i % 9 === 0 ? 2 : 1,
+  opacity: 0.16 + (i % 7) * 0.075,
+}));
 ---
 
-<Layout title="Ugurcan Yagiz — Personal Atlas" description="A personal atlas of science, history, art, future thinking, and JLOG reflections.">
-  <main class="atlas-page home-atlas">
-    <AtlasBackground variant="atlas" id="home-atlas-scene" />
-    <div class="atlas-content">
-      <section class="atlas-hero">
-        <div class="atlas-hero__panel" data-reveal>
-          <p class="atlas-eyebrow">Enter the knowledge universe</p>
-          <h1>Ugurcan Yagiz</h1>
-          <p class="atlas-hero__subtitle">A personal atlas of science, history, art, future thinking, and JLOG reflections.</p>
-        </div>
-      </section>
-
-      <section class="atlas-section">
-        <div class="atlas-panel" data-reveal>
-          <p class="atlas-eyebrow">Manifesto</p>
-          <p style="font-size:clamp(1.25rem,2.5vw,2rem);color:#f6efe4;font-family:Georgia,'Times New Roman',serif;line-height:1.35">
-            I study patterns across science, history, art, technology, and personal reflection. This website is a living map of curiosity, memory, and future thinking.
-          </p>
-        </div>
-      </section>
-
-      <section class="atlas-section">
-        <SectionHeader eyebrow="Knowledge Universe" title="Five rooms orbiting one atlas" text="Each section has a distinct identity, but all of them ask the same question: how do systems become meaning?" />
-        <div class="atlas-grid">
-          {universe.map(([href, label, title, text]) => (
-            <a class="atlas-card" href={href} data-reveal>
-              <span class="atlas-glyph">✦</span>
-              <p class="atlas-eyebrow">{label}</p>
-              <h3>{title}</h3>
-              <p>{text}</p>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      <section class="atlas-section">
-        <SectionHeader eyebrow="JLOG Preview" title="A quiet archive of thoughts, memory, belief, and becoming" text="The personal journal keeps the Pale Blue Dot audio area and turns notes into memory fragments." />
-        <div class="atlas-panel" data-reveal>
-          <audio controls preload="metadata" style="width:100%"><source src="/audio/pale-blue-dot.mp3" type="audio/mpeg" /></audio>
-        </div>
-      </section>
+<Layout title="Ugurcan Yagiz — Personal Atlas" description="Science, History, Art, Future and JLOG by Ugurcan Yagiz." hideChrome>
+  <div class="planet-home" data-planet-home>
+    <div class="starfield" aria-hidden="true">
+      {stars.map((star) => <i style={`--x:${star.x}%;--y:${star.y}%;--size:${star.size}px;--opacity:${star.opacity}`}></i>)}
     </div>
-    <ScrollReveal />
-  </main>
+
+    <nav class="constellation" aria-label="Explore Personal Atlas">
+      <div class="planet" aria-hidden="true">
+        <div class="planet-fallback"></div>
+        <canvas data-planet></canvas>
+      </div>
+
+      {sections.map(({ href, name, x, y, mobileX, mobileY, color }) => (
+        <a class="section-star" href={href}
+          style={`--x:${x}%;--y:${y}%;--mobile-x:${mobileX}%;--mobile-y:${mobileY}%;--star:${color}`}>
+          <span class="star-light" aria-hidden="true"></span>
+          <span class="star-label">{name}</span>
+        </a>
+      ))}
+    </nav>
+  </div>
 </Layout>
+
+<style>
+  .planet-home {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    place-items: center;
+    min-height: 100svh;
+    min-height: max(420px, 100svh);
+    overflow: hidden;
+    background: radial-gradient(ellipse at 50% 47%, #101a31 0%, #080d1b 45%, #03050c 82%);
+  }
+
+  .starfield { position: absolute; inset: 0; pointer-events: none; }
+  .starfield i {
+    position: absolute;
+    left: var(--x);
+    top: var(--y);
+    width: var(--size);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: #e0ecff;
+    opacity: var(--opacity);
+  }
+
+  .constellation {
+    position: relative;
+    width: min(100%, 1140px);
+    height: min(100svh, 780px);
+    min-height: 420px;
+  }
+
+  .planet {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    width: min(48vw, 58svh, 500px);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .planet-fallback {
+    position: absolute;
+    inset: 9%;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 21% 20%, #a9dcff40, transparent 42%),
+      radial-gradient(circle at 22% 22%, transparent 13%, #04081833 44%, #030611 84%),
+      repeating-linear-gradient(151deg, #34416e 0%, #6983ac 8%, #455478 14%, #ad8290 19%, #53678b 25%);
+    box-shadow: 0 0 25px #83c4ff33, inset 3px 3px 11px #a9ddff66;
+  }
+
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+  .planet[data-rendered] canvas { opacity: 1; }
+  .planet[data-rendered] .planet-fallback { visibility: hidden; }
+
+  .section-star {
+    position: absolute;
+    z-index: 1;
+    left: var(--x);
+    top: var(--y);
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    min-width: 78px;
+    min-height: 60px;
+    padding: 6px 10px;
+    gap: 9px;
+    transform: translate(-50%, -50%);
+    border-radius: 14px;
+    color: #f4f6ff;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .star-light {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px 2px var(--star), 0 0 22px 5px var(--star);
+    animation: starlight 5s ease-in-out infinite alternate;
+  }
+
+  .section-star:nth-of-type(even) .star-light { animation-delay: -2.4s; }
+  .star-light::before, .star-light::after {
+    content: "";
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 25px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--star), transparent);
+    transform: translate(-50%, -50%);
+  }
+  .star-light::after { transform: translate(-50%, -50%) rotate(90deg); }
+
+  .star-label {
+    font: 500 clamp(.8rem, 1.4vw, 1rem)/1.2 system-ui, sans-serif;
+    letter-spacing: .09em;
+    text-shadow: 0 1px 8px #03050c, 0 1px 8px #03050c;
+    transition: color .2s ease;
+  }
+
+  .section-star:is(:hover, :focus-visible) .star-label { color: var(--star); }
+  .section-star:focus-visible { outline: 1px solid var(--star); outline-offset: 4px; }
+  @keyframes starlight { from { opacity: .72; } to { opacity: 1; } }
+
+  @media (max-width: 600px) {
+    .constellation { height: 100svh; }
+    .planet { width: min(77vw, 50svh); top: 44%; }
+    .section-star { left: var(--mobile-x); top: var(--mobile-y); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .star-light { animation: none; }
+    .star-label { transition: none; }
+  }
+</style>
+
+<script>
+  const canvas = document.querySelector<HTMLCanvasElement>("[data-planet]");
+
+  function renderPlanet(canvas: HTMLCanvasElement) {
+    const gl = canvas.getContext("webgl", { alpha: true, antialias: false });
+    if (!gl) return;
+
+    const vertexSource = `
+      attribute vec2 position;
+      varying vec2 uv;
+      void main() {
+        uv = position;
+        gl_Position = vec4(position, 0.0, 1.0);
+      }`;
+
+    const fragmentSource = `
+      precision mediump float;
+      varying vec2 uv;
+      uniform float time;
+      uniform vec2 pointer;
+
+      float hash(vec3 p) {
+        p = fract(p * 0.3183099 + vec3(0.17, 0.32, 0.48));
+        p *= 17.0;
+        return fract(p.x * p.y * p.z * (p.x + p.y + p.z));
+      }
+
+      float noise(vec3 p) {
+        vec3 cell = floor(p);
+        vec3 f = fract(p);
+        f = f * f * (3.0 - 2.0 * f);
+        return mix(
+          mix(mix(hash(cell), hash(cell + vec3(1,0,0)), f.x),
+              mix(hash(cell + vec3(0,1,0)), hash(cell + vec3(1,1,0)), f.x), f.y),
+          mix(mix(hash(cell + vec3(0,0,1)), hash(cell + vec3(1,0,1)), f.x),
+              mix(hash(cell + vec3(0,1,1)), hash(cell + vec3(1,1,1)), f.x), f.y),
+          f.z);
+      }
+
+      void main() {
+        vec2 p = uv / 0.82;
+        float radius = length(p);
+        if (radius > 1.0) {
+          float glow = exp(-max(radius - 1.0, 0.0) * 29.0);
+          float lit = clamp(dot(normalize(p), vec2(-0.65, 0.55)) + 0.2, 0.08, 1.0);
+          gl_FragColor = vec4(vec3(0.34, 0.62, 0.96) * glow * lit * 0.43, glow * lit * 0.43);
+          return;
+        }
+
+        vec3 normal = vec3(p, sqrt(max(0.0, 1.0 - dot(p, p))));
+        vec3 surface = normal;
+        surface.xy = mat2(0.93, -0.368, 0.368, 0.93) * surface.xy;
+        float angle = time * 0.09 + pointer.x * 0.44;
+        float tilt = pointer.y * 0.19;
+        surface.yz = mat2(cos(tilt), -sin(tilt), sin(tilt), cos(tilt)) * surface.yz;
+        surface.xz = mat2(cos(angle), -sin(angle), sin(angle), cos(angle)) * surface.xz;
+
+        float flow = noise(surface * vec3(4.0, 14.0, 4.0));
+        float cloud = noise(surface * vec3(13.0, 42.0, 13.0) + flow * 2.0);
+        float bands = 0.5 + 0.5 * sin(surface.y * 39.0 + flow * 3.5 + cloud * 0.7);
+        float haze = noise(surface * vec3(26.0, 86.0, 26.0));
+        vec3 deep = vec3(0.20, 0.28, 0.50);
+        vec3 ice = vec3(0.63, 0.78, 0.96);
+        vec3 rose = vec3(0.78, 0.54, 0.58);
+        vec3 color = mix(deep, ice, clamp(bands * 0.62 + cloud * 0.44, 0.0, 1.0));
+        color = mix(color, rose, smoothstep(0.50, 0.85, flow) * 0.82);
+        color *= 0.88 + haze * 0.23;
+
+        float illumination = max(dot(normal, normalize(vec3(-0.70, 0.47, 0.72))), 0.0);
+        float rim = pow(1.0 - normal.z, 3.0);
+        color *= 0.071 + pow(illumination, 1.35) * 1.04;
+        color += vec3(0.31, 0.65, 1.0) * rim * (0.045 + illumination * 0.58);
+        float edge = 1.0 - smoothstep(0.992, 1.0, radius);
+        gl_FragColor = vec4(color * edge, edge);
+      }`;
+
+    function compile(kind: number, source: string) {
+      const shader = gl!.createShader(kind);
+      if (!shader) return null;
+      gl!.shaderSource(shader, source);
+      gl!.compileShader(shader);
+      if (gl!.getShaderParameter(shader, gl!.COMPILE_STATUS)) return shader;
+      gl!.deleteShader(shader);
+      return null;
+    }
+
+    const vertex = compile(gl.VERTEX_SHADER, vertexSource);
+    const fragment = compile(gl.FRAGMENT_SHADER, fragmentSource);
+    const program = gl.createProgram();
+    if (!vertex || !fragment || !program) return;
+    gl.attachShader(program, vertex);
+    gl.attachShader(program, fragment);
+    gl.linkProgram(program);
+    gl.deleteShader(vertex);
+    gl.deleteShader(fragment);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+
+    const buffer = gl.createBuffer();
+    if (!buffer) return;
+    gl.useProgram(program);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const position = gl.getAttribLocation(program, "position");
+    gl.enableVertexAttribArray(position);
+    gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+    const time = gl.getUniformLocation(program, "time");
+    const pointer = gl.getUniformLocation(program, "pointer");
+
+    const motion = matchMedia("(prefers-reduced-motion: reduce)");
+    const finePointer = matchMedia("(pointer: fine)");
+    const target = { x: 0, y: 0 };
+    const current = { x: 0, y: 0 };
+    let frame = 0;
+    let elapsed = 0;
+    let previous = 0;
+
+    function draw(now: number) {
+      frame = 0;
+      if (previous && !motion.matches) elapsed = (elapsed + Math.min(now - previous, 50) / 1000) % (2 * Math.PI / 0.09);
+      previous = now;
+      current.x += (target.x - current.x) * 0.055;
+      current.y += (target.y - current.y) * 0.055;
+      gl!.uniform1f(time, elapsed);
+      gl!.uniform2f(pointer, motion.matches ? 0 : current.x, motion.matches ? 0 : current.y);
+      gl!.drawArrays(gl!.TRIANGLES, 0, 3);
+      canvas.parentElement?.setAttribute("data-rendered", "");
+      if (!motion.matches && !document.hidden) frame = requestAnimationFrame(draw);
+    }
+
+    function refresh() {
+      cancelAnimationFrame(frame);
+      frame = 0;
+      previous = 0;
+      if (!document.hidden && !gl!.isContextLost()) frame = requestAnimationFrame(draw);
+    }
+
+    function resize() {
+      const size = Math.max(1, Math.round(canvas.clientWidth * Math.min(devicePixelRatio, 1.5)));
+      canvas.width = size;
+      canvas.height = size;
+      gl!.viewport(0, 0, size, size);
+      refresh();
+    }
+
+    const observer = new ResizeObserver(resize);
+    observer.observe(canvas);
+    const home = canvas.closest("[data-planet-home]");
+    home?.addEventListener("pointermove", (event) => {
+      if (!(event instanceof PointerEvent) || event.pointerType === "touch" || !finePointer.matches || motion.matches) return;
+      target.x = (event.clientX / innerWidth - 0.5) * 2;
+      target.y = (0.5 - event.clientY / innerHeight) * 2;
+    }, { passive: true });
+    home?.addEventListener("pointerleave", () => { target.x = target.y = 0; });
+    motion.addEventListener("change", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    canvas.addEventListener("webglcontextlost", () => {
+      cancelAnimationFrame(frame);
+      canvas.parentElement?.removeAttribute("data-rendered");
+    });
+  }
+
+  if (canvas) renderPlanet(canvas);
+</script>
