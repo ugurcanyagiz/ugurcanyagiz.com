@@ -25,6 +25,7 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     <nav class="constellation" aria-label="Explore Personal Atlas">
       <div class="planet" aria-hidden="true">
         <img src="/images/surreal-ocean-planet.webp" alt="" width="670" height="663" fetchpriority="high" />
+        <canvas class="planet-surface" aria-hidden="true"></canvas>
         <span class="planet-current"></span>
         <span class="planet-light"></span>
       </div>
@@ -84,7 +85,9 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     transform: translate(-50%, -50%);
     border-radius: 50%;
     overflow: hidden;
-    pointer-events: none;
+    touch-action: pan-y pinch-zoom;
+    isolation: isolate;
+    transition: transform .48s cubic-bezier(.23,.73,.19,1);
   }
 
   .planet img {
@@ -93,6 +96,16 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     height: 100%;
     animation: tide 9s ease-in-out infinite alternate;
   }
+
+  .planet-surface { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+  .planet[data-webgl] { cursor: grab; }
+  .planet[data-dragging] { cursor: grabbing; }
+  .planet[data-webgl] .planet-surface { opacity: 1; }
+  .planet[data-webgl] :is(img, .planet-current) { visibility: hidden; animation: none; }
+  .constellation[data-travel] .planet { transform: translate(-50%, -50%) scale(1.18); }
+  .constellation[data-travel="4"] .planet { transform: translate(-50%, -50%) scale(.78); }
+  .constellation[data-travel] .section-star:not([data-lit]) { opacity: .42; }
+  .section-star { transition: opacity .35s ease; }
 
   .planet-current {
     position: absolute;
@@ -195,113 +208,298 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
   @media (prefers-reduced-motion: reduce) {
     .planet img, .planet-current, .star-light { animation: none; }
     .planet-current { display: none; }
-    .planet-light, .connection { transition: none; }
+    .planet, .planet-light, .connection, .section-star { transition: none; }
   }
 </style>
 
+
 <script>
-  const nav = document.querySelector<HTMLElement>(".constellation");
-  const canvas = nav?.querySelector<HTMLCanvasElement>(".connection");
-  const planet = nav?.querySelector<HTMLElement>(".planet");
-  const context = canvas?.getContext("2d");
+const nav = document.querySelector<HTMLElement>('.constellation');
+const planet = nav?.querySelector<HTMLElement>('.planet');
+const surface = planet?.querySelector<HTMLCanvasElement>('.planet-surface');
+const image = planet?.querySelector<HTMLImageElement>('img');
+const connection = nav?.querySelector<HTMLCanvasElement>('.connection');
+const lines = connection?.getContext('2d');
+const motion = matchMedia('(prefers-reduced-motion: reduce)');
 
-  if (nav && canvas && planet && context) {
-    const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>(".section-star"));
-    const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-    let tapped: HTMLAnchorElement | null = null;
-    let lit: HTMLAnchorElement | null = null;
-    let touchLink: HTMLAnchorElement | null = null;
-    let navigationTimer: number | undefined;
-    let hovered: HTMLAnchorElement | null = null;
-    let focused: HTMLAnchorElement | null = null;
+const vertex = [
+  'attribute vec2 position;',
+  'varying vec2 screen;',
+  'void main(){ screen=position; gl_Position=vec4(position,0.,1.); }'
+].join('\n');
 
-    function draw() {
-      if (!nav || !canvas || !planet || !context) return;
-      const link = tapped ?? hovered ?? focused;
-      if (link !== lit) {
-        lit?.removeAttribute("data-lit");
-        link?.setAttribute("data-lit", "");
-        lit = link;
-      }
-      const star = link?.querySelector(".star-light");
-      if (!link || !star) {
-        nav.removeAttribute("data-active");
-        return;
-      }
+const fragment = [
+  'precision mediump float;',
+  'varying vec2 screen;',
+  'uniform sampler2D painting;',
+  'uniform vec2 turn;',
+  'uniform float time, travel, mode;',
+  'uniform vec3 tint;',
+  'vec3 yaw(vec3 n,float a){float c=cos(a),s=sin(a);return vec3(c*n.x+s*n.z,n.y,-s*n.x+c*n.z);}',
+  'vec3 pitch(vec3 n,float a){float c=cos(a),s=sin(a);return vec3(n.x,c*n.y-s*n.z,s*n.y+c*n.z);}',
+  'void main(){',
+  '  vec2 p=screen;',
+  '  float radius=length(p);',
+  '  if(radius>1.){gl_FragColor=vec4(0.);return;}',
+  '  vec3 n=vec3(p,sqrt(max(0.,1.-dot(p,p))));',
+  '  vec3 world=yaw(pitch(n,turn.y),turn.x);',
+  '  vec2 q=world.xy;',
+  '  q.x+=.008*sin(world.y*17.+time*1.25)*world.z;',
+  '  q.y+=.006*sin(world.x*20.-time*.95)*world.z;',
+  '  q*=min(1.,.972/max(length(q),.001));',
+  '  vec2 uv=vec2(.5)+q*vec2(.489,-.489);',
+  '  vec3 color=texture2D(painting,uv).rgb;',
+  '  float light=.67+.43*max(0.,dot(n,normalize(vec3(-.48,.55,.85))));',
+  '  color*=light;',
+  '  color=mix(color,vec3(.065,.10,.23),pow(radius,4.)*.30);',
+  '  float rim=smoothstep(.76,1.,radius)*smoothstep(-.7,.7,p.y-p.x*.4);',
+  '  color+=vec3(.18,.30,.52)*rim*.55;',
+  '  float wave=0.;',
+  '  if(mode<.5){float d=length(world.xy-vec2(-.26,-.14));wave=pow(max(0.,cos(d*27.-travel*15.)),10.)*(1.-smoothstep(.1,.85,d));}',
+  '  else if(mode<1.5){float grid=sin(world.x*31.+world.y*13.)*sin(world.y*26.);wave=pow(max(0.,grid),6.)*smoothstep(-.8,.7,world.y);}',
+  '  else if(mode<2.5){wave=.5+.5*sin(world.y*13.+world.x*9.+travel*4.);}',
+  '  else if(mode<3.5){float band=world.y-.36+.14*sin(world.x*8.+travel*5.);wave=exp(-abs(band)*13.)*smoothstep(-.2,.8,world.y);}',
+  '  else {wave=rim*.85;}',
+  '  color+=tint*wave*travel*.43;',
+  '  gl_FragColor=vec4(color,1.-smoothstep(.987,1.,radius));',
+  '}'
+].join('\n');
 
-      const bounds = nav.getBoundingClientRect();
-      const globe = planet.getBoundingClientRect();
-      const point = star.getBoundingClientRect();
-      const centerX = globe.left - bounds.left + globe.width / 2;
-      const centerY = globe.top - bounds.top + globe.height / 2;
-      const starX = point.left - bounds.left + point.width / 2;
-      const starY = point.top - bounds.top + point.height / 2;
-      const dx = starX - centerX;
-      const dy = starY - centerY;
-      const reach = 0.5 / Math.hypot(dx / globe.width, dy / globe.height);
-      const edgeX = centerX + dx * reach;
-      const edgeY = centerY + dy * reach;
-      const color = link.style.getPropertyValue("--star");
+function makeGlobe(canvas: HTMLCanvasElement, source: HTMLImageElement) {
+  const gl = canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false, powerPreference: 'low-power' });
+  if (!gl) return null;
+  const context = gl;
 
-      const scale = Math.min(devicePixelRatio, 2);
-      canvas.width = Math.round(bounds.width * scale);
-      canvas.height = Math.round(bounds.height * scale);
-      context.scale(scale, scale);
-      context.beginPath();
-      context.moveTo(edgeX, edgeY);
-      context.quadraticCurveTo(
-        (edgeX + starX) / 2 + (starY - edgeY) * .24,
-        (edgeY + starY) / 2 - (starX - edgeX) * .24,
-        starX, starY,
-      );
-      context.strokeStyle = color;
-      context.lineWidth = 1.6;
-      context.shadowColor = color;
-      context.shadowBlur = 7;
-      context.stroke();
-
-      nav.style.setProperty("--light-x", `${50 + dx * reach / globe.width * 100}%`);
-      nav.style.setProperty("--light-y", `${50 + dy * reach / globe.height * 100}%`);
-      nav.style.setProperty("--orbit-color", color);
-      nav.setAttribute("data-active", "");
-    }
-
-    for (const link of links) {
-      link.addEventListener("pointerdown", (event) => {
-        touchLink = event.pointerType === "touch" ? link : null;
-      });
-      link.addEventListener("pointercancel", () => { touchLink = null; });
-      link.addEventListener("click", (event) => {
-        const isTouchTap = touchLink === link && event.detail > 0;
-        touchLink = null;
-        if (!isTouchTap || reducedMotion.matches || event.defaultPrevented ||
-          event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-
-        event.preventDefault();
-        window.clearTimeout(navigationTimer);
-        tapped = link;
-        draw();
-        navigationTimer = window.setTimeout(() => window.location.assign(link.href), 320);
-      });
-      link.addEventListener("pointerenter", (event) => {
-        if (event.pointerType !== "touch") {
-          hovered = link;
-          draw();
-        }
-      });
-      link.addEventListener("pointerleave", () => { hovered = null; draw(); });
-      link.addEventListener("focus", () => { focused = link; draw(); });
-      link.addEventListener("blur", () => { focused = null; draw(); });
-    }
-
-    window.addEventListener("pagehide", () => {
-      window.clearTimeout(navigationTimer);
-      tapped = null;
-      hovered = null;
-      focused = null;
-      touchLink = null;
-      draw();
-    });
-    new ResizeObserver(draw).observe(nav);
+  function compile(type: number, code: string) {
+    const shader = context.createShader(type);
+    if (!shader) return null;
+    context.shaderSource(shader, code);
+    context.compileShader(shader);
+    if (context.getShaderParameter(shader, context.COMPILE_STATUS)) return shader;
+    context.deleteShader(shader);
+    return null;
   }
+
+  const vs = compile(gl.VERTEX_SHADER, vertex);
+  const fs = compile(gl.FRAGMENT_SHADER, fragment);
+  const program = gl.createProgram();
+  const texture = gl.createTexture();
+  const buffer = gl.createBuffer();
+  if (!vs || !fs || !program || !texture || !buffer) return null;
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+  gl.deleteShader(vs);
+  gl.deleteShader(fs);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return null;
+
+  gl.useProgram(program);
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const position = gl.getAttribLocation(program, 'position');
+  gl.enableVertexAttribArray(position);
+  gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+  if (gl.getError() !== gl.NO_ERROR) return null;
+  gl.uniform1i(gl.getUniformLocation(program, 'painting'), 0);
+
+  const turn = gl.getUniformLocation(program, 'turn');
+  const time = gl.getUniformLocation(program, 'time');
+  const travel = gl.getUniformLocation(program, 'travel');
+  const mode = gl.getUniformLocation(program, 'mode');
+  const tint = gl.getUniformLocation(program, 'tint');
+
+  return (x: number, y: number, t: number, amount: number, category: number, color: number[]) => {
+    const density = Math.min(devicePixelRatio || 1, 1.5);
+    const width = Math.min(900, Math.round(canvas.clientWidth * density));
+    const height = Math.min(900, Math.round(canvas.clientHeight * density));
+    if (width < 2 || height < 2) return;
+    if (canvas.width !== width || canvas.height !== height) {
+      canvas.width = width;
+      canvas.height = height;
+    }
+    context.viewport(0, 0, width, height);
+    context.uniform2f(turn, x, y);
+    context.uniform1f(time, t);
+    context.uniform1f(travel, amount);
+    context.uniform1f(mode, category);
+    context.uniform3f(tint, color[0], color[1], color[2]);
+    context.drawArrays(context.TRIANGLES, 0, 3);
+  };
+}
+
+if (nav && planet && surface && image && connection && lines) {
+  const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>('.section-star'));
+  const moves = [[-.40,.20],[.51,.18],[.63,-.12],[.27,-.40],[-.33,-.26]];
+  let renderer: ReturnType<typeof makeGlobe> = null;
+  let hover: HTMLAnchorElement | null = null;
+  let focus: HTMLAnchorElement | null = null;
+  let active: HTMLAnchorElement | null = null;
+  let lit: HTMLAnchorElement | null = null;
+  let flight = 0;
+  let navigation: number | undefined;
+  let frame = 0;
+  let lastFrame = 0;
+  let x = 0, y = 0, goalX = 0, goalY = 0;
+  let drag: {id:number,x:number,y:number} | null = null;
+
+  const clamp = (value: number, limit: number) => Math.max(-limit, Math.min(limit, value));
+
+  function drawLine() {
+    const link = active ?? hover ?? focus;
+    if (link !== lit) {
+      lit?.removeAttribute('data-lit');
+      link?.setAttribute('data-lit', '');
+      lit = link;
+    }
+    const star = link?.querySelector('.star-light');
+    if (!nav || !connection || !lines || !planet) return;
+    if (!link || !star) { nav.removeAttribute('data-active'); return; }
+    const bounds = nav.getBoundingClientRect();
+    const globe = planet.getBoundingClientRect();
+    const point = star.getBoundingClientRect();
+    const cx = globe.left - bounds.left + globe.width / 2;
+    const cy = globe.top - bounds.top + globe.height / 2;
+    const sx = point.left - bounds.left + point.width / 2;
+    const sy = point.top - bounds.top + point.height / 2;
+    const dx = sx-cx, dy = sy-cy;
+    const length = Math.hypot(dx / globe.width, dy / globe.height);
+    if (!length) return;
+    const reach = Math.min(1, .5 / length);
+    const ex = cx + dx * reach, ey = cy + dy * reach;
+    const color = link.style.getPropertyValue('--star');
+    const density = Math.min(devicePixelRatio || 1, 2);
+    const w = Math.round(bounds.width * density), h = Math.round(bounds.height * density);
+    if (connection.width !== w || connection.height !== h) {
+      connection.width = w;
+      connection.height = h;
+    }
+    lines.setTransform(density,0,0,density,0,0);
+    lines.clearRect(0,0,bounds.width,bounds.height);
+    lines.beginPath();
+    lines.moveTo(ex,ey);
+    lines.quadraticCurveTo((ex+sx)/2+(sy-ey)*.24,(ey+sy)/2-(sx-ex)*.24,sx,sy);
+    lines.strokeStyle = color;
+    lines.lineWidth = 1.6;
+    lines.shadowColor = color;
+    lines.shadowBlur = 7;
+    lines.stroke();
+    nav.style.setProperty('--light-x', (50 + dx * reach / globe.width * 100) + '%');
+    nav.style.setProperty('--light-y', (50 + dy * reach / globe.height * 100) + '%');
+    nav.style.setProperty('--orbit-color', color);
+    nav.setAttribute('data-active', '');
+  }
+
+  function schedule() {
+    if (!frame && !document.hidden && !motion.matches) frame = requestAnimationFrame(draw);
+  }
+
+  function draw(now: number) {
+    frame = 0;
+    if (now - lastFrame >= 29) {
+      lastFrame = now;
+      const index = active ? links.indexOf(active) : -1;
+      const amount = active ? Math.min(1, (now-flight)/480) : 0;
+      const target = moves[index] ?? [goalX,goalY];
+      x += (target[0] - x)*.19;
+      y += (target[1] - y)*.19;
+      const rgb = active ? parseInt(active.style.getPropertyValue('--star').trim().slice(1),16) : 0;
+      const tint = [(rgb>>16)/255,((rgb>>8)&255)/255,(rgb&255)/255];
+      const idle = drag || active ? 0 : Math.sin(now/4400)*.09;
+      renderer?.(x+idle,y,(now/1000)%120,amount,index,tint);
+      if (active) drawLine();
+    }
+    if (renderer || active) schedule();
+  }
+
+  function startGlobe() {
+    if (!image || !surface || !planet || motion.matches || !image.naturalWidth || renderer) return;
+    try { renderer = makeGlobe(surface,image); } catch { renderer = null; }
+    if (!renderer) return;
+    const bounds = planet.getBoundingClientRect();
+    if (bounds.width < 2 || bounds.height < 2) { renderer = null; return; }
+    renderer(0,0,0,0,-1,[0,0,0]);
+    planet.dataset.webgl = '';
+    schedule();
+  }
+
+  function stopGlobe() {
+    renderer = null;
+    planet?.removeAttribute('data-webgl');
+  }
+
+  function reset() {
+    window.clearTimeout(navigation);
+    active = null;
+    hover = null;
+    focus = null;
+    drag = null;
+    nav?.removeAttribute('data-travel');
+    planet?.removeAttribute('data-dragging');
+    drawLine();
+  }
+
+  for (const [index, link] of links.entries()) {
+    link.addEventListener('pointerenter', event => {
+      if (event.pointerType !== 'touch') { hover = link; drawLine(); }
+    });
+    link.addEventListener('pointerleave', () => { hover = null; drawLine(); });
+    link.addEventListener('focus', () => { focus = link; drawLine(); });
+    link.addEventListener('blur', () => { focus = null; drawLine(); });
+    link.addEventListener('click', event => {
+      if (event.defaultPrevented || motion.matches || event.button !== 0 ||
+          event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      window.clearTimeout(navigation);
+      active = link;
+      nav.dataset.travel = String(index);
+      flight = performance.now();
+      drawLine();
+      schedule();
+      navigation = window.setTimeout(() => window.location.assign(link.href), 480);
+    });
+  }
+
+  planet.addEventListener('pointerdown', event => {
+    if (!renderer || !event.isPrimary || event.button !== 0 || active) return;
+    drag = {id:event.pointerId,x:event.clientX,y:event.clientY};
+    planet.setPointerCapture(event.pointerId);
+    planet.dataset.dragging = '';
+  });
+  planet.addEventListener('pointermove', event => {
+    if (drag?.id !== event.pointerId) return;
+    goalX = clamp(goalX + (event.clientX-drag.x)*.008,.73);
+    goalY = clamp(goalY + (event.clientY-drag.y)*.007,.48);
+    drag.x = event.clientX;
+    drag.y = event.clientY;
+  });
+  for (const eventName of ['pointerup','pointercancel','lostpointercapture']) {
+    planet.addEventListener(eventName, () => {
+      drag = null;
+      planet.removeAttribute('data-dragging');
+    });
+  }
+  surface.addEventListener('webglcontextlost', event => { event.preventDefault(); stopGlobe(); });
+  surface.addEventListener('webglcontextrestored', startGlobe);
+  motion.addEventListener('change', () => {
+    if (!motion.matches) { startGlobe(); return; }
+    stopGlobe();
+    if (active) window.location.assign(active.href);
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) { lastFrame = 0; schedule(); return; }
+    cancelAnimationFrame(frame);
+    frame = 0;
+  });
+  window.addEventListener('pagehide', reset);
+  window.addEventListener('pageshow', schedule);
+  new ResizeObserver(drawLine).observe(nav);
+  if (image.complete) startGlobe();
+  else image.addEventListener('load', startGlobe, {once:true});
+}
 </script>
