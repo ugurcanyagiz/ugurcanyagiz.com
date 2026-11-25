@@ -22,6 +22,7 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
       {stars.map(({ x, y, opacity }) => <i style={`--x:${x}%;--y:${y}%;--opacity:${opacity}`}></i>)}
     </div>
 
+    <canvas class="cosmos-gas" aria-hidden="true"></canvas>
     <canvas class="cosmos" aria-hidden="true"></canvas>
 
     <nav class="constellation" aria-label="Explore Personal Atlas">
@@ -53,7 +54,7 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     place-items: center;
     min-height: max(380px, 100svh);
     overflow: hidden;
-    background: radial-gradient(ellipse at 49% 46%, #202b51 0%, #111831 42%, #080d20 80%);
+    background: radial-gradient(ellipse at 49% 46%, #12182b 0%, #090e1d 52%, #030611 87%);
   }
 
   .starfield { position: absolute; inset: 0; pointer-events: none; }
@@ -68,7 +69,7 @@ const stars = Array.from({ length: 72 }, (_, i) => ({
     opacity: var(--opacity);
   }
 
-  .cosmos { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .cosmos-gas, .cosmos { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
   .ocean-home[data-cosmos] .starfield { visibility: hidden; }
 
   .constellation {
@@ -535,6 +536,8 @@ function createCosmos(
   const hole = { x: 0, y: 0, visible: 0 };
   const nebula = document.createElement('canvas');
   const gas = nebula.getContext('2d');
+  const lensCanvas = stage.querySelector<HTMLCanvasElement>('.cosmos-gas');
+  let lens: ReturnType<typeof makeLens> = null;
   const stars: Star[] = [];
   let capture: Capture | null = null;
   let meteor: Meteor | null = null;
@@ -548,10 +551,14 @@ function createCosmos(
   function star(onEdge = false): Star {
     const position = Math.random();
     const edge = Math.floor(Math.random()*4);
+    const clustered = !onEdge && Math.random()<.48;
+    const band = .81-position*.60+Math.sin(position*7.1)*.092;
+    const scatter = (Math.random()+Math.random()-1)*.49;
+    const magnitude = Math.random();
     return {
-      x: onEdge ? (edge === 0 ? .012 : edge === 1 ? .988 : position) : Math.random(),
-      y: onEdge ? (edge === 2 ? .012 : edge === 3 ? .988 : position) : Math.random(),
-      size: Math.random() < .12 ? 1.4 + Math.random()*.9 : .45 + Math.random()*.83,
+      x: onEdge ? (edge === 0 ? .012 : edge === 1 ? .988 : position) : position,
+      y: onEdge ? (edge === 2 ? .012 : edge === 3 ? .988 : position) : clustered ? Math.max(.02,Math.min(.98,band+scatter)) : Math.random(),
+      size: magnitude < .014 ? 1.7 + Math.random()*1.05 : magnitude < .14 ? .93 + Math.random()*.63 : .22 + Math.random()*.69,
       depth: .18 + Math.random()*.82, phase: Math.random()*Math.PI*2,
       color: colors[Math.floor(Math.random()*colors.length)],
     };
@@ -565,35 +572,192 @@ function createCosmos(
     ctx.fillRect(x-radius,y-radius,radius*2,radius*2);
   }
 
-  function paintNebula() {
+
+  function hash(x: number, y: number) {
+    let n = Math.imul(x + 871, 374761393) ^ Math.imul(y - 913, 668265263);
+    n = Math.imul(n ^ (n >>> 13), 1274126177);
+    return ((n ^ (n >>> 16)) >>> 0) / 4294967295;
+  }
+
+  function noise(x: number, y: number) {
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const xf = x - ix, yf = y - iy;
+    const u = xf*xf*(3-2*xf), v = yf*yf*(3-2*yf);
+    const a = hash(ix,iy), b = hash(ix,iy+1);
+    return (a+(hash(ix+1,iy)-a)*u)*(1-v) + (b+(hash(ix+1,iy+1)-b)*u)*v;
+  }
+
+  function cloud(x: number, y: number) {
+    return noise(x,y)*.52 + noise(x*2.08+9,y*2.08+12)*.26 +
+      noise(x*4.31-4,y*4.31+19)*.14 + noise(x*9.27+18,y*9.27-17)*.08;
+  }
+
+  function paintDistantWorld(x: number, y: number, radius: number, ringed = false) {
     if (!gas) return;
-    nebula.width = 430;
-    nebula.height = Math.max(128, Math.round(430*height/width));
-    const w = nebula.width, h = nebula.height;
     gas.save();
-    gas.scale(w,h);
-    const clouds = [
-      [.14,.28,.35,.12,-.39,'72,90,217',.26],
-      [.24,.66,.39,.105,-.42,'56,69,166',.20],
-      [.75,.30,.31,.12,-.35,'98,66,146',.24],
-      [.83,.55,.28,.12,-.32,'44,123,159',.21],
-      [.53,.80,.37,.075,-.31,'91,56,119',.17],
-      [.13,.83,.24,.16,.22,'34,88,119',.16],
-    ] as const;
-    for (const [x,y,rx,ry,angle,color,opacity] of clouds) {
-      gas.save();
-      gas.translate(x,y);
-      gas.rotate(angle);
-      gas.scale(rx,ry);
-      const cloud = gas.createRadialGradient(0,0,0,0,0,1);
-      cloud.addColorStop(0,'rgba('+color+','+opacity+')');
-      cloud.addColorStop(.48,'rgba('+color+','+opacity*.52+')');
-      cloud.addColorStop(1,'rgba('+color+',0)');
-      gas.fillStyle = cloud;
-      gas.fillRect(-1,-1,2,2);
-      gas.restore();
+    gas.translate(x,y);
+    const light = gas.createRadialGradient(-radius*.66,-radius*.38,0,0,0,radius);
+    light.addColorStop(0,ringed?'#ba8464':'#609ba2');
+    light.addColorStop(.46,ringed?'#715877':'#47638c');
+    light.addColorStop(.78,ringed?'#302740':'#172740');
+    light.addColorStop(1,'#070916');
+    gas.fillStyle = light;
+    gas.beginPath();
+    gas.arc(0,0,radius,0,Math.PI*2);
+    gas.fill();
+    gas.save();
+    gas.clip();
+    gas.rotate(-.27);
+    for (let i=0;i<12;i++) {
+      gas.strokeStyle = i%3 === 0 ? 'rgba(255,211,170,.13)' : 'rgba(162,198,249,.09)';
+      gas.lineWidth = radius*(.03+(i%4)*.018);
+      gas.beginPath();
+      const y = (i/12-.5)*2*radius;
+      gas.moveTo(-radius,y);
+      gas.quadraticCurveTo(0,y+radius*.19,radius,y);
+      gas.stroke();
     }
     gas.restore();
+    gas.strokeStyle = ringed?'rgba(253,176,144,.47)':'rgba(151,220,255,.58)';
+    gas.lineWidth = Math.max(.6,radius*.04);
+    gas.beginPath();
+    gas.arc(0,0,radius-1,2.85,4.8);
+    gas.stroke();
+    if (ringed) {
+      for (let i=0;i<3;i++) {
+        gas.lineWidth = .7+i*.26;
+        gas.strokeStyle = ['rgba(228,163,153,.41)','rgba(218,170,181,.24)','rgba(131,139,207,.31)'][i];
+        gas.beginPath();
+        gas.ellipse(0,0,radius*(1.53+i*.16),radius*(.37+i*.064),-.32,0,Math.PI);
+        gas.stroke();
+      }
+    }
+    gas.restore();
+  }
+
+  function paintNebula() {
+    if (!gas) return;
+    nebula.width = width > 660 ? 680 : 350;
+    nebula.height = Math.max(250, Math.min(900,Math.round(nebula.width*height/width)));
+    const w = nebula.width, h = nebula.height;
+    const image = gas.createImageData(w,h);
+    const data = image.data;
+    const clamp = (n: number) => Math.max(0,Math.min(1,n));
+    for (let j=0;j<h;j++) {
+      const y = j/(h-1);
+      for (let i=0;i<w;i++) {
+        const x = i/(w-1);
+        const a = cloud(x*4+2,y*4+5);
+        const b = cloud(x*5+12,y*5+8);
+        const dust = cloud(x*9+(b-.5)*3.8,y*8+(a-.5)*4.1);
+        const fine = noise(x*66+b*3,y*62+a*4);
+        const diagonal = y - (.85-x*.65 + Math.sin(x*7.1)*.083 + (a-.49)*.49);
+        const secondary = y - (.14+x*.58 + (b-.48)*.43);
+        const ridge = Math.exp(-Math.abs(diagonal)*8.5);
+        const veil = Math.exp(-Math.abs(secondary)*8)*.64;
+        const darkLane = .44 + .56*clamp((Math.abs(diagonal+.028)+(dust-.5)*.13)*15);
+        const structure = Math.pow(clamp(dust*1.22+fine*.18-.26),1.64);
+        const filaments = Math.pow(1-Math.abs(2*dust-1),7)*ridge*.11;
+        const intensity = (ridge*darkLane+veil*.74)*structure + filaments + .065*b;
+        const frontQuiet = .69+.31*clamp(Math.hypot((x-.5)*2,(y-.5)*1.4));
+        const warm = clamp((x-.36)*1.29 + (a-.45)*.87);
+        const blue = clamp((b-.24)*2.03);
+        const fleck = hash(i,j)*1.9;
+        const offset=(j*w+i)*4;
+        data[offset] = 5+intensity*frontQuiet*(35+warm*184+blue*24)+fleck;
+        data[offset+1] = 9+intensity*frontQuiet*(132-warm*56+blue*17)+fleck;
+        data[offset+2] = 20+intensity*frontQuiet*(167+blue*57-warm*36)+fleck;
+        data[offset+3] = 255;
+      }
+    }
+    gas.putImageData(image,0,0);
+    const desktop = width > 650;
+    paintDistantWorld(w*.10,h*.77,w*(desktop ? .027 : .052),true);
+    paintDistantWorld(w*.89,h*.22,w*(desktop ? .019 : .042));
+    if (desktop) paintDistantWorld(w*.91,h*.79,w*.009);
+    lens?.upload(nebula);
+  }
+
+  function makeLens() {
+    const gl = lensCanvas?.getContext('webgl', {alpha:false, antialias:false,powerPreference:'low-power'});
+    if (!gl) return null;
+    const gpu = gl;
+    function compile(kind: number, source: string) {
+      const shader = gpu.createShader(kind);
+      if (!shader) return null;
+      gpu.shaderSource(shader,source);
+      gpu.compileShader(shader);
+      if (gpu.getShaderParameter(shader,gpu.COMPILE_STATUS)) return shader;
+      gpu.deleteShader(shader);
+      return null;
+    }
+    const vs = compile(gl.VERTEX_SHADER, 'attribute vec2 point;varying vec2 uv;void main(){uv=point*.5+.5;gl_Position=vec4(point,0.,1.);}');
+    const fs = compile(gl.FRAGMENT_SHADER, [
+      'precision mediump float;',
+      'varying vec2 uv;uniform sampler2D dust;',
+      'uniform vec2 resolution, hole, drift;uniform float horizon, strength, time;',
+      'void main(){',
+      ' vec2 view=vec2(uv.x,1.-uv.y);',
+      ' vec2 delta=(view-hole)*resolution;',
+      ' float r=length(delta)/max(1.,horizon);',
+      ' float a=atan(delta.y,delta.x);',
+      ' float bend=strength*exp(-r*.57);',
+      ' float angle=a+bend*.93;',
+      ' vec2 source=view+(vec2(cos(angle),sin(angle))*(length(delta)+bend*horizon*.88)-delta)/resolution;',
+      ' vec3 gas=texture2D(dust, source*.97+.015+drift).rgb;',
+      ' float filament=.54+.20*sin(a*10.+time*1.3+r*5.)+.15*sin(a*27.-r*9.-time*.83);',
+      ' float orange=smoothstep(-.52,.72,cos(a-1.75));',
+      ' vec3 tint=mix(vec3(.22,.63,.79),vec3(.98,.42,.23),orange);',
+      ' float bloom=exp(-abs(r-1.21)*5.4)*filament*strength;',
+      ' float halo=exp(-abs(r-1.06)*20.)*strength;',
+      ' gas+=tint*(bloom*.22+halo*.26)*(1.+.36*cos(a-1.));',
+      ' gas*=mix(1.,smoothstep(.946,1.025,r),strength);',
+      ' gl_FragColor=vec4(gas,1.);',
+      '}'
+    ].join('\n'));
+    const program = gl.createProgram(), buffer = gl.createBuffer(), texture = gl.createTexture();
+    if (!program || !vs || !fs || !buffer || !texture) return null;
+    gl.attachShader(program,vs);
+    gl.attachShader(program,fs);
+    gl.linkProgram(program);
+    gl.deleteShader(vs);
+    gl.deleteShader(fs);
+    if (!gl.getProgramParameter(program,gl.LINK_STATUS)) return null;
+    gl.useProgram(program);
+    gl.bindBuffer(gl.ARRAY_BUFFER,buffer);
+    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
+    const point = gl.getAttribLocation(program,'point');
+    gl.enableVertexAttribArray(point);
+    gl.vertexAttribPointer(point,2,gl.FLOAT,false,0,0);
+    gl.bindTexture(gl.TEXTURE_2D,texture);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+    gl.uniform1i(gl.getUniformLocation(program,'dust'),0);
+    const resolution = gl.getUniformLocation(program,'resolution');
+    const center = gl.getUniformLocation(program,'hole');
+    const radius = gl.getUniformLocation(program,'horizon');
+    const strength = gl.getUniformLocation(program,'strength');
+    const time = gl.getUniformLocation(program,'time');
+    const drift = gl.getUniformLocation(program,'drift');
+    return {
+      upload(source: HTMLCanvasElement) {
+        gpu.texImage2D(gpu.TEXTURE_2D,0,gpu.RGBA,gpu.RGBA,gpu.UNSIGNED_BYTE,source);
+      },
+      draw() {
+        if (!lensCanvas) return;
+        gpu.viewport(0,0,lensCanvas.width,lensCanvas.height);
+        gpu.uniform2f(resolution,width,height);
+        gpu.uniform2f(center,hole.x/width,hole.y/height);
+        gpu.uniform1f(radius,horizon());
+        gpu.uniform1f(strength,hole.visible);
+        gpu.uniform1f(time,elapsed%140);
+        gpu.uniform2f(drift,Math.sin(elapsed*.075)*.012+(hole.x/width-.5)*.007,
+          Math.cos(elapsed*.064)*.010+(hole.y/height-.5)*.006);
+        gpu.drawArrays(gpu.TRIANGLES,0,3);
+      }
+    };
   }
 
   function resize() {
@@ -607,7 +771,12 @@ function createCosmos(
     canvas.width = Math.round(w*dpr);
     canvas.height = Math.round(h*dpr);
     ctx.setTransform(canvas.width/w,0,0,canvas.height/h,0,0);
-    const count = Math.max(115,Math.min(265,Math.round(w*h/4400)));
+    if (lensCanvas) {
+      const scale = Math.min(1,1080/w,810/h);
+      lensCanvas.width = Math.max(2,Math.round(w*scale));
+      lensCanvas.height = Math.max(2,Math.round(h*scale));
+    }
+    const count = Math.max(690,Math.min(1730,Math.round(w*h/730)));
     while (stars.length < count) stars.push(star());
     if (stars.length > count) stars.length = count;
     if (capture && !stars.includes(capture.star)) capture = null;
@@ -630,16 +799,20 @@ function createCosmos(
     return Math.hypot(gx/(globe.width/2), gy/(globe.height/2)) < 1.05;
   }
 
+  function horizon() {
+    return Math.min(57,Math.max(35,width*.044));
+  }
+
   function beginCapture() {
     let candidate: Star | null = null;
     let bestScore = Infinity;
     let angle = 0, radius = 0;
-    const reach = Math.min(255,Math.max(118,width*.19));
+    const reach = Math.min(294,Math.max(136,width*.23));
     for (const s of stars) {
       const [x,y] = coordinates(s);
       const d = Math.hypot(x-hole.x,y-hole.y);
-      if (d < 29 || d > reach || covered(x,y)) continue;
-      const score = d + (s.size < 1 ? 22 : -8);
+      if (d < horizon()*1.28 || d > reach || covered(x,y)) continue;
+      const score = d + (s.size < .95 ? 70 : -26);
       if (score >= bestScore) continue;
       candidate = s;
       bestScore = score;
@@ -672,18 +845,32 @@ function createCosmos(
   }
 
   function drawStars() {
+    const radius = horizon();
     for (const s of stars) {
       if (s === capture?.star) continue;
-      const [x,y] = coordinates(s);
-      const pulse = .64 + Math.sin(elapsed*(.65+s.depth*.85)+s.phase)*.30;
-      ctx.fillStyle = 'rgba('+s.color+','+(pulse*(.25+s.depth*.72))+')';
-      ctx.beginPath();
-      ctx.arc(x,y,s.size,0,Math.PI*2);
-      ctx.fill();
-      if (s.size > 1.65) {
-        ctx.fillStyle = 'rgba('+s.color+','+pulse*.38+')';
-        ctx.fillRect(x-s.size*2.1,y-.35,s.size*4.2,.7);
-        ctx.fillRect(x-.35,y-s.size*2.1,.7,s.size*4.2);
+      let [x,y] = coordinates(s);
+      const dx = x-hole.x, dy = y-hole.y;
+      const distance = Math.hypot(dx,dy);
+      const lensing = hole.visible*.57*Math.exp(-distance/(radius*1.48));
+      if (lensing > .035) {
+        const angle = Math.atan2(dy,dx)-lensing;
+        const out = distance+lensing*radius*.76;
+        x = hole.x+Math.cos(angle)*out;
+        y = hole.y+Math.sin(angle)*out;
+      }
+      const pulse = .65 + Math.sin(elapsed*(.58+s.depth*.72)+s.phase)*.29;
+      const opacity = pulse*(.23+s.depth*.73);
+      ctx.fillStyle = 'rgba('+s.color+','+opacity+')';
+      if (s.size < .90) ctx.fillRect(x-s.size*.5,y-s.size*.5,s.size,s.size);
+      else {
+        ctx.beginPath();
+        ctx.arc(x,y,s.size*.78,0,Math.PI*2);
+        ctx.fill();
+      }
+      if (s.size > 1.69) {
+        ctx.fillStyle = 'rgba('+s.color+','+pulse*.39+')';
+        ctx.fillRect(x-s.size*2.3,y-.36,s.size*4.6,.72);
+        ctx.fillRect(x-.36,y-s.size*1.75,.72,s.size*3.5);
       }
     }
   }
@@ -718,16 +905,16 @@ function createCosmos(
   function drawCaptured() {
     if (!capture) return;
     const p = Math.min(1,capture.elapsed/capture.duration);
-    const radius = capture.radius*(1-p*p*.95);
+    const radius = capture.radius+(horizon()*.87-capture.radius)*p*p;
     const angle = capture.angle+capture.direction*(p*.32+p*p*2.85);
     const dx = Math.cos(angle), dy = Math.sin(angle);
     const x = hole.x+dx*radius, y = hole.y+dy*radius;
-    const stretch = capture.star.size*1.5 + 49*p*p;
-    const width = capture.star.size*(1.52-p*.99);
+    const stretch = 5 + horizon()*1.5*p*p;
+    const width = Math.max(1.1,capture.star.size*1.35)*(2.03-p*1.53);
     const alpha = hole.visible*(1-Math.max(0,(p-.88)/.12));
     const tail = ctx.createLinearGradient(x+dx*stretch,y+dy*stretch,x-dx*width,y-dy*width);
     tail.addColorStop(0,'rgba(255,123,172,0)');
-    tail.addColorStop(.47,'rgba('+capture.star.color+','+alpha*.57+')');
+    tail.addColorStop(.56,'rgba('+capture.star.color+','+alpha*.73+')');
     tail.addColorStop(1,'rgba(255,244,224,'+alpha+')');
     ctx.strokeStyle = tail;
     ctx.lineWidth = width;
@@ -740,36 +927,48 @@ function createCosmos(
     amber(x,y,9+p*17,capture.star.color,alpha*.55);
   }
 
-  function orbit(rx: number, ry: number, angle: number, from: number, length: number, color: string, thickness: number) {
-    ctx.beginPath();
-    ctx.ellipse(0,0,rx,ry,angle,from,from+length);
-    ctx.strokeStyle = color;
-    ctx.lineWidth = thickness;
-    ctx.stroke();
-  }
-
   function drawHole() {
     if (hole.visible < .012) return;
     const {x,y,visible} = hole;
+    const radius = horizon();
     const pulse = capture ? Math.pow(capture.elapsed/capture.duration,4) : 0;
-    amber(x,y,73,'135,70,215',visible*(.25+pulse*.18));
-    amber(x-4,y+1,48,'245,94,121',visible*(.13+pulse*.21));
+    amber(x-radius*.44,y-radius*.2,radius*2.3,'29,149,186',visible*(.22+pulse*.12));
+    amber(x+radius*.46,y+radius*.43,radius*2.19,'229,87,46',visible*(.15+pulse*.25));
     ctx.save();
     ctx.translate(x,y);
     ctx.globalAlpha = visible;
-    const tilt = -.27;
-    orbit(40,16,tilt,0,Math.PI*2,'rgba(161,120,237,.32)',1.1);
-    orbit(34,13,tilt,Math.PI,Math.PI,'rgba(252,137,106,.65)',2.5);
-    orbit(29,13,tilt,Math.PI,Math.PI,'rgba(255,207,142,.83)',1.3);
-    ctx.fillStyle = '#05030c';
+
+    const softEdge = ctx.createRadialGradient(0,0,radius*.82,0,0,radius*1.145);
+    softEdge.addColorStop(0,'#000106');
+    softEdge.addColorStop(.59,'rgba(0,1,6,.985)');
+    softEdge.addColorStop(.76,'rgba(2,4,11,.56)');
+    softEdge.addColorStop(1,'rgba(2,4,11,0)');
+    ctx.fillStyle = softEdge;
+    ctx.fillRect(-radius*1.15,-radius*1.15,radius*2.3,radius*2.3);
+
+    for (let ring=0;ring<73;ring++) {
+      const seed = hash(ring,11);
+      const shade = hash(ring,26);
+      const distance = radius*(.998+hash(ring,44)*.65);
+      const from = seed*Math.PI*2+(ring%2 ? 1 : -.46)*elapsed*.16;
+      const alpha = (.09+shade*.29)*Math.exp(-(distance/radius-1)*2.9);
+      const tint = Math.sin(from+.28)>.12 ? (shade>.68?'255,187,115':'215,106,85') :
+        (shade>.73?'199,237,243':'65,167,195');
+      ctx.strokeStyle = 'rgba('+tint+','+alpha+')';
+      ctx.lineWidth = .25 + shade*1.15;
+      ctx.beginPath();
+      ctx.arc(0,0,distance,from,from+.07+shade*.56);
+      ctx.stroke();
+    }
+    ctx.strokeStyle = 'rgba(195,220,220,.32)';
+    ctx.lineWidth = .95 + pulse*.7;
     ctx.beginPath();
-    ctx.arc(0,0,15.5,0,Math.PI*2);
-    ctx.fill();
-    orbit(16,16,0,3.56,4.79,'rgba(255,207,174,.62)',1.1);
-    orbit(33,13,tilt,0,Math.PI,'rgba(245,108,111,.72)',2.15+pulse);
-    orbit(29,12,tilt,.09,2.84,'rgba(255,211,150,.91)',1.45);
-    orbit(45,17,tilt,elapsed*1.6,1.10,'rgba(209,143,255,.70)',1.05);
-    orbit(39,15,tilt,elapsed*1.95+2,1.1,'rgba(255,174,126,.65)',1.05);
+    ctx.arc(0,0,radius*1.042,3.06,5.56);
+    ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,173,120,.44)';
+    ctx.beginPath();
+    ctx.arc(0,0,radius*1.051,.04,2.12);
+    ctx.stroke();
     ctx.restore();
   }
 
@@ -782,8 +981,9 @@ function createCosmos(
     if (width && height) {
       moveHole(dt);
       ctx.clearRect(0,0,width,height);
-      if (gas) {
-        ctx.globalAlpha = .86 + Math.sin(elapsed*.27)*.12;
+      if (lens) lens.draw();
+      else if (gas) {
+        ctx.globalAlpha = .99;
         const shiftX = pointer.ready ? (hole.x/width-.5)*13 : 0;
         const shiftY = pointer.ready ? (hole.y/height-.5)*8 : 0;
         ctx.drawImage(nebula,-22+shiftX,-18+shiftY,width+44,height+36);
@@ -811,10 +1011,12 @@ function createCosmos(
     if (reducedMotion.matches) {
       stop();
       stage.removeAttribute('data-cosmos');
+      if (lensCanvas) lensCanvas.hidden = true;
       ctx.clearRect(0,0,width,height);
       return;
     }
     stage.dataset.cosmos = '';
+    if (lensCanvas) lensCanvas.hidden = !lens;
     schedule();
   }
 
@@ -838,6 +1040,20 @@ function createCosmos(
   window.addEventListener('pagehide', () => { suspended = true; pointer.active = false; stop(); });
   window.addEventListener('pageshow', () => { suspended = false; schedule(); });
   reducedMotion.addEventListener('change', applyMotion);
+  lens = makeLens();
+  if (lensCanvas) {
+    lensCanvas.hidden = !lens;
+    lensCanvas.addEventListener('webglcontextlost', event => {
+      event.preventDefault();
+      lens = null;
+      lensCanvas.hidden = true;
+    });
+    lensCanvas.addEventListener('webglcontextrestored', () => {
+      lens = makeLens();
+      if (gas) lens?.upload(nebula);
+      applyMotion();
+    });
+  }
   new ResizeObserver(resize).observe(stage);
   resize();
   applyMotion();
